@@ -1,0 +1,90 @@
+name: Build Image & Deploy
+on:
+  push:
+    branches:
+      - main
+concurrency: cd
+
+jobs:
+  build:
+    # runs-on: self-hosted
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: write
+    if: "!contains(github.event.head_commit.message, '#skip-ci')"
+
+    steps:
+      - name: Check Out Repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Install Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Dry incremement patch version
+        id: tag-dry-run
+        uses: anothrNick/github-tag-action@1.36.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BUMP: none
+          WITH_V: true
+          DRY_RUN: true
+
+      - name: Set version for later
+        run: |
+          echo "Increnting version with '${{ steps.tag-dry-run.outputs.part }}' to '${{ steps.tag-dry-run.outputs.new_tag }}' from '${{ steps.tag-dry-run.outputs.tag }}'"
+          tag=${{ steps.tag-dry-run.outputs.new_tag }}
+          version=$(echo "$tag" | cut -b 2-)
+          echo "version=$version" >> $GITHUB_ENV
+      - name: Set npm version
+        uses: reedyuk/npm-version@1.1.1
+        with:
+          version: ${{ env.version }}
+
+      - name: Docker metadata
+        id: metadata
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            ghcr.io/${{ github.repository_owner }}/helldivers2-bot
+          tags: |
+            type=semver,pattern={{major}},value=${{ env.version }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ env.version }}
+
+      - name: Set up Docker Context for Buildx
+        id: buildx-context
+        run: |
+          docker context create builders
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+        with:
+          endpoint: builders
+
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
+
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v3
+        with:
+          context: ./
+          file: ./Dockerfile
+          builder: ${{ steps.buildx.outputs.name }}
+          push: true
+          tags: ${{ steps.metadata.outputs.tags }}
+          labels: ${{ steps.metadata.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Increment patch version
+        uses: anothrNick/github-tag-action@1.36.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WITH_V: true
+          DEFAULT_BUMP: none

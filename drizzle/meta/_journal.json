@@ -1,0 +1,41 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1709804890468,
+      "tag": "0000_deep_mephistopheles",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1709805172072,
+      "tag": "0001_married_miss_america",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1709805246193,
+      "tag": "0002_mighty_sunset_bain",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1709805820422,
+      "tag": "0003_equal_darwin",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1709834073915,
+      "tag": "0004_calm_medusa",
+      "breakpoints": true
+    }
+  ]
+}

@@ -1,0 +1,123 @@
+{
+  "id": "cab2e7f3-b27e-4e52-a1d2-ea18c83bf156",
+  "prevId": "5f8ada69-3f53-4d4e-8f3d-b2db5fbc20c8",
+  "version": "5",
+  "dialect": "pg",
+  "tables": {
+    "announcement_channels": {
+      "name": "announcement_channels",
+      "schema": "",
+      "columns": {
+        "channel_id": {
+          "name": "channel_id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "announcement_types": {
+          "name": "announcement_types",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "guild_id": {
+          "name": "guild_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "production": {
+          "name": "production",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "persistent_messages": {
+      "name": "persistent_messages",
+      "schema": "",
+      "columns": {
+        "message_id": {
+          "name": "message_id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "channel_id": {
+          "name": "channel_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "announcement_types": {
+          "name": "announcement_types",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "guild_id": {
+          "name": "guild_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "production": {
+          "name": "production",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    }
+  },
+  "enums": {
+    "user_perms": {
+      "name": "user_perms",
+      "values": {
+        "admin": "admin",
+        "officer": "officer"
+      }
+    }
+  },
+  "schemas": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

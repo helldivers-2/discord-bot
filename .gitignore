@@ -1,0 +1,7 @@
+/node_modules
+/api_responses
+/build
+.env*
+foo*
+newrelic_agent.log
+data.json

@@ -1,0 +1,1 @@
+ALTER TABLE "persistent_messages" ADD COLUMN "deleted" boolean DEFAULT false NOT NULL;
