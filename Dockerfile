@@ -1,27 +1,36 @@
-FROM node:20-alpine3.18 as build
+FROM node:20-alpine3.18 as base
 WORKDIR /app
+
 # Copy files for npm install and TS compile
 COPY package*.json tsconfig.json ./
-# Copy Prisma src files needed to generate the Prisma client
-COPY prisma/schema.prisma ./prisma/schema.prisma
-# Install dependencies
-RUN npm install
-# Copy src files after installing deps -- allows deps caching if they're unchanged
+RUN npm ci --quiet
 COPY ./src ./src
-# Compile TS, remove node_modules folder, then install without dev deps
-RUN npm run build \
+
+# Build stage > build project, remove deps and install runtime deps
+FROM base AS build
+WORKDIR /app
+
+RUN npm run build \ 
     && rm -rf node_modules \
-    && npm ci --omit-dev
+    && npm ci --omit=dev
+
+# Deploy stage > copy runtime files, copy build files (prev. stage), install runtime deps
+FROM node:20-alpine3.18 as deploy
+WORKDIR /home/node/app
 
 # - - - FRESH BUILD STAGE - - -
 FROM node:20-alpine3.18 as deploy
 WORKDIR /home/node/app
-# Copy runtime files with perms for user 'node' (included in node docker image)
+
+# Set user 'node' as the owner for all copied files
 COPY --chown=node:node --from=build /app/build ./build
 COPY --chown=node:node --from=build /app/node_modules ./node_modules
 COPY --chown=node:node package*.json *.config.js ./
-COPY --chown=node:node prisma ./prisma/
+
+# Set 'node' as owner of this directory (permits creating files eg. logs)
 RUN chown -h node:node .
-# Run npm start as user 'node'
 USER node
-CMD [ "npm", "start" ]
+
+USER node
+# Start the application
+CMD ["node", "build/src/server.js"]
