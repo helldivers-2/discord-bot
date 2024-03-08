@@ -1,7 +1,7 @@
 {
   "name": "helldivers-bot",
   "description": "Welcome to the repo for Helldivers's discord bot! This bot is intended to be a helper for Helldivers's team and community.",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "author": "jgaribsin",
   "license": "ISC",
   "scripts": {
