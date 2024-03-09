@@ -21,19 +21,19 @@ const command: Command = {
       subcommand
         .setName('list')
         .setDescription('Display a list of planets with ongoing offences')
-    )
-    .addSubcommand(subcommand =>
-      subcommand
-        .setName('info')
-        .setDescription('Get information for a specific planet')
-        .addStringOption(option =>
-          option
-            .setName('planet')
-            .setDescription('The name of the planet you want to check')
-            .setRequired(true)
-            .setAutocomplete(true)
-        )
     ),
+  // .addSubcommand(subcommand =>
+  //   subcommand
+  //     .setName('info')
+  //     .setDescription('Get information for a specific planet')
+  //     .addStringOption(option =>
+  //       option
+  //         .setName('planet')
+  //         .setDescription('The name of the planet you want to check')
+  //         .setRequired(true)
+  //         .setAutocomplete(true)
+  //     )
+  // ),
   run: async interaction => {
     const subcommand = interaction.options.data[0].name;
 
