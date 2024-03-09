@@ -18,6 +18,7 @@ import {existsSync, mkdirSync, writeFileSync} from 'fs';
 import {compressFile, dayjs, writeGzipJson} from '../handlers';
 import path from 'path';
 import {getAllPlanets} from './planets';
+import axios from 'axios';
 
 const API_URL = 'https://api.live.prod.thehelldiversgame.com/api';
 
@@ -73,27 +74,27 @@ export async function getData() {
     mkdirSync(path.join('api_responses', String(season)), {recursive: true});
 
   const warInfoApi = await (
-    await fetch(`${API_URL}/WarSeason/${season}/WarInfo`)
-  ).json();
+    await axios.get(`${API_URL}/WarSeason/${season}/WarInfo`)
+  ).data;
   const warInfo = warInfoApi as WarInfo;
-  const warInfoPath = path.join(
-    'api_responses',
-    String(season),
-    `${fileTimestamp}_WarInfo.json`
-  );
-  await writeGzipJson(warInfoPath + '.gz', warInfoApi);
+  // const warInfoPath = path.join(
+  //   'api_responses',
+  //   String(season),
+  //   `${fileTimestamp}_WarInfo.json`
+  // );
+  // await writeGzipJson(warInfoPath + '.gz', warInfoApi);
   const statusApi = await (
-    await fetch(`${API_URL}/WarSeason/${season}/Status`)
-  ).json();
+    await axios.get(`${API_URL}/WarSeason/${season}/Status`)
+  ).data;
   const status = statusApi as Status;
   status.timeUtc = Date.now();
-  const statusPath = path.join(
-    'api_responses',
-    String(season),
-    `${fileTimestamp}_Status.json`
-  );
 
-  await writeGzipJson(statusPath + '.gz', statusApi);
+  // const statusPath = path.join(
+  //   'api_responses',
+  //   String(season),
+  //   `${fileTimestamp}_Status.json`
+  // );
+  // await writeGzipJson(statusPath + '.gz', statusApi);
 
   const planets: MergedPlanetData[] = [];
   const players = {
