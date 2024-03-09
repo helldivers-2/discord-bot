@@ -88,3 +88,23 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true
           DEFAULT_BUMP: none
+
+  deploy:
+    # runs-on: self-hosted
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+    if: "!contains(github.event.head_commit.message, '#skip-ci')"
+    needs: ['build'] # always run after build step
+
+    steps:
+      - name: Check Out Repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - uses: steebchen/kubectl@v2.0.0
+        with:
+          config: ${{ secrets.KUBECONFIG }}
+          command: rollout restart deployment/helldivers2-bot-deployment -n=helldivers2
