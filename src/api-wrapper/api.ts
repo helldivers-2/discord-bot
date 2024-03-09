@@ -2,20 +2,14 @@ import {
   WarInfo,
   Status,
   MergedPlanetData,
-  PlanetStatus,
   GlobalEvent,
   Faction,
   MergedCampaignData,
   MergedPlanetEventData,
 } from './types';
-import {
-  getFactionName,
-  getPlanetEventType,
-  getPlanetName,
-  getSectorName,
-} from './mapping';
+import {getFactionName, getPlanetEventType, getPlanetName} from './mapping';
 import {existsSync, mkdirSync, writeFileSync} from 'fs';
-import {compressFile, dayjs, logger, writeGzipJson} from '../handlers';
+import {dayjs, logger} from '../handlers';
 import path from 'path';
 import {getAllPlanets} from './planets';
 import axios from 'axios';

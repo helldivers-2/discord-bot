@@ -7,7 +7,12 @@ import {
 } from 'discord.js';
 import {Command} from '../interfaces';
 import {EMBED_COLOUR, FOOTER_MESSAGE} from './_components';
-import {client, missingChannelPerms, sleep, warStatusEmbeds} from '../handlers';
+import {
+  client,
+  missingChannelPerms,
+  sleep,
+  warStatusPersistentMessage,
+} from '../handlers';
 import {isProd} from '../config';
 import {
   db,
@@ -126,7 +131,7 @@ async function status(interaction: CommandInteraction) {
       const discordMsg = await messageChannel.messages.fetch(message.id);
       if (discordMsg)
         await discordMsg.edit({
-          embeds: warStatusEmbeds(),
+          embeds: warStatusPersistentMessage(),
         });
     }
 

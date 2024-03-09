@@ -10,7 +10,6 @@ import {
   Faction,
   MergedCampaignData,
   MergedPlanetEventData,
-  getAllActivePlanets,
   getAllCampaigns,
   getAllPlayers,
   getCampaignByPlanetName,
@@ -29,15 +28,34 @@ export function commandErrorEmbed(
           name: client.user?.tag || '',
           iconURL: client.user?.avatarURL() || undefined,
         })
-        .setTitle(`Something Went Wrong )=`)
+        .setTitle('Something Went Wrong )=')
         .setDescription(
           `There was an issue trying to execute \`/${
             interaction.isCommand()
               ? interaction.commandName
               : interaction.customId
           }\`! ` +
-            `The issue has been logged and will be looked into. Feel free to try again shortly. ` +
-            `If the problem persists, please let Major know`
+            'The issue has been logged and will be looked into. Feel free to try again shortly. ' +
+            'If the problem persists, please let Major know'
+        )
+        .setFooter({text: FOOTER_MESSAGE})
+        .setColor(EMBED_COLOUR as ColorResolvable)
+        .setTimestamp(),
+    ],
+  };
+}
+
+export function missingChannelPerms(interaction: CommandInteraction) {
+  return {
+    embeds: [
+      new EmbedBuilder()
+        .setAuthor({
+          name: interaction.user.tag,
+          iconURL: interaction.user.avatarURL() || undefined,
+        })
+        .setTitle('Permission Denied')
+        .setDescription(
+          'This command creates a public, persistent message. To avoid inconviencing other users, it requires moderator permissions. '
         )
         .setFooter({text: FOOTER_MESSAGE})
         .setColor(EMBED_COLOUR as ColorResolvable)
@@ -54,7 +72,7 @@ export function ownerCommandEmbed(interaction: CommandInteraction) {
           name: interaction.user.tag,
           iconURL: interaction.user.avatarURL() || undefined,
         })
-        .setTitle(`Permission Denied`)
+        .setTitle('Permission Denied')
         .setDescription('This command is only available to Owners!')
         .setFooter({text: FOOTER_MESSAGE})
         .setColor(EMBED_COLOUR as ColorResolvable)
@@ -71,7 +89,7 @@ export function adminCommandEmbed(interaction: CommandInteraction) {
           name: interaction.user.tag,
           iconURL: interaction.user.avatarURL() || undefined,
         })
-        .setTitle(`Permission Denied`)
+        .setTitle('Permission Denied')
         .setDescription('This command is only available to Admins!')
         .setFooter({text: FOOTER_MESSAGE})
         .setColor(EMBED_COLOUR as ColorResolvable)
@@ -140,7 +158,6 @@ export function warStatusEmbeds() {
     .addFields(status['Terminids']);
 
   const embeds = [automatonEmbed, terminidEmbed];
-  embeds[embeds.length - 1].setFooter({text: FOOTER_MESSAGE}).setTimestamp();
 
   return embeds;
 }

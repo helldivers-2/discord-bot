@@ -1,8 +1,4 @@
-import {
-  CommandInteraction,
-  EmbedBuilder,
-  SlashCommandBuilder,
-} from 'discord.js';
+import {EmbedBuilder, SlashCommandBuilder} from 'discord.js';
 import {Command} from '../interfaces';
 import {EMBED_COLOUR, FOOTER_MESSAGE} from './_components';
 import {config} from '../config';

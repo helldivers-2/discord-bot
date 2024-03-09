@@ -3,17 +3,7 @@ import {
   EmbedBuilder,
   SlashCommandBuilder,
 } from 'discord.js';
-import {
-  Faction,
-  MergedCampaignData,
-  MergedPlanetData,
-  MergedPlanetEventData,
-  getAllCampaigns,
-  getCampaignByPlanetName,
-  getUtcTime,
-} from '../api-wrapper';
 import {Command} from '../interfaces';
-import {FACTION_COLOUR, FOOTER_MESSAGE} from './_components';
 import {campaignEmbeds} from '../handlers';
 
 const command: Command = {
@@ -38,7 +28,6 @@ const command: Command = {
         )
     ),
   run: async interaction => {
-    // TODO: perform any checks if needed (eg. perm checks)
     const subcommand = interaction.options.data[0].name;
 
     await subcmds[subcommand](interaction);
@@ -47,7 +36,6 @@ const command: Command = {
 
 const subcmds: {[key: string]: (job: CommandInteraction) => Promise<void>} = {
   // hashmap of subcommands
-  // TODO
   list,
   info,
 };

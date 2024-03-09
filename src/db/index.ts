@@ -3,7 +3,6 @@ import postgres from 'postgres';
 import {config} from '../config';
 import * as schema from './schema';
 import {announcementChannels} from './schema';
-import {eq} from 'drizzle-orm';
 
 const {DATABASE_URL} = config;
 

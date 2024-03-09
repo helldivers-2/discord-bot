@@ -1,21 +1,15 @@
-import {
-  ActivityType,
-  ChannelType,
-  Client,
-  DiscordAPIError,
-  REST,
-  Routes,
-} from 'discord.js';
+import {ActivityType, Client, REST, Routes} from 'discord.js';
 import {schedule} from 'node-cron';
 import {commandHash, commandList, presenceCmds} from '../commands';
-import {config, isProd} from '../config';
+import {config} from '../config';
 import {getData, mappedNames} from '../api-wrapper';
-import {db, eq, persistentMessages} from '../db';
-import {logger, warStatusEmbeds} from '../handlers';
-import {and} from 'drizzle-orm';
+import {logger, updateMessages} from '../handlers';
 
 // bot client token, for use with discord API
 const BOT_TOKEN = config.BOT_TOKEN;
+const PERSISTENT_MESSAGE_INTERVAL = config.PERSISTENT_MESSAGE_INTERVAL;
+const API_UPDATE_INTERVAL = config.API_UPDATE_INTERVAL;
+const STATUS_UPDATE_INTERVAL = config.STATUS_UPDATE_INTERVAL;
 
 const onReady = async (client: Client) => {
   if (!client.user) throw Error('Client not initialised');
@@ -46,6 +40,7 @@ const onReady = async (client: Client) => {
     type: 'startup',
   });
 
+  start = Date.now();
   // get api data on startup
   await getData().then(data => {
     mappedNames.planets = data[801].Planets.map(x => x.name);
@@ -59,91 +54,10 @@ const onReady = async (client: Client) => {
   });
 
   // cron schedule to update messages every hour
-  schedule('0 * * * *', async () => {
-    // measure time taken to update all persistent messages
-    start = Date.now();
-
-    const embeds = {
-      curr_war: warStatusEmbeds(),
-    };
-
-    const messages = await db.query.persistentMessages.findMany({
-      where: and(
-        eq(persistentMessages.deleted, false),
-        eq(persistentMessages.production, isProd)
-      ),
-    });
-
-    const promises: Promise<any>[] = [];
-    for (const message of messages) {
-      const {messageId, channelId, type: messageType} = message;
-
-      try {
-        // try fetching the channel, may throw '50001', bot can't see channel
-        const messageChannel = await client.channels.fetch(channelId);
-        if (
-          messageChannel &&
-          (messageChannel.type === ChannelType.GuildText ||
-            messageChannel.type === ChannelType.PublicThread)
-        ) {
-          // try fetching the message, may throw '10008', message doesn't exist (deleted?)
-          const discordMsg = await messageChannel.messages.fetch(messageId);
-          if (discordMsg)
-            switch (messageType) {
-              case 'war_status':
-                promises.push(
-                  discordMsg.edit({
-                    embeds: embeds.curr_war,
-                  })
-                );
-                break;
-            }
-        }
-      } catch (err) {
-        const discordErr = err as DiscordAPIError;
-        // discord API error codes
-        // https://github.com/meew0/discord-api-docs-1/blob/master/docs/topics/RESPONSE_CODES.md#json-error-response
-        switch (discordErr.code) {
-          case 10003: // Unknown channel
-            promises.push(
-              db
-                .update(persistentMessages)
-                .set({deleted: true})
-                .where(eq(persistentMessages.messageId, messageId))
-            );
-            break;
-          case 10008: // Unknown message
-            promises.push(
-              db
-                .update(persistentMessages)
-                .set({deleted: true})
-                .where(eq(persistentMessages.messageId, messageId))
-            );
-            break;
-          case 50001: // Missing access
-            promises.push(
-              db
-                .update(persistentMessages)
-                .set({deleted: true})
-                .where(eq(persistentMessages.messageId, messageId))
-            );
-            break;
-          case 50005: // Cannot edit a message authored by another user
-            break;
-        }
-      }
-    }
-
-    // await all message edits completion
-    await Promise.all(promises);
-    time = `${Date.now() - start}ms`;
-    logger.info(`Updated ${messages.length} messages in ${time}`, {
-      type: 'info',
-    });
-  });
+  schedule(PERSISTENT_MESSAGE_INTERVAL, () => updateMessages());
 
   // cron schedule to update api data every 10 seconds
-  schedule('*/10 * * * * *', () => {
+  schedule(API_UPDATE_INTERVAL, () => {
     getData().then(data => {
       mappedNames.planets = data[801].Planets.map(x => x.name);
       mappedNames.campaignPlanets = data[801].Campaigns.map(x => x.planetName);
@@ -151,7 +65,7 @@ const onReady = async (client: Client) => {
   });
 
   // cron schedule to update presence every 3 seconds
-  schedule('*/3 * * * * *', () => {
+  schedule(STATUS_UPDATE_INTERVAL, () => {
     if (client.user) {
       if (client.user.presence.activities[0]) {
         const prev = client.user.presence.activities[0].name;

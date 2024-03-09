@@ -8,6 +8,11 @@ const configObj: Record<string, string | number | undefined> = {
   BOT_TOKEN: process.env.BOT_TOKEN,
   BOT_OWNER: process.env.BOT_OWNER || '319226464786710539',
 
+  // Cron job intervals
+  PERSISTENT_MESSAGE_INTERVAL: '*/10 * * * *', // every 10 minutes
+  API_UPDATE_INTERVAL: '*/10 * * * * *', // every 10 seconds
+  STATUS_UPDATE_INTERVAL: '*/3 * * * * *', // every 3 seconds
+
   // Database config
   DATABASE_URL: process.env.DATABASE_URL,
 
