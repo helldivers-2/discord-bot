@@ -85,6 +85,7 @@ const onInteraction = async (interaction: Interaction) => {
         command,
         type: 'command',
         user: interaction.user.tag,
+        guild: interaction.guildId,
       });
 
       return;
