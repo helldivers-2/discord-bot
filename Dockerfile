@@ -33,4 +33,4 @@ USER node
 
 USER node
 # Start the application
-CMD ["node", "build/src/server.js"]
+CMD ["node", "build/src/index.js"]
