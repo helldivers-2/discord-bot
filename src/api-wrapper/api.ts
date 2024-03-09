@@ -68,9 +68,9 @@ for (const season of seasons.seasons) {
 export async function getData() {
   const season = seasons.current;
   const fileTimestamp = dayjs().format('DD_MM_YYYYTHH_mm_ssZZ[UTC]');
-  logger.info(`Fetching data for season ${season} at ${fileTimestamp}`, {
-    type: 'info',
-  });
+  // logger.info(`Fetching data for season ${season} at ${fileTimestamp}`, {
+  //   type: 'info',
+  // });
 
   if (!existsSync(path.join('api_responses', String(season))))
     mkdirSync(path.join('api_responses', String(season)), {recursive: true});
