@@ -12,6 +12,7 @@ import {config, isProd} from '../config';
 import {getData, mappedNames} from '../api-wrapper';
 import {db, eq, persistentMessages} from '../db';
 import {logger, warStatusEmbeds} from '../handlers';
+import {and} from 'drizzle-orm';
 
 // bot client token, for use with discord API
 const BOT_TOKEN = config.BOT_TOKEN;
@@ -67,9 +68,10 @@ const onReady = async (client: Client) => {
     };
 
     const messages = await db.query.persistentMessages.findMany({
-      where:
-        eq(persistentMessages.deleted, false) &&
-        eq(persistentMessages.production, isProd),
+      where: and(
+        eq(persistentMessages.deleted, false),
+        eq(persistentMessages.production, isProd)
+      ),
     });
 
     const promises: Promise<any>[] = [];

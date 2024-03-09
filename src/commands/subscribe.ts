@@ -9,7 +9,14 @@ import {Command} from '../interfaces';
 import {EMBED_COLOUR, FOOTER_MESSAGE} from './_components';
 import {client, missingChannelPerms, sleep, warStatusEmbeds} from '../handlers';
 import {isProd} from '../config';
-import {db, newAnnouncementChannel, newPersistentMessage} from '../db';
+import {
+  db,
+  eq,
+  newAnnouncementChannel,
+  newPersistentMessage,
+  persistentMessages,
+} from '../db';
+import {and} from 'drizzle-orm';
 
 const command: Command = {
   data: new SlashCommandBuilder()
@@ -34,7 +41,7 @@ const command: Command = {
   // )
   run: async interaction => {
     const subcommand = interaction.options.data[0].name;
-    // TODO: limit each type of subscription to one per guild
+
     if (interaction.guild) {
       const user = await interaction.guild.members.fetch(interaction.user.id);
       if (!user.permissions.has('ManageMessages')) {
@@ -51,14 +58,43 @@ const command: Command = {
 };
 
 const subcmds: {[key: string]: (job: CommandInteraction) => Promise<void>} = {
-  // hashmap of subcommands
-  // TODO:
   status,
   planet,
   events,
 };
 
 async function status(interaction: CommandInteraction) {
+  // check whether this guild already has a persistent message
+  const existingMessage = await db.query.persistentMessages.findFirst({
+    where: and(
+      eq(persistentMessages.guildId, interaction.guildId ?? ''),
+      eq(persistentMessages.type, 'war_status'),
+      eq(persistentMessages.deleted, false),
+      eq(persistentMessages.production, isProd)
+    ),
+  });
+  if (existingMessage) {
+    await interaction.editReply({
+      embeds: [
+        new EmbedBuilder()
+          .setAuthor({
+            name: interaction.user.tag,
+            iconURL: interaction.user.avatarURL() || undefined,
+          })
+          .setTitle('Guild Already Subscribed')
+          .setDescription(
+            'This guild is already subscribed to war status updates! To prevent spam, only one subscription per type per guild is allowed.'
+          )
+          .setFooter({text: FOOTER_MESSAGE})
+          .setColor(EMBED_COLOUR)
+          .setTimestamp(),
+      ],
+    });
+    await sleep(5000);
+    await interaction.deleteReply();
+    return;
+  }
+
   const message = await interaction.editReply({
     embeds: [
       new EmbedBuilder()
