@@ -15,7 +15,7 @@ import {
   getSectorName,
 } from './mapping';
 import {existsSync, mkdirSync, writeFileSync} from 'fs';
-import {compressFile, dayjs, writeGzipJson} from '../handlers';
+import {compressFile, dayjs, logger, writeGzipJson} from '../handlers';
 import path from 'path';
 import {getAllPlanets} from './planets';
 import axios from 'axios';
@@ -68,7 +68,9 @@ for (const season of seasons.seasons) {
 export async function getData() {
   const season = seasons.current;
   const fileTimestamp = dayjs().format('DD_MM_YYYYTHH_mm_ssZZ[UTC]');
-  console.log(`Fetching data for season ${season} at ${fileTimestamp}`);
+  logger.info(`Fetching data for season ${season} at ${fileTimestamp}`, {
+    type: 'info',
+  });
 
   if (!existsSync(path.join('api_responses', String(season))))
     mkdirSync(path.join('api_responses', String(season)), {recursive: true});

@@ -7,7 +7,12 @@ import {
   ownerCmds,
   planetAutoCmds,
 } from '../commands';
-import {checkPerms, commandErrorEmbed, ownerCommandEmbed} from '../handlers';
+import {
+  checkPerms,
+  commandErrorEmbed,
+  logger,
+  ownerCommandEmbed,
+} from '../handlers';
 import {go as search} from 'fuzzysort';
 import {mappedNames} from '../api-wrapper';
 
@@ -75,7 +80,12 @@ const onInteraction = async (interaction: Interaction) => {
       await commandHash[command](interaction);
 
       const time = `${Date.now() - start}ms`;
-      console.log(`Executed command /${command} in ${time}`);
+      logger.info(`Executed command /${command} in ${time}`, {
+        time,
+        command,
+        type: 'command',
+        user: interaction.user.tag,
+      });
 
       return;
     } catch (err) {
@@ -84,7 +94,7 @@ const onInteraction = async (interaction: Interaction) => {
       // TODO: handle other error types explicitly eg. discordjs
 
       // Log error and additional info for debugging
-      console.log(error.message, {
+      logger.info(error.message, {
         command: interaction.commandName,
         args: interaction.options.data,
         user: interaction.user.tag,

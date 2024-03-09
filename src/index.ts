@@ -1,6 +1,6 @@
 import {config} from './config';
 import {onInteraction, onReady} from './events';
-import {client} from './handlers';
+import {client, logger} from './handlers';
 
 const {BOT_TOKEN} = config;
 
@@ -13,13 +13,19 @@ async function main() {
     if (guild.available) {
       // retrieve new server count
       const serverCount = (await client.guilds.fetch()).size;
-      console.log(`Client joined guild #${serverCount}: ${guild.name}`);
+      logger.info(`Client joined guild #${serverCount}: ${guild.name}`),
+        {
+          type: 'info',
+        };
     }
   });
 
   // log server kick
   client.on('guildDelete', guild => {
-    if (guild.available) console.log(`Client removed from: ${guild.name}`);
+    if (guild.available)
+      logger.info(`Client removed from: ${guild.name}`, {
+        type: 'info',
+      });
   });
 
   // handle user interactions (eg. commands)

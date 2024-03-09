@@ -11,7 +11,7 @@ import {commandHash, commandList, presenceCmds} from '../commands';
 import {config, isProd} from '../config';
 import {getData, mappedNames} from '../api-wrapper';
 import {db, eq, persistentMessages} from '../db';
-import {warStatusEmbeds} from '../handlers';
+import {logger, warStatusEmbeds} from '../handlers';
 
 // bot client token, for use with discord API
 const BOT_TOKEN = config.BOT_TOKEN;
@@ -23,7 +23,9 @@ const onReady = async (client: Client) => {
 
   const rest = new REST().setToken(BOT_TOKEN);
 
-  console.log(`Serving ${serverCount} servers as ${client.user?.tag}`);
+  logger.info(`Serving ${serverCount} servers as ${client.user?.tag}`, {
+    type: 'startup',
+  });
 
   // two non-constant value for timing functions
   let start = Date.now();
@@ -34,10 +36,14 @@ const onReady = async (client: Client) => {
   await rest.put(Routes.applicationCommands(clientId), {
     body: commandData,
   });
-  console.log(`Commands loaded: ${Object.keys(commandHash).join(', ')}`);
+  logger.info(`Commands loaded: ${Object.keys(commandHash).join(', ')}`, {
+    type: 'startup',
+  });
 
   time = `${Date.now() - start}ms`;
-  console.log(`Loaded ${commandData.length} commands in ${time}`);
+  logger.info(`Loaded ${commandData.length} commands in ${time}`, {
+    type: 'startup',
+  });
 
   // get api data on startup
   await getData().then(data => {
@@ -47,7 +53,9 @@ const onReady = async (client: Client) => {
 
   // retrieve encounters and load them as autocomplete suggestions
   time = `${Date.now() - start}ms`;
-  console.log(`Loaded ${mappedNames.planets.length} planets in ${time}`);
+  logger.info(`Loaded ${mappedNames.planets.length} planets in ${time}`, {
+    type: 'startup',
+  });
 
   // cron schedule to update messages every hour
   schedule('0 * * * *', async () => {
@@ -127,7 +135,9 @@ const onReady = async (client: Client) => {
     // await all message edits completion
     await Promise.all(promises);
     time = `${Date.now() - start}ms`;
-    console.log(`Updated ${messages.length} messages in ${time}`);
+    logger.info(`Updated ${messages.length} messages in ${time}`, {
+      type: 'info',
+    });
   });
 
   // cron schedule to update api data every 10 seconds
