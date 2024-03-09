@@ -19,19 +19,19 @@ const command: Command = {
       subcommand
         .setName('status')
         .setDescription('Display current galactic war status.')
-    )
-    // .addSubcommand(subcommand =>
-    //   subcommand
-    //     .setName('planets')
-    //     .setDescription(
-    //       'Sends a message planet becomes available or unavailable.'
-    //     )
-    // )
-    .addSubcommand(subcommand =>
-      subcommand
-        .setName('events')
-        .setDescription('Sends a message when a global event starts or ends.')
     ),
+  // .addSubcommand(subcommand =>
+  //   subcommand
+  //     .setName('planets')
+  //     .setDescription(
+  //       'Sends a message planet becomes available or unavailable.'
+  //     )
+  // )
+  // .addSubcommand(subcommand =>
+  //   subcommand
+  //     .setName('events')
+  //     .setDescription('Sends a message when a global event starts or ends.')
+  // )
   run: async interaction => {
     const subcommand = interaction.options.data[0].name;
     // TODO: limit each type of subscription to one per guild

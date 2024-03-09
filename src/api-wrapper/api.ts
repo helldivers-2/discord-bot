@@ -74,7 +74,11 @@ export async function getData() {
     mkdirSync(path.join('api_responses', String(season)), {recursive: true});
 
   const warInfoApi = await (
-    await axios.get(`${API_URL}/WarSeason/${season}/WarInfo`)
+    await axios.get(`${API_URL}/WarSeason/${season}/WarInfo`, {
+      headers: {
+        'Accept-Language': 'en-us',
+      },
+    })
   ).data;
   const warInfo = warInfoApi as WarInfo;
   // const warInfoPath = path.join(
@@ -84,7 +88,11 @@ export async function getData() {
   // );
   // await writeGzipJson(warInfoPath + '.gz', warInfoApi);
   const statusApi = await (
-    await axios.get(`${API_URL}/WarSeason/${season}/Status`)
+    await axios.get(`${API_URL}/WarSeason/${season}/Status`, {
+      headers: {
+        'Accept-Language': 'en-us',
+      },
+    })
   ).data;
   const status = statusApi as Status;
   status.timeUtc = Date.now();

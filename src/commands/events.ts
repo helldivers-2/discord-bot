@@ -41,7 +41,12 @@ async function all(interaction: CommandInteraction) {
     const title = event.title;
     let message = event.message;
     message = message.replace(/<i=1>/g, '*').replace(/<\/i>/g, '*');
-    embeds.push(new EmbedBuilder().setTitle(title).setDescription(message));
+    const embed = new EmbedBuilder()
+      .setTitle(title)
+      .setFooter({text: FOOTER_MESSAGE})
+      .setTimestamp();
+    if (message) embed.setDescription(message);
+    embeds.push(embed);
   }
   embeds[embeds.length - 1].setFooter({text: FOOTER_MESSAGE}).setTimestamp();
   await interaction.editReply({embeds: embeds});
@@ -55,9 +60,9 @@ async function latest(interaction: CommandInteraction) {
   message = message.replace(/<i=1>/g, '*').replace(/<\/i>/g, '*');
   const embed = new EmbedBuilder()
     .setTitle(title)
-    .setDescription(message)
     .setFooter({text: FOOTER_MESSAGE})
     .setTimestamp();
+  if (message) embed.setDescription(message);
 
   await interaction.editReply({embeds: [embed]});
 }
