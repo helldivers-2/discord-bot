@@ -1,9 +1,10 @@
-FROM node:20-alpine3.18 as base
+FROM node:16-alpine3.16 as base
 WORKDIR /app
 
 # Copy files for npm install and TS compile
 COPY package*.json tsconfig.json ./
 RUN npm ci --quiet
+
 COPY ./src ./src
 
 # Build stage > build project, remove deps and install runtime deps
@@ -19,7 +20,7 @@ FROM node:20-alpine3.18 as deploy
 WORKDIR /home/node/app
 
 # - - - FRESH BUILD STAGE - - -
-FROM node:20-alpine3.18 as deploy
+FROM node:16-alpine3.16 as deploy
 WORKDIR /home/node/app
 
 # Set user 'node' as the owner for all copied files
