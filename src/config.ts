@@ -13,7 +13,10 @@ const configObj: Record<string, string | number | undefined> = {
 
   // Bot Commands
   EMBED_COLOUR: process.env.EMBED_COLOUR || 'DarkPurple',
-  FOOTER_MESSAGE: `v${version} | made for Helldivers`,
+  FOOTER_MESSAGE:
+    'Bug reports and suggestions welcome in Discord!\n' +
+    `/discord | v${version} | made by Major`,
+  DISCORD_INVITE: 'https://discord.gg/levialliance',
 
   // Project info
   VERSION: version,

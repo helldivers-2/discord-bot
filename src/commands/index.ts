@@ -1,11 +1,12 @@
 import {CommandInteraction, ModalSubmitInteraction} from 'discord.js';
 import {Command} from '../interfaces';
 import campaign from './campaign';
+import discord from './discord';
 import events from './events';
 import planet from './planet';
 import subscribe from './subscribe';
 
-const commandList: Command[] = [planet, events, campaign, subscribe];
+const commandList: Command[] = [planet, events, campaign, subscribe, discord];
 const notEphemeral = ['subscribe'];
 const ephemeralCmds = commandList
   .map(x => x.data.name)

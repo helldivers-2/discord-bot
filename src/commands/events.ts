@@ -41,13 +41,11 @@ async function all(interaction: CommandInteraction) {
     const title = event.title;
     let message = event.message;
     message = message.replace(/<i=1>/g, '*').replace(/<\/i>/g, '*');
-    const embed = new EmbedBuilder()
-      .setTitle(title)
-      .setFooter({text: FOOTER_MESSAGE})
-      .setTimestamp();
+    const embed = new EmbedBuilder().setTitle(title).setTimestamp();
     if (message) embed.setDescription(message);
     embeds.push(embed);
   }
+
   embeds[embeds.length - 1].setFooter({text: FOOTER_MESSAGE}).setTimestamp();
   await interaction.editReply({embeds: embeds});
 }

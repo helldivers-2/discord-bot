@@ -139,7 +139,10 @@ export function warStatusEmbeds() {
     )
     .addFields(status['Terminids']);
 
-  return [automatonEmbed, terminidEmbed];
+  const embeds = [automatonEmbed, terminidEmbed];
+  embeds[embeds.length - 1].setFooter({text: FOOTER_MESSAGE}).setTimestamp();
+
+  return embeds;
 }
 
 export async function campaignEmbeds(planet_name?: string) {
