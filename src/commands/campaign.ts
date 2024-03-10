@@ -5,6 +5,7 @@ import {
 } from 'discord.js';
 import {Command} from '../interfaces';
 import {campaignEmbeds} from '../handlers';
+import {getPopularCampaign} from '../api-wrapper';
 
 const command: Command = {
   data: new SlashCommandBuilder()
@@ -14,6 +15,11 @@ const command: Command = {
       subcommand
         .setName('list')
         .setDescription('Display all ongoing Helldiver war efforts')
+    )
+    .addSubcommand(subcommand =>
+      subcommand
+        .setName('most')
+        .setDescription('Display the campaign with the most active Helldivers')
     )
     .addSubcommand(subcommand =>
       subcommand
@@ -37,6 +43,7 @@ const command: Command = {
 const subcmds: {[key: string]: (job: CommandInteraction) => Promise<void>} = {
   // hashmap of subcommands
   list,
+  most,
   info,
 };
 
@@ -50,6 +57,14 @@ async function info(interaction: CommandInteraction) {
   const userQuery = interaction.options.get('planet_name', true)
     .value as string;
   const embeds: EmbedBuilder[] = await campaignEmbeds(userQuery);
+
+  await interaction.editReply({embeds: embeds});
+}
+
+async function most(interaction: CommandInteraction) {
+  const campaign = getPopularCampaign();
+  campaign.planetName;
+  const embeds: EmbedBuilder[] = await campaignEmbeds(campaign.planetName);
 
   await interaction.editReply({embeds: embeds});
 }
