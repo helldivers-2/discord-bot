@@ -78,12 +78,12 @@ const command: Command = {
 
 const subcmds: {[key: string]: (job: CommandInteraction) => Promise<void>} = {
   status,
-  unsubscribe,
+  remove,
   planet,
   events,
 };
 
-async function unsubscribe(interaction: CommandInteraction) {
+async function remove(interaction: CommandInteraction) {
   const event = interaction.options.get('event', true).value as string;
 
   const message = await db.query.persistentMessages.findFirst({

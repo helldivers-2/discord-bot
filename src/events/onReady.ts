@@ -21,7 +21,7 @@ const onReady = async (client: Client) => {
   const rest = new REST().setToken(BOT_TOKEN);
 
   logger.info(
-    `[${VERSION}] Serving ${serverCount} servers as ${client.user?.tag}`,
+    `[v${VERSION}] Serving ${serverCount} servers as ${client.user?.tag}`,
     {
       type: 'startup',
     }
