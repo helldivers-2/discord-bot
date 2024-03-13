@@ -145,7 +145,7 @@ export function warStatusEmbeds() {
     .setColor(FACTION_COLOUR.Automaton)
     .setTitle('Automatons')
     .setDescription(
-      `**${players.Automaton}** Helldivers are braving the automaton trenches!`
+      `**${players.Automaton.toLocaleString()}** Helldivers are braving the automaton trenches!`
     )
     .addFields(status['Automaton']);
 
@@ -156,7 +156,7 @@ export function warStatusEmbeds() {
     .setColor(FACTION_COLOUR.Terminids)
     .setTitle('Terminids')
     .setDescription(
-      `**${players.Terminids}** Helldivers are deployed to manage the terminid swarms!`
+      `**${players.Terminids.toLocaleString()}** Helldivers are deployed to manage the terminid swarms!`
     )
     .addFields(status['Terminids']);
 
