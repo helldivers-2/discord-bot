@@ -3,13 +3,14 @@ import {schedule} from 'node-cron';
 import {commandHash, commandList, presenceCmds} from '../commands';
 import {config} from '../config';
 import {getData, mappedNames} from '../api-wrapper';
-import {logger, updateMessages} from '../handlers';
+import {dbData, logger, updateMessages} from '../handlers';
 
 // bot client token, for use with discord API
 const BOT_TOKEN = config.BOT_TOKEN;
 const PERSISTENT_MESSAGE_INTERVAL = config.PERSISTENT_MESSAGE_INTERVAL;
 const API_UPDATE_INTERVAL = config.API_UPDATE_INTERVAL;
 const STATUS_UPDATE_INTERVAL = config.STATUS_UPDATE_INTERVAL;
+const DB_DATA_INTERVAL = config.DB_DATA_INTERVAL;
 
 const onReady = async (client: Client) => {
   if (!client.user) throw Error('Client not initialised');
@@ -43,8 +44,8 @@ const onReady = async (client: Client) => {
   start = Date.now();
   // get api data on startup
   await getData().then(data => {
-    mappedNames.planets = data[801].Planets.map(x => x.name);
-    mappedNames.campaignPlanets = data[801].Campaigns.map(x => x.planetName);
+    mappedNames.planets = data.Planets.map(x => x.name);
+    mappedNames.campaignPlanets = data.Campaigns.map(x => x.planetName);
   });
 
   // retrieve encounters and load them as autocomplete suggestions
@@ -53,14 +54,17 @@ const onReady = async (client: Client) => {
     type: 'startup',
   });
 
-  // cron schedule to update messages every hour
+  // cron schedule to update messages
   schedule(PERSISTENT_MESSAGE_INTERVAL, () => updateMessages());
+
+  // cron schedule to insert new api data into db
+  schedule(DB_DATA_INTERVAL, () => dbData());
 
   // cron schedule to update api data every 10 seconds
   schedule(API_UPDATE_INTERVAL, () => {
     getData().then(data => {
-      mappedNames.planets = data[801].Planets.map(x => x.name);
-      mappedNames.campaignPlanets = data[801].Campaigns.map(x => x.planetName);
+      mappedNames.planets = data.Planets.map(x => x.name);
+      mappedNames.campaignPlanets = data.Campaigns.map(x => x.planetName);
     });
   });
 

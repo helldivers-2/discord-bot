@@ -1,6 +1,5 @@
-import {data, seasons} from './api';
+import {data} from './api';
 
-export function getUtcTime(helldiversTime: number, war_id?: number) {
-  const warId = war_id || seasons.current;
-  return helldiversTime * 1000 + data[warId].UTCOffset;
+export function getUtcTime(helldiversTime: number) {
+  return helldiversTime * 1000 + data.UTCOffset;
 }

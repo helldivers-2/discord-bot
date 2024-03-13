@@ -181,3 +181,43 @@ export type WarOverview = {
   Planets: MergedPlanetData[];
   Events: GlobalEvent[];
 };
+
+export type ApiData = {
+  WarInfo: WarInfo;
+  Status: Status;
+  Planets: MergedPlanetData[];
+  Campaigns: MergedCampaignData[];
+  PlanetEvents: MergedPlanetEventData[];
+  ActivePlanets: MergedPlanetData[];
+  PlanetAttacks: {source: string; target: string}[];
+  Events: GlobalEvent[];
+  Players: {
+    [key in Faction]: number;
+  };
+  UTCOffset: number;
+};
+
+export type StrippedApiData = {
+  WarInfo: Omit<WarInfo, 'planetInfos'>;
+  Status: Omit<Status, 'planetStatus'>;
+  Campaigns: MergedCampaignData[];
+  PlanetEvents: MergedPlanetEventData[];
+  ActivePlanets: MergedPlanetData[];
+  PlanetAttacks: {source: string; target: string}[];
+  Events: GlobalEvent[];
+  Players: {
+    [key in Faction]: number;
+  };
+  UTCOffset: number;
+};
+
+export type WarDifferences = {
+  NewCampaigns: MergedCampaignData[];
+  NewEvents: GlobalEvent[];
+  NewMajorOrder: GlobalEvent;
+  WonPlanets: MergedPlanetData[];
+  LostPlanets: MergedPlanetData[];
+  Players: {
+    [key in Faction]: number;
+  };
+};

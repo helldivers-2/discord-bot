@@ -1,17 +1,14 @@
-import {data, seasons} from './api';
+import {data} from './api';
 import {Faction} from './types';
 
-export function getAllPlayers(war_id?: number) {
-  const warId = war_id || seasons.current;
-  return data[warId].Players;
+export function getAllPlayers() {
+  return data.Players;
 }
 
-export function getCurrentPlayers(war_id?: number) {
-  const warId = war_id || seasons.current;
-  return data[warId].Players.Total;
+export function getCurrentPlayers() {
+  return data.Players.Total;
 }
 
-export function getFactionPlayers(faction: Faction, war_id?: number) {
-  const warId = war_id || seasons.current;
-  return data[warId].Players[faction];
+export function getFactionPlayers(faction: Faction) {
+  return data.Players[faction];
 }

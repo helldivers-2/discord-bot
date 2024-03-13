@@ -12,6 +12,7 @@ const configObj: Record<string, string | number | undefined> = {
   PERSISTENT_MESSAGE_INTERVAL: '*/10 * * * *', // every 10 minutes
   API_UPDATE_INTERVAL: '*/10 * * * * *', // every 10 seconds
   STATUS_UPDATE_INTERVAL: '*/3 * * * * *', // every 3 seconds
+  DB_DATA_INTERVAL: '0 * * * *', // every 1 hour
 
   // Database config
   DATABASE_URL: process.env.DATABASE_URL,

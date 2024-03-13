@@ -112,30 +112,18 @@ export function warStatusEmbeds() {
     Total: [],
   };
 
-  let playerDesc = '';
-  for (const [key, val] of Object.entries(players)) {
-    if (key === 'Total') continue;
-    const perc = ((val / players.Total) * 100).toFixed(2);
-    playerDesc += `${key}: ${val} (${perc}%)\n`;
-  }
-  playerDesc += `\nTotal: ${players.Total}`;
-
   for (const campaign of campaigns) {
-    const {planetName, type, campaignType, planetData, planetEvent} = campaign;
+    const {planetName, campaignType, planetData, planetEvent} = campaign;
     const title = `${planetName}: ${campaignType.toUpperCase()}`;
 
     if (campaignType === 'Liberation') {
-      const {maxHealth, owner, health, players, liberation} = planetData;
-      // status[owner] += `${planetName}: ${liberation}%\n`;
+      const {owner, liberation} = planetData;
       const progressBar = drawLoadingBarPerc(liberation, 30);
-      status[owner].push({name: title, value: progressBar});
+      status[owner as Faction].push({name: title, value: progressBar});
     } else if (campaignType === 'Defend') {
-      const {maxHealth, health, defence, race, startTime, expireTime} =
-        planetEvent as MergedPlanetEventData;
-      const {players} = planetData;
-      // status[race] += `${planetName}: ${defence}%\n`;
+      const {defence, race} = planetEvent as MergedPlanetEventData;
       const progressBar = drawLoadingBarPerc(defence, 30);
-      status[race].push({name: title, value: progressBar});
+      status[race as Faction].push({name: title, value: progressBar});
     }
   }
   const automatonEmbed = new EmbedBuilder()

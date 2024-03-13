@@ -6,6 +6,8 @@ import {
   Faction,
   MergedCampaignData,
   MergedPlanetEventData,
+  ApiData,
+  WarDifferences,
 } from './types';
 import {getFactionName, getPlanetEventType, getPlanetName} from './mapping';
 import {existsSync, mkdirSync, writeFileSync} from 'fs';
@@ -22,42 +24,48 @@ export const seasons = {
 };
 
 // create an empty object to store the data
-export const data: {
-  [key: number]: {
-    WarInfo: WarInfo;
-    Status: Status;
-    Planets: MergedPlanetData[];
-    Campaigns: MergedCampaignData[];
-    PlanetEvents: MergedPlanetEventData[];
-    ActivePlanets: MergedPlanetData[];
-    PlanetAttacks: {source: string; target: string}[];
-    Events: GlobalEvent[];
-    Players: {
-      [key in Faction]: number;
-    };
-    UTCOffset: number;
-  };
-} = {};
-
-for (const season of seasons.seasons) {
-  data[season] = {
-    WarInfo: {} as WarInfo,
-    Status: {} as Status,
-    Planets: [] as MergedPlanetData[],
-    Campaigns: [] as MergedCampaignData[],
-    PlanetEvents: [] as MergedPlanetEventData[],
-    ActivePlanets: [],
-    PlanetAttacks: [],
-    Events: [] as GlobalEvent[],
-    Players: {
-      Automaton: 0,
-      Humans: 0,
-      Terminids: 0,
-      Total: 0,
-    },
-    UTCOffset: 0,
-  };
-}
+export let data: ApiData = {
+  WarInfo: {
+    warId: 0,
+    startDate: 0,
+    endDate: 0,
+    minimumClientVersion: '',
+    planetInfos: [],
+    homeWorlds: [],
+    capitalInfos: [],
+    planetPermanentEffects: [],
+  },
+  Status: {
+    warId: 0,
+    time: 0,
+    timeUtc: 0,
+    impactMultiplier: 0,
+    storyBeatId32: 0,
+    planetStatus: [],
+    planetAttacks: [],
+    campaigns: [],
+    communityTargets: [],
+    jointOperations: [],
+    planetEvents: [],
+    planetActiveEffects: [],
+    activeElectionPolicyEffects: [],
+    globalEvents: [],
+    superEarthWarResults: [],
+  },
+  Planets: [],
+  Campaigns: [],
+  PlanetEvents: [],
+  ActivePlanets: [],
+  PlanetAttacks: [],
+  Events: [],
+  Players: {
+    Humans: 0,
+    Total: 0,
+    Automaton: 0,
+    Terminids: 0,
+  },
+  UTCOffset: 0,
+};
 
 export async function getData() {
   const season = seasons.current;
@@ -154,7 +162,7 @@ export async function getData() {
       planetEvents.find(p => p.campaignId === c.id)?.eventType || 'Liberation',
   }));
 
-  data[season] = {
+  data = {
     WarInfo: warInfo,
     Status: status,
     Planets: planets,
@@ -177,6 +185,54 @@ export async function getData() {
   return data;
 }
 
+// export async function compareData(oldData: ApiData, newData: ApiData) {
+//   const oldSeason = oldData[seasons.current];
+//   const newSeason = newData[seasons.current];
+
+//   // compare old api snapshot to the new one, check for changes
+//   // eg. new campaign, planet owner change, new event, new major order etc.
+//   // TODO: compare old and new campaigns
+//   for (const campaign of newSeason.Campaigns) {
+//     const {planetName} = campaign;
+//     const oldCampaign = oldSeason.Campaigns.find(
+//       c => c.planetName === planetName
+//     );
+//     if (!oldCampaign) {
+//       differences.NewCampaigns.push(campaign);
+//       // if there isn't an old campaign, then this is a new campaign
+//       logger.info(`New campaign on ${planetName}`, {type: 'info'});
+//     } else {
+//       const oldOwner = oldCampaign.planetData.owner;
+//       const newOwner = campaign.planetData.owner;
+//       // if there is an old campaign, check if the owner has changed
+//       if (oldOwner !== newOwner) {
+//         if (newOwner === 'Humans') {
+//           // we won the campaign
+//           // eg. helldivers have successfully liberated <planet>!
+//         } else if (oldOwner === 'Humans') {
+//           // we lost the campaign (probably a defend planet)
+//           // eg. helldivers were not able to defend <planet>!
+//         }
+//         //
+//         logger.info(
+//           `Planet ${planetName} has changed owner from ${oldCampaign.planetData.owner} to ${campaign.planetData.owner}`,
+//           {type: 'info'}
+//         );
+//       }
+//     }
+//   }
+//   // TODO: compare old and new events
+//   for (const event of newSeason.Events) {
+//     const oldEvent = oldSeason.Events.find(e => e.eventId === event.eventId);
+//     if (!oldEvent) {
+//       if (event.flag === 0) differences.NewMajorOrder = event;
+//       differences.NewEvents.push(event);
+//       logger.info(`New event: ${event.title}`, {type: 'info'});
+//     }
+//   }
+//   // TODO: compare old and new player counts
+// }
+
 export const mappedNames: {
   factions: string[];
   planets: string[];
@@ -189,46 +245,5 @@ export const mappedNames: {
   sectors: [],
 };
 export const planetNames = getAllPlanets().map(p => p.name);
-
-// setInterval(getData, 60000);
-
-// "https://api.live.prod.thehelldiversgame.com/api/WarSeason/#{war_id}/WarInfo"
-// "https://api.live.prod.thehelldiversgame.com/api/WarSeason/#{war_id}/Status"
-// eg:
-// "https://api.live.prod.thehelldiversgame.com/api/WarSeason/801/WarInfo"
-// "https://api.live.prod.thehelldiversgame.com/api/WarSeason/801/Status"
-
-/*
-good stuff to have:
-- <warId>/WarInfo
-- <warId>/Status
-- <warId>/Planets
-- <warId>/Planets/<planetIndex>
-
-other api has:
-/api
-all available war seasons
-
-/api/{war_id}/events
-all global events
-
-/api/{war_id}/events/latest
-latest global event
-
-/api/{war_id}/info
-war season info
-
-/api/{war_id}/planets
-overview of all planets
-
-/api/{war_id}/planets/{planet_index}
-info about a specific planet
-
-/api/{war_id}/planets/{planet_index}/status
-status of a specific planet
-
-/api/{war_id}/status
-current overall helldiver offensive status
-*/
 
 export {API_URL};

@@ -9,6 +9,7 @@ import {
   uniqueIndex,
   varchar,
 } from 'drizzle-orm/pg-core';
+import {StrippedApiData} from '../api-wrapper';
 
 // https://orm.drizzle.team/docs/column-types/pg
 export const permsEnum = pgEnum('user_perms', ['admin', 'officer']);
@@ -30,5 +31,12 @@ export const persistentMessages = pgTable('persistent_messages', {
   guildId: varchar('guild_id').notNull(),
   production: boolean('production').notNull(),
   deleted: boolean('deleted').default(false).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export const apiData = pgTable('api_data', {
+  time: integer('time').primaryKey(),
+  warId: integer('war_id').notNull(),
+  data: json('data').notNull().$type<StrippedApiData>(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
