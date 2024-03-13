@@ -31,6 +31,20 @@ const command: Command = {
       subcommand
         .setName('status')
         .setDescription('Display current galactic war status.')
+    )
+    .addSubcommand(subcommand =>
+      subcommand
+        .setName('remove')
+        .setDescription(
+          "Remove a guild's subscription to a specific event type."
+        )
+        .addStringOption(option =>
+          option
+            .setName('event')
+            .setDescription('Event type to unsubscribe')
+            .setRequired(true)
+            .setChoices({name: 'War Status', value: 'war_status'})
+        )
     ),
   // .addSubcommand(subcommand =>
   //   subcommand
@@ -64,9 +78,56 @@ const command: Command = {
 
 const subcmds: {[key: string]: (job: CommandInteraction) => Promise<void>} = {
   status,
+  unsubscribe,
   planet,
   events,
 };
+
+async function unsubscribe(interaction: CommandInteraction) {
+  const event = interaction.options.get('event', true).value as string;
+
+  const message = await db.query.persistentMessages.findFirst({
+    where: and(
+      eq(persistentMessages.guildId, interaction.guildId || ''),
+      eq(persistentMessages.type, event),
+      eq(persistentMessages.production, isProd)
+    ),
+  });
+
+  if (!message) {
+    const embed = new EmbedBuilder()
+      .setTitle('No Subscription Found!')
+      .setDescription(`This guild is not subscribed to ${event} events.`)
+      .setFooter({text: FOOTER_MESSAGE})
+      .setTimestamp();
+
+    await interaction.editReply({embeds: [embed]});
+    await sleep(5000);
+    await interaction.deleteReply();
+    return;
+  }
+
+  await db
+    .delete(persistentMessages)
+    .where(
+      and(
+        eq(persistentMessages.guildId, interaction.guildId || ''),
+        eq(persistentMessages.type, event)
+      )
+    );
+
+  const embed = new EmbedBuilder()
+    .setTitle('Channel Unsubscribed!')
+    .setDescription(
+      `This guild is no longer subscribed to ${event} events. Feel free to delete the associated messages.`
+    )
+    .setFooter({text: FOOTER_MESSAGE})
+    .setTimestamp();
+
+  await interaction.editReply({embeds: [embed]});
+  await sleep(5000);
+  await interaction.deleteReply();
+}
 
 async function status(interaction: CommandInteraction) {
   // check whether this guild already has a persistent message

@@ -1,11 +1,12 @@
 import {
   ColorResolvable,
   CommandInteraction,
+  Embed,
   EmbedBuilder,
   ModalSubmitInteraction,
 } from 'discord.js';
 import {config} from '../config';
-import {client} from '.';
+import {client, planetNameTransform} from '.';
 import {
   Faction,
   MergedCampaignData,
@@ -13,6 +14,7 @@ import {
   getAllCampaigns,
   getAllPlayers,
   getCampaignByPlanetName,
+  getLatestEvent,
 } from '../api-wrapper';
 import {FACTION_COLOUR} from '../commands/_components';
 
@@ -101,6 +103,7 @@ export function adminCommandEmbed(interaction: CommandInteraction) {
 export function warStatusEmbeds() {
   const campaigns = getAllCampaigns();
   const players = getAllPlayers();
+  const latestEvent = getLatestEvent();
 
   const status: Record<Faction, {name: string; value: string}[]> = {
     Terminids: [],
@@ -159,6 +162,20 @@ export function warStatusEmbeds() {
 
   const embeds = [automatonEmbed, terminidEmbed];
 
+  if (latestEvent) {
+    const eventEmbed = new EmbedBuilder()
+      .setThumbnail(
+        'https://cdn.discordapp.com/emojis/1215225140934213662.webp?size=128&quality=lossless'
+      )
+      .setColor(FACTION_COLOUR.Humans)
+      .setAuthor({
+        name: 'Super Earth Command Dispatch',
+      });
+    if (latestEvent.title) eventEmbed.setTitle(latestEvent.title);
+    if (latestEvent.message) eventEmbed.setDescription(latestEvent.message);
+    embeds.push(eventEmbed);
+  }
+
   return embeds;
 }
 
@@ -171,6 +188,9 @@ export async function campaignEmbeds(planet_name?: string) {
   for (const campaign of campaigns) {
     const {planetName, type, campaignType, planetData, planetEvent} = campaign;
     const title = `${planetName}: ${campaignType.toUpperCase()}`;
+    const planetThumbnailUrl = `https://helldiverscompanionimagescdn.b-cdn.net/planet-images/${planetNameTransform(
+      planetName
+    )}.png`;
 
     if (campaignType === 'Liberation') {
       const {
@@ -180,30 +200,29 @@ export async function campaignEmbeds(planet_name?: string) {
         health,
         regenPerSecond,
         players,
+        playerPerc,
         liberation,
         lossPercPerHour,
       } = planetData;
 
+      const embed = new EmbedBuilder()
+        .setTitle(title)
+        .setColor(FACTION_COLOUR[owner])
+        .setImage(planetThumbnailUrl);
+      embeds.push(embed);
+      const squadImpact = maxHealth - health;
+
       const display = {
-        Liberation: `${liberation}%`,
-        Players: players,
-        Progress: `${health} / ${maxHealth}`,
-        'Loss Per Hour': `${lossPercPerHour}%`,
-        // regenPerSecond,
+        Players: `${players.toLocaleString()} (${playerPerc}%)`,
         'Controlled By': owner,
         'Initial Owner': initialOwner,
+        Liberation: `${liberation}%`,
+        'Loss Per Hour': `${lossPercPerHour}%`,
+        'Total Squad Impact': `${squadImpact.toLocaleString()} / ${maxHealth.toLocaleString()}`,
       };
-      let desc = '';
       for (const [key, val] of Object.entries(display)) {
-        desc += `**${key[0].toUpperCase() + key.slice(1)}**: ${val}\n`;
+        embed.addFields({name: key, value: val.toString(), inline: true});
       }
-
-      embeds.push(
-        new EmbedBuilder()
-          .setTitle(title)
-          .setDescription(desc)
-          .setColor(FACTION_COLOUR[owner])
-      );
     } else if (campaignType === 'Defend') {
       const {
         maxHealth,
@@ -214,25 +233,26 @@ export async function campaignEmbeds(planet_name?: string) {
         startTime,
         expireTime,
       } = planetEvent as MergedPlanetEventData;
-      const {players} = planetData;
+      const {players, playerPerc, owner} = planetData;
 
+      const embed = new EmbedBuilder()
+        .setTitle(title)
+        .setColor(FACTION_COLOUR[race])
+        .setImage(planetThumbnailUrl);
+      embeds.push(embed);
+      const squadImpact = maxHealth - health;
       const display = {
+        Players: `${players.toLocaleString()} (${playerPerc}%)`,
+        'Controlled By': owner,
+        Attackers: race,
         Defence: `${defence}%`,
-        Players: players,
-        Progress: `${health} / ${maxHealth}`,
         'Time Left': `${Math.floor((expireTime - Date.now()) / 1000)}s`,
-        Faction: race,
+        'Total Squad Impact': `${squadImpact.toLocaleString()} / ${maxHealth.toLocaleString()}`,
       };
-      let desc = '';
       for (const [key, val] of Object.entries(display)) {
-        desc += `**${key[0].toUpperCase() + key.slice(1)}**: ${val}\n`;
+        embed.addFields({name: key, value: val.toString(), inline: true});
       }
-      embeds.push(
-        new EmbedBuilder()
-          .setTitle(title)
-          .setDescription(desc)
-          .setColor(FACTION_COLOUR[race])
-      );
+      embeds.push(embed);
     }
   }
   embeds[embeds.length - 1].setFooter({text: FOOTER_MESSAGE}).setTimestamp();

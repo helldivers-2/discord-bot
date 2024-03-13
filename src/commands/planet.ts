@@ -8,10 +8,11 @@ import {
   getPlanetAttacks,
   getPlanetByName,
   getAllPlayers,
+  getAllCampaigns,
 } from '../api-wrapper';
 import {Command} from '../interfaces';
 import {EMBED_COLOUR, FACTION_COLOUR, FOOTER_MESSAGE} from './_components';
-import {warStatusEmbeds} from '../handlers';
+import {planetNameTransform, warStatusEmbeds} from '../handlers';
 
 const command: Command = {
   data: new SlashCommandBuilder()
@@ -21,19 +22,19 @@ const command: Command = {
       subcommand
         .setName('list')
         .setDescription('Display a list of planets with ongoing offences')
+    )
+    .addSubcommand(subcommand =>
+      subcommand
+        .setName('info')
+        .setDescription('Get information for a specific planet')
+        .addStringOption(option =>
+          option
+            .setName('planet')
+            .setDescription('The name of the planet you want to check')
+            .setRequired(true)
+            .setAutocomplete(true)
+        )
     ),
-  // .addSubcommand(subcommand =>
-  //   subcommand
-  //     .setName('info')
-  //     .setDescription('Get information for a specific planet')
-  //     .addStringOption(option =>
-  //       option
-  //         .setName('planet')
-  //         .setDescription('The name of the planet you want to check')
-  //         .setRequired(true)
-  //         .setAutocomplete(true)
-  //     )
-  // ),
   run: async interaction => {
     const subcommand = interaction.options.data[0].name;
 
@@ -47,57 +48,19 @@ const subcmds: {[key: string]: (job: CommandInteraction) => Promise<void>} = {
 };
 
 async function list(interaction: CommandInteraction) {
-  const activePlanets = getAllActivePlanets();
-  const planetAttacks = getPlanetAttacks();
-  const players = getAllPlayers();
+  const embeds = warStatusEmbeds();
+  embeds[embeds.length - 1].setFooter({text: FOOTER_MESSAGE}).setTimestamp();
 
-  const responseEmbed = new EmbedBuilder()
-    .setAuthor({
-      name: `foo`,
-    })
-    .setFooter({text: FOOTER_MESSAGE})
-    .setColor(EMBED_COLOUR)
-    .setTimestamp();
-
-  let value = '';
-  let value2 = '';
-
-  for (const val of activePlanets)
-    value += `${val.name}: ${val.liberation}% (${val.players})\n`;
-
-  for (const val of planetAttacks) value2 += `${val.source} -> ${val.target}\n`;
-
-  responseEmbed.addFields(
-    {
-      name: `bar`,
-      value: value,
-    },
-    {
-      name: `baz`,
-      value: value2,
-    }
-  );
-  let playerDesc = '';
-  for (const [key, val] of Object.entries(players)) {
-    if (key === 'Total') continue;
-    const perc = ((val / players.Total) * 100).toFixed(2);
-    playerDesc += `${key}: ${val} (${perc}%)\n`;
-  }
-  playerDesc += `\nTotal: ${players.Total}`;
-  const playersEmbed = new EmbedBuilder()
-    .setTitle('Active Helldivers')
-    .setDescription(playerDesc)
-    .setFooter({text: FOOTER_MESSAGE})
-    .setColor(EMBED_COLOUR);
-
-  // await interaction.editReply({embeds: [responseEmbed, playersEmbed]});
-  await interaction.editReply({embeds: warStatusEmbeds()});
+  await interaction.editReply({embeds: embeds});
 }
 
 async function info(interaction: CommandInteraction) {
   const userQuery = interaction.options.get('planet', true).value as string;
 
   const planet = getPlanetByName(userQuery as string);
+  const campaigns = await getAllCampaigns();
+
+  const isActive: boolean = campaigns.some(c => c.planetName === userQuery);
 
   if (!planet) {
     await interaction.editReply({
@@ -105,12 +68,6 @@ async function info(interaction: CommandInteraction) {
     });
     return;
   }
-
-  const responseEmbed = new EmbedBuilder()
-    .setTitle(`${planet.name}`)
-    .setFooter({text: FOOTER_MESSAGE})
-    .setColor(FACTION_COLOUR[planet.owner])
-    .setTimestamp();
 
   const {
     index,
@@ -120,31 +77,43 @@ async function info(interaction: CommandInteraction) {
     initialOwner,
     owner,
     health,
-    regenPerSecond,
+    lossPercPerHour,
+    playerPerc,
     players,
     liberation,
   } = planet;
-  const display = {
-    sector,
-    liberation: `${liberation}%`,
-    players,
-    health,
-    maxHealth,
-    regenPerSecond,
-    owner,
-    initialOwner,
-  };
 
-  let value = '';
-  for (const [key, val] of Object.entries(display)) {
-    value += `**${key[0].toUpperCase() + key.slice(1)}**: ${val}\n`;
-  }
+  const squadImpact = maxHealth - health;
+  let display: Record<string, string | number> = {};
 
-  responseEmbed.addFields({
-    name: `${name} (${index})`,
-    value: value,
-  });
-  await interaction.editReply({embeds: [responseEmbed]});
+  if (isActive)
+    display = {
+      Sector: sector,
+      Players: `${players.toLocaleString()} (${playerPerc}%)`,
+      Owner: owner,
+      Liberation: `${liberation}%`,
+      'Loss Per Hour': `${lossPercPerHour}%`,
+      'Total Squad Impact': `${squadImpact.toLocaleString()} / ${maxHealth.toLocaleString()}`,
+    };
+  else
+    display = {
+      Sector: sector,
+      Players: `${players.toLocaleString()} (${playerPerc}%)`,
+      Owner: owner,
+    };
+
+  const planetThumbnailUrl = `https://helldiverscompanionimagescdn.b-cdn.net/planet-images/${planetNameTransform(
+    planet.name
+  )}.png`;
+  const embed = new EmbedBuilder()
+    .setTitle(planet.name)
+    .setColor(FACTION_COLOUR[planet.owner])
+    .setImage(planetThumbnailUrl);
+
+  for (const [key, val] of Object.entries(display))
+    embed.addFields({name: key, value: val.toString(), inline: true});
+
+  await interaction.editReply({embeds: [embed]});
 }
 
 export default command;

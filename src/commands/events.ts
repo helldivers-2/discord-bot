@@ -41,7 +41,13 @@ async function all(interaction: CommandInteraction) {
     const title = event.title;
     let message = event.message;
     message = message.replace(/<i=1>/g, '*').replace(/<\/i>/g, '*');
-    const embed = new EmbedBuilder().setTitle(title).setTimestamp();
+    const embed = new EmbedBuilder()
+      .setTitle(title)
+      .setThumbnail(
+        'https://cdn.discordapp.com/emojis/1215225140934213662.webp?size=128&quality=lossless'
+      )
+      .setTimestamp();
+
     if (message) embed.setDescription(message);
     embeds.push(embed);
   }
@@ -58,6 +64,9 @@ async function latest(interaction: CommandInteraction) {
   message = message.replace(/<i=1>/g, '*').replace(/<\/i>/g, '*');
   const embed = new EmbedBuilder()
     .setTitle(title)
+    .setThumbnail(
+      'https://cdn.discordapp.com/emojis/1215225140934213662.webp?size=128&quality=lossless'
+    )
     .setFooter({text: FOOTER_MESSAGE})
     .setTimestamp();
   if (message) embed.setDescription(message);

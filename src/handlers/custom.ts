@@ -6,3 +6,10 @@ export function sleep(ms: number) {
     setTimeout(resolve, ms);
   });
 }
+
+export function planetNameTransform(planetName: string) {
+  return planetName
+    .toLowerCase() // Convert to lowercase
+    .replace(/'/g, '') // Remove apostrophes
+    .replace(/\s/g, '_'); // Replace spaces with underscores
+}
