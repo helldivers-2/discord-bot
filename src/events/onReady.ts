@@ -11,6 +11,7 @@ const PERSISTENT_MESSAGE_INTERVAL = config.PERSISTENT_MESSAGE_INTERVAL;
 const API_UPDATE_INTERVAL = config.API_UPDATE_INTERVAL;
 const STATUS_UPDATE_INTERVAL = config.STATUS_UPDATE_INTERVAL;
 const DB_DATA_INTERVAL = config.DB_DATA_INTERVAL;
+const VERSION = config.VERSION;
 
 const onReady = async (client: Client) => {
   if (!client.user) throw Error('Client not initialised');
@@ -19,9 +20,12 @@ const onReady = async (client: Client) => {
 
   const rest = new REST().setToken(BOT_TOKEN);
 
-  logger.info(`Serving ${serverCount} servers as ${client.user?.tag}`, {
-    type: 'startup',
-  });
+  logger.info(
+    `[${VERSION}] Serving ${serverCount} servers as ${client.user?.tag}`,
+    {
+      type: 'startup',
+    }
+  );
 
   // two non-constant value for timing functions
   let start = Date.now();
