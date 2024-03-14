@@ -25,7 +25,7 @@ const configObj: Record<string, string | number | undefined> = {
     'Bug reports and suggestions welcome in Discord!\n' +
     `/discord | v${version} | made by Major`,
   SUBSCRIBE_FOOTER:
-    'Delivered via `/subscribe`\n' + `/discord | v${version} | made by Major`,
+    'Delivered via /subscribe\n' + `/discord | v${version} | made by Major`,
   DISCORD_INVITE: 'https://discord.gg/levialliance',
 
   // Project info
