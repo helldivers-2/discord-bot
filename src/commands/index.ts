@@ -7,7 +7,7 @@ import planet from './planet';
 import subscribe from './subscribe';
 
 const commandList: Command[] = [planet, events, campaign, subscribe, discord];
-const notEphemeral = ['subscribe'];
+const notEphemeral: string[] = [];
 const ephemeralCmds = commandList
   .map(x => x.data.name)
   .filter(x => !notEphemeral.includes(x));

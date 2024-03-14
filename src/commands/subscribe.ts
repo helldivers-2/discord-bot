@@ -11,10 +11,13 @@ import {
   client,
   missingChannelPerms,
   sleep,
+  subscribeEmbed,
+  subscribeNotifEmbed,
   warStatusPersistentMessage,
 } from '../handlers';
 import {isProd} from '../config';
 import {
+  announcementChannels,
   db,
   eq,
   newAnnouncementChannel,
@@ -43,21 +46,26 @@ const command: Command = {
             .setName('event')
             .setDescription('Event type to unsubscribe')
             .setRequired(true)
-            .setChoices({name: 'War Status', value: 'war_status'})
+            .setChoices(
+              {name: 'War Status', value: 'war_status'},
+              {name: 'War Announcements', value: 'war_announcements'}
+            )
+        )
+    )
+    .addSubcommand(subcommand =>
+      subcommand
+        .setName('updates')
+        .setDescription(
+          'Subscribes a specified channel to updates for the galactic war'
+        )
+        .addChannelOption(option =>
+          option
+            .setName('channel')
+            .setDescription('Forum channel to add to the recognised list')
+            .setRequired(true)
         )
     ),
-  // .addSubcommand(subcommand =>
-  //   subcommand
-  //     .setName('planets')
-  //     .setDescription(
-  //       'Sends a message planet becomes available or unavailable.'
-  //     )
-  // )
-  // .addSubcommand(subcommand =>
-  //   subcommand
-  //     .setName('events')
-  //     .setDescription('Sends a message when a global event starts or ends.')
-  // )
+
   run: async interaction => {
     const subcommand = interaction.options.data[0].name;
 
@@ -66,8 +74,7 @@ const command: Command = {
       if (!user.permissions.has('ManageMessages')) {
         // respond with missing perms, then delete the response after 5s
         await interaction.editReply(missingChannelPerms(interaction));
-        await sleep(5000);
-        await interaction.deleteReply();
+
         return;
       }
     }
@@ -79,54 +86,189 @@ const command: Command = {
 const subcmds: {[key: string]: (job: CommandInteraction) => Promise<void>} = {
   status,
   remove,
-  planet,
-  events,
+  updates,
 };
 
 async function remove(interaction: CommandInteraction) {
   const event = interaction.options.get('event', true).value as string;
 
-  const message = await db.query.persistentMessages.findFirst({
-    where: and(
-      eq(persistentMessages.guildId, interaction.guildId || ''),
-      eq(persistentMessages.type, event),
-      eq(persistentMessages.production, isProd)
-    ),
-  });
+  if (event === 'war_status') {
+    const message = await db.query.persistentMessages.findFirst({
+      where: and(
+        eq(persistentMessages.guildId, interaction.guildId || ''),
+        eq(persistentMessages.type, event),
+        eq(persistentMessages.production, isProd)
+      ),
+    });
 
-  if (!message) {
+    if (!message) {
+      const embed = new EmbedBuilder()
+        .setTitle('No Subscription Found!')
+        .setDescription(`This guild is not subscribed to ${event} events.`)
+        .setFooter({text: FOOTER_MESSAGE})
+        .setTimestamp();
+
+      await interaction.editReply({embeds: [embed]});
+
+      return;
+    }
+
+    await db
+      .delete(persistentMessages)
+      .where(
+        and(
+          eq(persistentMessages.guildId, interaction.guildId || ''),
+          eq(persistentMessages.type, event),
+          eq(persistentMessages.production, isProd)
+        )
+      );
+
     const embed = new EmbedBuilder()
-      .setTitle('No Subscription Found!')
-      .setDescription(`This guild is not subscribed to ${event} events.`)
+      .setTitle('Channel Unsubscribed!')
+      .setDescription(
+        `This guild is no longer subscribed to ${event} events. Attempting to delete the message. If this fails, feel free to delete it manually.`
+      )
       .setFooter({text: FOOTER_MESSAGE})
       .setTimestamp();
 
     await interaction.editReply({embeds: [embed]});
-    await sleep(5000);
-    await interaction.deleteReply();
+
+    try {
+      const messageChannel = await client.channels.fetch(message.channelId);
+      if (
+        messageChannel &&
+        (messageChannel.type === ChannelType.GuildText ||
+          messageChannel.type === ChannelType.PublicThread)
+      ) {
+        const discordMsg = await messageChannel.messages.fetch(
+          message.messageId
+        );
+        await discordMsg.delete();
+      }
+    } catch (e) {
+      return;
+    }
+
+    return;
+  } else if (event === 'war_announcements') {
+    const channel = await db.query.announcementChannels.findFirst({
+      where: and(
+        eq(announcementChannels.guildId, interaction.guildId || ''),
+        eq(announcementChannels.type, event),
+        eq(announcementChannels.production, isProd)
+      ),
+    });
+
+    if (!channel) {
+      const embed = new EmbedBuilder()
+        .setTitle('No Subscription Found!')
+        .setDescription(`This guild is not subscribed to ${event} events.`)
+        .setFooter({text: FOOTER_MESSAGE})
+        .setTimestamp();
+
+      await interaction.editReply({embeds: [embed]});
+
+      return;
+    }
+
+    await db
+      .delete(announcementChannels)
+      .where(
+        and(
+          eq(announcementChannels.guildId, interaction.guildId || ''),
+          eq(announcementChannels.type, event),
+          eq(announcementChannels.production, isProd)
+        )
+      );
+
+    const embed = new EmbedBuilder()
+      .setTitle('Channel Unsubscribed!')
+      .setDescription(
+        `This guild is no longer subscribed to ${event} events. Attempting to delete the message. If this fails, feel free to delete it manually.`
+      )
+      .setFooter({text: FOOTER_MESSAGE})
+      .setTimestamp();
+
+    await interaction.editReply({embeds: [embed]});
+  }
+}
+
+async function updates(interaction: CommandInteraction) {
+  const channel = interaction.options.get('channel')?.value as string;
+  const existing = await db.query.announcementChannels.findFirst({
+    where: and(
+      eq(announcementChannels.guildId, interaction.guildId ?? ''),
+      eq(announcementChannels.type, 'war_announcements'),
+      eq(persistentMessages.production, isProd)
+    ),
+  });
+  if (existing) {
+    await interaction.editReply({
+      embeds: [
+        new EmbedBuilder()
+          .setAuthor({
+            name: interaction.user.tag,
+            iconURL: interaction.user.avatarURL() || undefined,
+          })
+          .setTitle('Guild Already Subscribed')
+          .setDescription(
+            'This guild is already subscribed to war announcements! To prevent spam, only one subscription per type per guild is allowed (feel free to use other subscribe types, however).'
+          )
+          .setFooter({text: FOOTER_MESSAGE})
+          .setColor(EMBED_COLOUR)
+          .setTimestamp(),
+      ],
+    });
+
     return;
   }
 
-  await db
-    .delete(persistentMessages)
-    .where(
-      and(
-        eq(persistentMessages.guildId, interaction.guildId || ''),
-        eq(persistentMessages.type, event)
-      )
-    );
+  try {
+    const messageChannel = await interaction.guild?.channels.fetch(channel);
+    if (
+      messageChannel &&
+      (messageChannel.type === ChannelType.GuildText ||
+        messageChannel.type === ChannelType.PublicThread)
+    ) {
+      await messageChannel.send({
+        embeds: subscribeNotifEmbed('war_announcements'),
+      });
 
-  const embed = new EmbedBuilder()
-    .setTitle('Channel Unsubscribed!')
-    .setDescription(
-      `This guild is no longer subscribed to ${event} events. Feel free to delete the associated messages.`
-    )
-    .setFooter({text: FOOTER_MESSAGE})
-    .setTimestamp();
+      // if edit succeeds, then create db entry to update the message in future
+      await newAnnouncementChannel({
+        channelId: messageChannel.id,
+        type: 'war_announcements',
+        userId: interaction.user.id,
+        guildId: interaction.guild?.id || '',
+        production: isProd,
+      });
 
-  await interaction.editReply({embeds: [embed]});
-  await sleep(5000);
-  await interaction.deleteReply();
+      await interaction.editReply({
+        embeds: subscribeEmbed('war_announcements', messageChannel),
+      });
+    }
+
+    // API throws noaccess err if bot doesn't have perms for the channel
+  } catch (err) {
+    await interaction.editReply({
+      embeds: [
+        new EmbedBuilder()
+          .setAuthor({
+            name: interaction.user.tag,
+            iconURL: interaction.user.avatarURL() || undefined,
+          })
+          .setTitle('Missing Permissions')
+          .setDescription(
+            `Bot requires \`View Channel\`, \`Send Messages\` and \`Embed Link\` permissions in <#${interaction.channelId}> for this command!`
+          )
+          .setFooter({text: FOOTER_MESSAGE})
+          .setColor(EMBED_COLOUR as ColorResolvable)
+          .setTimestamp(),
+      ],
+    });
+
+    return;
+  }
 }
 
 async function status(interaction: CommandInteraction) {
@@ -156,33 +298,35 @@ async function status(interaction: CommandInteraction) {
           .setTimestamp(),
       ],
     });
-    await sleep(5000);
-    await interaction.deleteReply();
+
     return;
   }
 
-  const message = await interaction.editReply({
-    embeds: [
-      new EmbedBuilder()
-        .setAuthor({
-          name: interaction.user.tag,
-          iconURL: interaction.user.avatarURL() || undefined,
-        })
-        .setTitle('Testing Permissions...')
-        .setDescription(
-          'Checking if this can be updated in the future...\n\n' +
-            'If this message does not change, then the bot is missing the following permissions:\n' +
-            '- View Channel\n' +
-            '- Embed Links'
-        )
-        .setFooter({text: FOOTER_MESSAGE})
-        .setColor(EMBED_COLOUR)
-        .setTimestamp(),
-    ],
-  });
+  const channel = interaction.channel;
+  if (!channel) return;
 
   // try to update interaction reply via message API to check permissions
   try {
+    const message = await channel.send({
+      embeds: [
+        new EmbedBuilder()
+          .setAuthor({
+            name: interaction.user.tag,
+            iconURL: interaction.user.avatarURL() || undefined,
+          })
+          .setTitle('Testing Permissions...')
+          .setDescription(
+            'Checking if this can be updated in the future...\n\n' +
+              'If this message does not change, then the bot is missing the following permissions for this channel:\n' +
+              '- View Channel\n' +
+              '- Embed Links'
+          )
+          .setFooter({text: FOOTER_MESSAGE})
+          .setColor(EMBED_COLOUR)
+          .setTimestamp(),
+      ],
+    });
+
     const messageChannel = await client.channels.fetch(message.channelId);
     if (
       messageChannel &&
@@ -194,18 +338,23 @@ async function status(interaction: CommandInteraction) {
         await discordMsg.edit({
           embeds: warStatusPersistentMessage(),
         });
+
+      // if edit succeeds, then create db entry to update the message in future
+      await newPersistentMessage({
+        messageId: message.id,
+        channelId: message.channelId,
+        type: 'war_status',
+        userId: interaction.user.id,
+        guildId: message.guild?.id || '',
+        production: isProd,
+      });
+
+      await interaction.editReply({
+        embeds: subscribeEmbed('war_status', messageChannel),
+      });
     }
 
-    // if edit succeeds, then create db entry to update the message in future
-    await newPersistentMessage({
-      messageId: message.id,
-      channelId: message.channelId,
-      type: 'war_status',
-      userId: interaction.user.id,
-      guildId: message.guild?.id || '',
-      production: isProd,
-    });
-
+    return;
     // API throws noaccess err if bot doesn't have perms for the channel
     // update interaction reply to reflect that, then remove it 10s later
   } catch (err) {
@@ -218,51 +367,16 @@ async function status(interaction: CommandInteraction) {
           })
           .setTitle('Missing Permissions')
           .setDescription(
-            'Bot requires `View Channel` and `Embed Link` permissions for this command!'
+            `Bot requires \`View Channel\`, \`Send Messages\` and \`Embed Link\` permissions in <#${interaction.channelId}> for this command!`
           )
           .setFooter({text: FOOTER_MESSAGE})
           .setColor(EMBED_COLOUR as ColorResolvable)
           .setTimestamp(),
       ],
     });
-    await sleep(10000);
-    await interaction.deleteReply();
+
+    return;
   }
-}
-
-async function events(interaction: CommandInteraction) {
-  const embed = new EmbedBuilder()
-    .setTitle('Channel Subscribed!')
-    .setDescription(
-      'You will now recieve notifications for subsequent Helldivers 2 global events!'
-    )
-    .setFooter({text: FOOTER_MESSAGE})
-    .setTimestamp();
-
-  await newAnnouncementChannel({
-    channelId: interaction.channelId,
-    type: 'events',
-    userId: interaction.user.id,
-    guildId: interaction.guildId || '',
-    production: isProd,
-  });
-
-  // we use editReply because slashcommands are deferred by default
-  // discord requires a response within 3 seconds, so we defer a response and then edit it later
-  await interaction.editReply({embeds: [embed]});
-}
-
-async function planet(interaction: CommandInteraction) {
-  // TODO: implement subcommand
-  const embed = new EmbedBuilder()
-    .setTitle('EMBED_TITLE')
-    .setDescription('EMBED_DESC')
-    .setFooter({text: FOOTER_MESSAGE})
-    .setTimestamp();
-
-  // we use editReply because slashcommands are deferred by default
-  // discord requires a response within 3 seconds, so we defer a response and then edit it later
-  await interaction.editReply({embeds: [embed]});
 }
 
 export default command;

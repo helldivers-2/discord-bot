@@ -3,7 +3,40 @@ import {apiData, db, eq, newApiData} from '../../db';
 
 export async function dbData() {
   const data = await getData();
-  const strippedData = data as StrippedApiData;
+  const strippedData: StrippedApiData = {
+    WarInfo: {
+      warId: data.WarInfo.warId,
+      startDate: data.WarInfo.startDate,
+      endDate: data.WarInfo.endDate,
+      minimumClientVersion: data.WarInfo.minimumClientVersion,
+      homeWorlds: data.WarInfo.homeWorlds,
+      capitalInfos: data.WarInfo.capitalInfos,
+      planetPermanentEffects: data.WarInfo.planetPermanentEffects,
+    },
+    Status: {
+      warId: data.Status.warId,
+      time: data.Status.time,
+      timeUtc: data.Status.timeUtc,
+      impactMultiplier: data.Status.impactMultiplier,
+      storyBeatId32: data.Status.storyBeatId32,
+      planetAttacks: data.Status.planetAttacks,
+      campaigns: data.Status.campaigns,
+      communityTargets: data.Status.communityTargets,
+      jointOperations: data.Status.jointOperations,
+      planetEvents: data.Status.planetEvents,
+      planetActiveEffects: data.Status.planetActiveEffects,
+      activeElectionPolicyEffects: data.Status.activeElectionPolicyEffects,
+      globalEvents: data.Status.globalEvents,
+      superEarthWarResults: data.Status.superEarthWarResults,
+    },
+    Campaigns: data.Campaigns,
+    PlanetEvents: data.PlanetEvents,
+    ActivePlanets: data.ActivePlanets,
+    PlanetAttacks: data.PlanetAttacks,
+    Events: data.Events,
+    Players: data.Players,
+    UTCOffset: data.UTCOffset,
+  };
 
   const existingData = await db.query.apiData.findFirst({
     where: eq(apiData.time, strippedData.Status.time),

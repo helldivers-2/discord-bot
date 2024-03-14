@@ -14,6 +14,7 @@ export const db = drizzle(queryClient, {schema});
 type NewAnnouncementChannel = typeof schema.announcementChannels.$inferInsert;
 type NewPersistentMessage = typeof schema.persistentMessages.$inferInsert;
 type ApiData = typeof schema.apiData.$inferInsert;
+type PrevData = typeof schema.prevData.$inferInsert;
 
 export const newAnnouncementChannel = async (data: NewAnnouncementChannel) => {
   return db.insert(announcementChannels).values(data);
@@ -25,6 +26,10 @@ export const newPersistentMessage = async (data: NewPersistentMessage) => {
 
 export const newApiData = async (data: ApiData) => {
   return db.insert(schema.apiData).values(data);
+};
+
+export const newPrevData = async (data: PrevData) => {
+  return db.insert(schema.prevData).values(data);
 };
 
 export {eq} from 'drizzle-orm';

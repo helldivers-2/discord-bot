@@ -38,6 +38,7 @@
     "fuzzysort": "^2.0.4",
     "newrelic": "^11.12.0",
     "node-cron": "^3.0.3",
+    "pg": "^8.11.3",
     "postgres": "^3.4.3",
     "winston": "^3.12.0"
   }

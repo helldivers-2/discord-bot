@@ -185,54 +185,6 @@ export async function getData() {
   return data;
 }
 
-// export async function compareData(oldData: ApiData, newData: ApiData) {
-//   const oldSeason = oldData[seasons.current];
-//   const newSeason = newData[seasons.current];
-
-//   // compare old api snapshot to the new one, check for changes
-//   // eg. new campaign, planet owner change, new event, new major order etc.
-//   // TODO: compare old and new campaigns
-//   for (const campaign of newSeason.Campaigns) {
-//     const {planetName} = campaign;
-//     const oldCampaign = oldSeason.Campaigns.find(
-//       c => c.planetName === planetName
-//     );
-//     if (!oldCampaign) {
-//       differences.NewCampaigns.push(campaign);
-//       // if there isn't an old campaign, then this is a new campaign
-//       logger.info(`New campaign on ${planetName}`, {type: 'info'});
-//     } else {
-//       const oldOwner = oldCampaign.planetData.owner;
-//       const newOwner = campaign.planetData.owner;
-//       // if there is an old campaign, check if the owner has changed
-//       if (oldOwner !== newOwner) {
-//         if (newOwner === 'Humans') {
-//           // we won the campaign
-//           // eg. helldivers have successfully liberated <planet>!
-//         } else if (oldOwner === 'Humans') {
-//           // we lost the campaign (probably a defend planet)
-//           // eg. helldivers were not able to defend <planet>!
-//         }
-//         //
-//         logger.info(
-//           `Planet ${planetName} has changed owner from ${oldCampaign.planetData.owner} to ${campaign.planetData.owner}`,
-//           {type: 'info'}
-//         );
-//       }
-//     }
-//   }
-//   // TODO: compare old and new events
-//   for (const event of newSeason.Events) {
-//     const oldEvent = oldSeason.Events.find(e => e.eventId === event.eventId);
-//     if (!oldEvent) {
-//       if (event.flag === 0) differences.NewMajorOrder = event;
-//       differences.NewEvents.push(event);
-//       logger.info(`New event: ${event.title}`, {type: 'info'});
-//     }
-//   }
-//   // TODO: compare old and new player counts
-// }
-
 export const mappedNames: {
   factions: string[];
   planets: string[];

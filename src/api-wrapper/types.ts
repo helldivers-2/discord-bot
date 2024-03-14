@@ -214,9 +214,9 @@ export type StrippedApiData = {
 export type WarDifferences = {
   NewCampaigns: MergedCampaignData[];
   NewEvents: GlobalEvent[];
-  NewMajorOrder: GlobalEvent;
-  WonPlanets: MergedPlanetData[];
-  LostPlanets: MergedPlanetData[];
+  NewMajorOrder?: GlobalEvent;
+  WonPlanets: MergedCampaignData[];
+  LostPlanets: MergedCampaignData[];
   Players: {
     [key in Faction]: number;
   };

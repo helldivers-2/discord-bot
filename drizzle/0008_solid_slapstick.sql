@@ -1,0 +1,1 @@
+ALTER TABLE "prev_data" ALTER COLUMN "created_at" DROP DEFAULT;

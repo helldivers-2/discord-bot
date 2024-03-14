@@ -6,6 +6,9 @@ import {
 import {Command} from '../interfaces';
 import {getAllEvents, getLatestEvent} from '../api-wrapper';
 import {FOOTER_MESSAGE} from './_components';
+import {helldiversConfig} from '../config';
+
+const {factionSprites} = helldiversConfig;
 
 const command: Command = {
   data: new SlashCommandBuilder()
@@ -43,9 +46,7 @@ async function all(interaction: CommandInteraction) {
     message = message.replace(/<i=1>/g, '*').replace(/<\/i>/g, '*');
     const embed = new EmbedBuilder()
       .setTitle(title)
-      .setThumbnail(
-        'https://cdn.discordapp.com/emojis/1215225140934213662.webp?size=128&quality=lossless'
-      )
+      .setThumbnail(factionSprites['Humans'])
       .setTimestamp();
 
     if (message) embed.setDescription(message);
@@ -64,9 +65,7 @@ async function latest(interaction: CommandInteraction) {
   message = message.replace(/<i=1>/g, '*').replace(/<\/i>/g, '*');
   const embed = new EmbedBuilder()
     .setTitle(title)
-    .setThumbnail(
-      'https://cdn.discordapp.com/emojis/1215225140934213662.webp?size=128&quality=lossless'
-    )
+    .setThumbnail(factionSprites['Humans'])
     .setFooter({text: FOOTER_MESSAGE})
     .setTimestamp();
   if (message) embed.setDescription(message);

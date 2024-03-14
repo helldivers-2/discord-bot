@@ -4,8 +4,10 @@ import {
   Embed,
   EmbedBuilder,
   ModalSubmitInteraction,
+  PublicThreadChannel,
+  TextChannel,
 } from 'discord.js';
-import {config} from '../config';
+import {config, helldiversConfig} from '../config';
 import {client, planetNameTransform} from '.';
 import {
   Faction,
@@ -19,6 +21,7 @@ import {
 import {FACTION_COLOUR} from '../commands/_components';
 
 const {FOOTER_MESSAGE, EMBED_COLOUR} = config;
+const {factionSprites} = helldiversConfig;
 
 export function commandErrorEmbed(
   interaction: CommandInteraction | ModalSubmitInteraction
@@ -100,6 +103,49 @@ export function adminCommandEmbed(interaction: CommandInteraction) {
   };
 }
 
+export function subscribeEmbed(
+  type: string,
+  channel: TextChannel | PublicThreadChannel
+): EmbedBuilder[] {
+  const embeds = [];
+  const embed = new EmbedBuilder()
+    // .setAuthor({
+    //   name: 'Super Earth Command Dispatch',
+    // })
+    // .setThumbnail(
+    //   factionSprites['Humans']
+    // )
+    // .setColor(FACTION_COLOUR.Humans)
+    .setTitle('Success!')
+    .setDescription(
+      `<#${channel.id}> has been subscribed to receive updates for **${type}** events.`
+    )
+    .setFooter({text: FOOTER_MESSAGE})
+    .setColor(EMBED_COLOUR as ColorResolvable)
+    .setTimestamp();
+  embeds.push(embed);
+  return embeds;
+}
+
+export function subscribeNotifEmbed(type: string): EmbedBuilder[] {
+  const embeds = [];
+  const embed = new EmbedBuilder()
+    .setAuthor({
+      name: 'Super Earth Command Dispatch',
+    })
+    .setThumbnail(factionSprites['Humans'])
+    .setColor(FACTION_COLOUR.Humans)
+    .setTitle('Subscription Approved!')
+    .setDescription(
+      `This channel has been subscribed to receive updates for **${type}** events.`
+    )
+    .setFooter({text: FOOTER_MESSAGE})
+    .setColor(EMBED_COLOUR as ColorResolvable)
+    .setTimestamp();
+  embeds.push(embed);
+  return embeds;
+}
+
 export function warStatusEmbeds() {
   const campaigns = getAllCampaigns();
   const players = getAllPlayers();
@@ -127,9 +173,7 @@ export function warStatusEmbeds() {
     }
   }
   const automatonEmbed = new EmbedBuilder()
-    .setThumbnail(
-      'https://cdn.discordapp.com/emojis/1215225136899170354.webp?size=128&quality=lossless'
-    )
+    .setThumbnail(factionSprites['Automaton'])
     .setColor(FACTION_COLOUR.Automaton)
     .setTitle('Automatons')
     .setDescription(
@@ -138,9 +182,7 @@ export function warStatusEmbeds() {
     .addFields(status['Automaton']);
 
   const terminidEmbed = new EmbedBuilder()
-    .setThumbnail(
-      'https://cdn.discordapp.com/emojis/1215225138060984340.webp?size=128&quality=lossless'
-    )
+    .setThumbnail(factionSprites['Terminids'])
     .setColor(FACTION_COLOUR.Terminids)
     .setTitle('Terminids')
     .setDescription(
@@ -152,9 +194,7 @@ export function warStatusEmbeds() {
 
   if (latestEvent) {
     const eventEmbed = new EmbedBuilder()
-      .setThumbnail(
-        'https://cdn.discordapp.com/emojis/1215225140934213662.webp?size=128&quality=lossless'
-      )
+      .setThumbnail(factionSprites['Humans'])
       .setColor(FACTION_COLOUR.Humans)
       .setAuthor({
         name: 'Super Earth Command Dispatch',
