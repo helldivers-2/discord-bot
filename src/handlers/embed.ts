@@ -20,7 +20,7 @@ import {
 } from '../api-wrapper';
 import {FACTION_COLOUR} from '../commands/_components';
 
-const {FOOTER_MESSAGE, EMBED_COLOUR} = config;
+const {SUBSCRIBE_FOOTER, FOOTER_MESSAGE, EMBED_COLOUR} = config;
 const {factionSprites} = helldiversConfig;
 
 export function commandErrorEmbed(
@@ -139,7 +139,7 @@ export function subscribeNotifEmbed(type: string): EmbedBuilder[] {
     .setDescription(
       `This channel has been subscribed to receive updates for **${type}** events.`
     )
-    .setFooter({text: FOOTER_MESSAGE})
+    .setFooter({text: SUBSCRIBE_FOOTER})
     .setColor(EMBED_COLOUR as ColorResolvable)
     .setTimestamp();
   embeds.push(embed);

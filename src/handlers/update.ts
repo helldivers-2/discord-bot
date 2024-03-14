@@ -6,7 +6,7 @@ import {client} from './client';
 import {warStatusEmbeds} from './embed';
 import {logger} from './logging';
 
-const FOOTER_MESSAGE = config.FOOTER_MESSAGE;
+const SUBSCRIBE_FOOTER = config.SUBSCRIBE_FOOTER;
 
 export async function updateMessages() {
   // measure time taken to update all persistent messages
@@ -98,7 +98,7 @@ export function warStatusPersistentMessage() {
     .setDescription(
       `This message is updated every 10 minutes! It was last updated <t:${timestamp}:R>.`
     )
-    .setFooter({text: FOOTER_MESSAGE})
+    .setFooter({text: SUBSCRIBE_FOOTER})
     .setTimestamp();
 
   return [...warStatusEmbeds(), updateEmbed];

@@ -12,7 +12,7 @@ import {
   data,
   getPopularCampaign,
 } from '../../api-wrapper';
-import {helldiversConfig, isProd} from '../../config';
+import {config, helldiversConfig, isProd} from '../../config';
 import {announcementChannels, db, eq, newPrevData, prevData} from '../../db';
 import {logger} from '../logging';
 import {client} from '../client';
@@ -21,6 +21,7 @@ import {FACTION_COLOUR} from '../../commands/_components';
 import {and} from 'drizzle-orm';
 import {writeFileSync} from 'fs';
 
+const {SUBSCRIBE_FOOTER} = config;
 const {factionSprites, altSprites} = helldiversConfig;
 
 export async function compareData(): Promise<WarDifferences | void> {
@@ -254,7 +255,8 @@ export async function deliverUpdates(differences: WarDifferences) {
           }
         )
         .setImage(planetThumbnailUrl)
-        .setColor(FACTION_COLOUR[race]),
+        .setColor(FACTION_COLOUR[race])
+        .setFooter({text: SUBSCRIBE_FOOTER}),
     ];
     // send new campaign updates
     for (const channel of channels) promises.push(channel.send({embeds}));
@@ -266,7 +268,8 @@ export async function deliverUpdates(differences: WarDifferences) {
       .setAuthor({
         name: 'New Dispatch from SE Command',
         iconURL: altSprites['Humans'],
-      });
+      })
+      .setFooter({text: SUBSCRIBE_FOOTER});
     if (event.title) eventEmbed.setTitle(event.title);
     if (event.message) eventEmbed.setDescription(event.message);
     for (const channel of channels)
@@ -311,7 +314,8 @@ export async function deliverUpdates(differences: WarDifferences) {
           }
         )
         .setImage(planetThumbnailUrl)
-        .setColor(FACTION_COLOUR['Humans']),
+        .setColor(FACTION_COLOUR['Humans'])
+        .setFooter({text: SUBSCRIBE_FOOTER}),
     ];
     for (const channel of channels) promises.push(channel.send({embeds}));
   }
@@ -354,7 +358,8 @@ export async function deliverUpdates(differences: WarDifferences) {
           }
         )
         .setImage(planetThumbnailUrl)
-        .setColor(FACTION_COLOUR[race]),
+        .setColor(FACTION_COLOUR[race])
+        .setFooter({text: SUBSCRIBE_FOOTER}),
     ];
     for (const channel of channels) promises.push(channel.send({embeds}));
   }
