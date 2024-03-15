@@ -69,15 +69,16 @@ const command: Command = {
   run: async interaction => {
     const subcommand = interaction.options.data[0].name;
 
-    if (interaction.guild) {
-      const user = await interaction.guild.members.fetch(interaction.user.id);
-      if (!user.permissions.has('ManageMessages')) {
-        // respond with missing perms, then delete the response after 5s
-        await interaction.editReply(missingChannelPerms(interaction));
+    // TODO: re-enable one the bot is approved for priv intents
+    // if (interaction.guild) {
+    //   const user = await interaction.guild.members.fetch(interaction.user.id);
+    //   if (!user.permissions.has('ManageMessages')) {
+    //     // respond with missing perms, then delete the response after 5s
+    //     await interaction.editReply(missingChannelPerms(interaction));
 
-        return;
-      }
-    }
+    //     return;
+    //   }
+    // }
 
     await subcmds[subcommand](interaction);
   },
@@ -212,7 +213,9 @@ async function updates(interaction: CommandInteraction) {
           })
           .setTitle('Guild Already Subscribed')
           .setDescription(
-            'This guild is already subscribed to war announcements! To prevent spam, only one subscription per type per guild is allowed (feel free to use other subscribe types, however).'
+            'This guild is already subscribed to war announcements! ' +
+              'To prevent spam, only one subscription per type per guild is allowed (feel free to use other subscribe types, however). ' +
+              '\n\nIf you would like to remove the subscription, use the `/subscribe remove` command.'
           )
           .setFooter({text: FOOTER_MESSAGE})
           .setColor(EMBED_COLOUR)
@@ -291,7 +294,9 @@ async function status(interaction: CommandInteraction) {
           })
           .setTitle('Guild Already Subscribed')
           .setDescription(
-            'This guild is already subscribed to war status updates! To prevent spam, only one subscription per type per guild is allowed.'
+            'This guild is already subscribed to war status updates! ' +
+              'To prevent spam, only one subscription per type per guild is allowed (feel free to use other subscribe types, however). ' +
+              '\n\nIf you would like to remove the subscription, use the `/subscribe remove` command.'
           )
           .setFooter({text: FOOTER_MESSAGE})
           .setColor(EMBED_COLOUR)
