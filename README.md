@@ -1,4 +1,4 @@
-# Welcome to HellCom's Development Home!
+# Welcome!
 
 o/
 This is the repo for the Discord bot HellCom StratDef Network, a Helldivers 2 community bot. This project is meant to be a utility/helper bot for any Helldivers Discords!
@@ -7,7 +7,7 @@ HellCom StratDef Network is the all-in-one solution for your Helldivers 2 server
 
 HellCom will be continuously updated and improved. It is a community-driven project, so if there's a feature you'd like to see, feel free to suggest it in our Discord! Improvements and addition suggestions are always welcome =)
 
-If you have admin permissions, you can add it to your own server using **[this link (click)](https://discord.com/api/oauth2/authorize?client_id=1213944670288347176&permissions=414464658496&scope=applications.commands%20bot)**.
+You can add it to your own server using **[this link (click)](https://discord.com/api/oauth2/authorize?client_id=1213944670288347176&permissions=414464658496&scope=applications.commands%20bot)**.
 
 ## Features
 
