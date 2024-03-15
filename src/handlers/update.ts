@@ -13,7 +13,7 @@ export async function updateMessages() {
   const start = Date.now();
 
   const embeds = {
-    curr_war: warStatusPersistentMessage(),
+    curr_war: await warStatusPersistentMessage(),
   };
 
   const messages = await db.query.persistentMessages.findMany({
@@ -91,7 +91,7 @@ export async function updateMessages() {
   });
 }
 
-export function warStatusPersistentMessage() {
+export async function warStatusPersistentMessage() {
   const timestamp = Math.round(Date.now() / 1000);
 
   const updateEmbed = new EmbedBuilder()
@@ -101,5 +101,5 @@ export function warStatusPersistentMessage() {
     .setFooter({text: SUBSCRIBE_FOOTER})
     .setTimestamp();
 
-  return [...warStatusEmbeds(), updateEmbed];
+  return [...(await warStatusEmbeds()), updateEmbed];
 }

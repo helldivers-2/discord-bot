@@ -42,10 +42,7 @@ Object.keys(configObj).forEach(key => {
   config[key] = value as string;
 });
 
-const helldiversConfig: {
-  factionSprites: Record<Faction, string>;
-  altSprites: Record<Faction, string>;
-} = {
+const helldiversConfig = {
   factionSprites: {
     Automaton:
       'https://helldiverscompanionimagescdn.b-cdn.net/icons/factions/Automatons.png',
@@ -65,6 +62,10 @@ const helldiversConfig: {
       'https://helldiverscompanionimagescdn.b-cdn.net/icons/factions/Terminids.png',
     Total:
       'https://cdn.discordapp.com/emojis/1215225140934213662.webp?size=128&quality=lossless',
+  },
+  icons: {
+    helldiver:
+      'https://helldiverscompanionimagescdn.b-cdn.net/icons/factions/diver.png',
   },
 };
 

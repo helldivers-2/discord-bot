@@ -21,6 +21,8 @@ import {
   getPlanetName,
 } from '../api-wrapper';
 import {FACTION_COLOUR} from '../commands/_components';
+import {apiData, db} from '../db';
+import {asc, gt} from 'drizzle-orm';
 
 const {SUBSCRIBE_FOOTER, FOOTER_MESSAGE, EMBED_COLOUR} = config;
 const {factionSprites, altSprites} = helldiversConfig;
@@ -237,7 +239,7 @@ export function majorOrderEmbed(assignment: Assignment) {
   return embed;
 }
 
-export function warStatusEmbeds() {
+export async function warStatusEmbeds() {
   const campaigns = getAllCampaigns();
   const players = getAllPlayers();
   const majorOrder = getLatestAssignment();
@@ -249,9 +251,44 @@ export function warStatusEmbeds() {
     Total: [],
   };
 
+  // todo: get API data from 6~ hours ago (or closer), and calculate the lossPercPerHour
+  const timeCheck = 4 * 60 * 60 * 1000; // 6 hours in milliseconds
+  const timestamp = new Date(Date.now() - timeCheck);
+  // fetch the first API data entry that is older than 6 hours
+  const pastApiData = await db.query.apiData.findMany({
+    where: gt(apiData.createdAt, timestamp),
+    orderBy: asc(apiData.createdAt),
+  });
   for (const campaign of campaigns) {
+    const oldData = pastApiData.find(d =>
+      d.data.Campaigns.some(c => c.id === campaign.id)
+    );
+    console.log(oldData?.createdAt);
+    let averageChangeStr = '';
+    if (oldData) {
+      const oldCampaign = oldData.data.Campaigns.find(
+        c => c.id === campaign.id
+      );
+      const timeSinceInH =
+        (Date.now() - new Date(oldData.createdAt).getTime()) / 1000 / 60 / 60;
+
+      const oldPerc =
+        oldCampaign!.campaignType === 'Liberation'
+          ? oldCampaign!.planetData.liberation
+          : oldCampaign!.planetEvent!.defence;
+      const newPerc =
+        campaign.campaignType === 'Liberation'
+          ? campaign.planetData.liberation
+          : campaign.planetEvent!.defence;
+      const avgChange = (newPerc - oldPerc) / timeSinceInH;
+      averageChangeStr +=
+        ' (' +
+        (avgChange >= 0 ? '+' : '') +
+        parseFloat(avgChange.toFixed(2)) +
+        '%/h)';
+    }
+    // const oldCampaign = pastApiData!.data.Campaigns.find(c => c.id === campaign.id);
     const {planetName, campaignType, planetData, planetEvent} = campaign;
-    const {lossPercPerHour} = planetData;
     const title = `${planetName}: ${campaignType.toUpperCase()}`;
 
     if (campaignType === 'Liberation') {
@@ -259,12 +296,15 @@ export function warStatusEmbeds() {
       const progressBar = drawLoadingBarPerc(liberation, 30);
       status[owner as Faction].push({
         name: title,
-        value: `${progressBar} (-${lossPercPerHour}%/h)`,
+        value: `${progressBar}` + averageChangeStr,
       });
     } else if (campaignType === 'Defend') {
       const {defence, race} = planetEvent as MergedPlanetEventData;
       const progressBar = drawLoadingBarPerc(defence, 30);
-      status[race as Faction].push({name: title, value: progressBar});
+      status[race as Faction].push({
+        name: title,
+        value: `${progressBar}` + averageChangeStr,
+      });
     }
   }
   const automatonEmbed = new EmbedBuilder()

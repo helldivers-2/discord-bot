@@ -48,7 +48,7 @@ const subcmds: {[key: string]: (job: CommandInteraction) => Promise<void>} = {
 };
 
 async function list(interaction: CommandInteraction) {
-  const embeds = warStatusEmbeds();
+  const embeds = await warStatusEmbeds();
   embeds[embeds.length - 1].setFooter({text: FOOTER_MESSAGE}).setTimestamp();
 
   await interaction.editReply({embeds: embeds});

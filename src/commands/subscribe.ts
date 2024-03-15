@@ -336,7 +336,7 @@ async function status(interaction: CommandInteraction) {
       const discordMsg = await messageChannel.messages.fetch(message.id);
       if (discordMsg)
         await discordMsg.edit({
-          embeds: warStatusPersistentMessage(),
+          embeds: await warStatusPersistentMessage(),
         });
 
       // if edit succeeds, then create db entry to update the message in future
