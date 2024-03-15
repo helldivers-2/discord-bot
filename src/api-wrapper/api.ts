@@ -146,7 +146,7 @@ export async function getData() {
 
   const planetEvents: MergedPlanetEventData[] = status.planetEvents.map(p => ({
     ...p,
-    defence: +(p.health / p.maxHealth).toFixed(4),
+    defence: +((p.health / p.maxHealth) * 100).toFixed(4),
     planetName: getPlanetName(p.planetIndex),
     eventType: getPlanetEventType(p.eventType),
     race: getFactionName(p.race),
