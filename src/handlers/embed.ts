@@ -267,7 +267,7 @@ export async function campaignEmbeds(planet_name?: string) {
         .setTitle(title)
         .setColor(FACTION_COLOUR[race])
         .setImage(planetThumbnailUrl);
-      embeds.push(embed);
+
       const squadImpact = maxHealth - health;
       const display = {
         Players: `${players.toLocaleString()} (${playerPerc}%)`,
