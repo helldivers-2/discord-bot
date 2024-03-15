@@ -252,7 +252,7 @@ export async function warStatusEmbeds() {
   };
 
   const diverEmoji = client.emojis.cache.find(
-    emoji => emoji.name === 'helldiver'
+    emoji => emoji.name === 'helldiver_icon_s092'
   );
 
   // todo: get API data from 2~ hours ago (or closer), and calculate the lossPercPerHour
