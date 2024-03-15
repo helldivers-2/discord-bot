@@ -11,6 +11,7 @@ import {config, helldiversConfig} from '../../config';
 import {planetNameTransform} from '../custom';
 import {validateChannelArr} from '../discord';
 import {majorOrderEmbed} from '../embed';
+import {logger} from '../logging';
 
 const {SUBSCRIBE_FOOTER} = config;
 const {factionSprites, altSprites} = helldiversConfig;
@@ -58,7 +59,13 @@ export async function newCampaignUpdate(
   ];
   // send new updates to subscribed channels
   const promises: Promise<any>[] = [];
-  for (const channel of channels) promises.push(channel.send({embeds}));
+  for (const channel of channels) {
+    try {
+      await channel.send({embeds});
+    } catch (err) {
+      logger.error(err);
+    }
+  }
   await Promise.all(promises);
   return;
 }
@@ -123,7 +130,14 @@ export async function wonPlanetUpdate(
   ];
   // send new updates to subscribed channels
   const promises: Promise<any>[] = [];
-  for (const channel of channels) promises.push(channel.send({embeds}));
+  for (const channel of channels) {
+    try {
+      await channel.send({embeds});
+    } catch (err) {
+      logger.error(err);
+    }
+  }
+
   await Promise.all(promises);
   return;
 }
@@ -188,7 +202,13 @@ export async function lostPlanetUpdate(
   ];
   // send new updates to subscribed channels
   const promises: Promise<any>[] = [];
-  for (const channel of channels) promises.push(channel.send({embeds}));
+  for (const channel of channels) {
+    try {
+      await channel.send({embeds});
+    } catch (err) {
+      logger.error(err);
+    }
+  }
   await Promise.all(promises);
   return;
 }
@@ -209,8 +229,13 @@ export async function newEventUpdate(event: GlobalEvent, channelIds: string[]) {
 
   // send new updates to subscribed channels
   const promises: Promise<any>[] = [];
-  for (const channel of channels)
-    promises.push(channel.send({embeds: [eventEmbed]}));
+  for (const channel of channels) {
+    try {
+      await channel.send({embeds: [eventEmbed]});
+    } catch (err) {
+      logger.error(err);
+    }
+  }
   await Promise.all(promises);
   return;
 }
@@ -226,7 +251,13 @@ export async function newMajorOrderUpdater(
 
   // send new updates to subscribed channels
   const promises: Promise<any>[] = [];
-  for (const channel of channels) promises.push(channel.send({embeds: embeds}));
+  for (const channel of channels) {
+    try {
+      await channel.send({embeds});
+    } catch (err) {
+      logger.error(err);
+    }
+  }
   await Promise.all(promises);
   return;
 }
