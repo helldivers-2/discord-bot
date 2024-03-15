@@ -204,7 +204,7 @@ export function majorOrderEmbed(assignment: Assignment) {
       planetName: getPlanetName(t.values[2]),
       progress:
         campaigns.find(c => c.planetName === getPlanetName(t.values[2]))
-          ?.planetData.liberation || 100,
+          ?.planetData.liberation ?? 100,
     }));
     let taskString = '';
     for (const task of tasksDisplay)
