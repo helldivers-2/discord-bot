@@ -7,7 +7,7 @@ import {
   TextChannel,
 } from 'discord.js';
 import {config, helldiversConfig} from '../config';
-import {client, planetNameTransform} from '.';
+import {client, formatPlayers, planetNameTransform} from '.';
 import {
   Assignment,
   Faction,
@@ -251,6 +251,10 @@ export async function warStatusEmbeds() {
     Total: [],
   };
 
+  const diverEmoji = client.emojis.cache.find(
+    emoji => emoji.name === 'helldiver'
+  );
+
   // todo: get API data from 2~ hours ago (or closer), and calculate the lossPercPerHour
   const timeCheck = 3 * 60 * 60 * 1000; // 6 hours in milliseconds
   const timestamp = new Date(Date.now() - timeCheck);
@@ -289,7 +293,11 @@ export async function warStatusEmbeds() {
     }
     // const oldCampaign = pastApiData!.data.Campaigns.find(c => c.id === campaign.id);
     const {planetName, campaignType, planetData, planetEvent} = campaign;
-    const title = `${planetName}: ${campaignType.toUpperCase()}`;
+    const {players, playerPerc} = planetData;
+    const playersStr = `${diverEmoji} ${formatPlayers(
+      players
+    )} | ${playerPerc}%`;
+    const title = `${planetName}: ${campaignType.toUpperCase()} - ${playersStr}`;
 
     if (campaignType === 'Liberation') {
       const {owner, liberation} = planetData;
