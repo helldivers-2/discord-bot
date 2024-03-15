@@ -8,6 +8,8 @@ import {
   MergedPlanetEventData,
   ApiData,
   WarDifferences,
+  Assignment,
+  NewsFeedItem,
 } from './types';
 import {getFactionName, getPlanetEventType, getPlanetName} from './mapping';
 import {existsSync, mkdirSync, writeFileSync} from 'fs';
@@ -65,6 +67,8 @@ export let data: ApiData = {
     Terminids: 0,
   },
   UTCOffset: 0,
+  Assignment: [],
+  NewsFeed: [],
 };
 
 export async function getData() {
@@ -85,12 +89,7 @@ export async function getData() {
     })
   ).data;
   const warInfo = warInfoApi as WarInfo;
-  // const warInfoPath = path.join(
-  //   'api_responses',
-  //   String(season),
-  //   `${fileTimestamp}_WarInfo.json`
-  // );
-  // await writeGzipJson(warInfoPath + '.gz', warInfoApi);
+
   const statusApi = await (
     await axios.get(`${API_URL}/WarSeason/${season}/Status`, {
       headers: {
@@ -101,12 +100,26 @@ export async function getData() {
   const status = statusApi as Status;
   status.timeUtc = Date.now();
 
-  // const statusPath = path.join(
-  //   'api_responses',
-  //   String(season),
-  //   `${fileTimestamp}_Status.json`
-  // );
-  // await writeGzipJson(statusPath + '.gz', statusApi);
+  // https://api.live.prod.thehelldiversgame.com/api/v2/Assignment/War/801
+
+  const assignmentApi = await (
+    await axios.get(`${API_URL}/v2/Assignment/War/${season}`, {
+      headers: {
+        'Accept-Language': 'en-us',
+      },
+    })
+  ).data;
+  const assignment = assignmentApi as Assignment[];
+
+  //https://api.live.prod.thehelldiversgame.com/api/NewsFeed/801
+  const newsFeedApi = await (
+    await axios.get(`${API_URL}/NewsFeed/${season}`, {
+      headers: {
+        'Accept-Language': 'en-us',
+      },
+    })
+  ).data;
+  const newsFeed = newsFeedApi as NewsFeedItem[];
 
   const planets: MergedPlanetData[] = [];
   const players = {
@@ -123,7 +136,10 @@ export async function getData() {
     const planetStatus = status.planetStatus.find(p => p.index === index);
     if (planetStatus) {
       const {regenPerSecond} = planetStatus;
-      const liberation = (1 - planetStatus.health / planet.maxHealth) * 100;
+      const liberation = +(
+        (1 - planetStatus.health / planet.maxHealth) *
+        100
+      ).toFixed(4);
       const lossPercPerHour =
         ((regenPerSecond * 3600) / planet.maxHealth) * 100;
       const playerPerc = (planetStatus.players / players['Total']) * 100;
@@ -165,6 +181,8 @@ export async function getData() {
   data = {
     WarInfo: warInfo,
     Status: status,
+    Assignment: assignment,
+    NewsFeed: newsFeed,
     Planets: planets,
     Campaigns: campaigns,
     PlanetEvents: planetEvents,

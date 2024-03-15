@@ -1,7 +1,6 @@
 import {
   ColorResolvable,
   CommandInteraction,
-  Embed,
   EmbedBuilder,
   ModalSubmitInteraction,
   PublicThreadChannel,
@@ -10,18 +9,21 @@ import {
 import {config, helldiversConfig} from '../config';
 import {client, planetNameTransform} from '.';
 import {
+  Assignment,
   Faction,
   MergedCampaignData,
   MergedPlanetEventData,
   getAllCampaigns,
   getAllPlayers,
   getCampaignByPlanetName,
-  getLatestEvent,
+  getCurrencyName,
+  getLatestAssignment,
+  getPlanetName,
 } from '../api-wrapper';
 import {FACTION_COLOUR} from '../commands/_components';
 
 const {SUBSCRIBE_FOOTER, FOOTER_MESSAGE, EMBED_COLOUR} = config;
-const {factionSprites} = helldiversConfig;
+const {factionSprites, altSprites} = helldiversConfig;
 
 export function commandErrorEmbed(
   interaction: CommandInteraction | ModalSubmitInteraction
@@ -146,10 +148,99 @@ export function subscribeNotifEmbed(type: string): EmbedBuilder[] {
   return embeds;
 }
 
+export function majorOrderEmbed(assignment: Assignment) {
+  const {expiresIn, id32, progress, setting} = assignment;
+  const {
+    type: settingsType,
+    overrideTitle,
+    overrideBrief,
+    taskDescription,
+    tasks,
+    reward,
+  } = setting;
+  const {type, amount} = reward;
+
+  const expiresInUtcS = Math.floor((Date.now() + expiresIn * 1000) / 1000);
+  const expiresInDays = Math.floor(expiresIn / 86400);
+  const expiresInHours = Math.floor((expiresIn % 86400) / 3600);
+
+  // 0 means incomplete, 1 means complete
+  const completed = progress.filter(value => value === 1).length;
+
+  const campaigns = getAllCampaigns();
+
+  const embedTitle = overrideTitle || 'Major Order';
+  const embedDescription = overrideBrief || 'No briefing provided.';
+  const embedTaskDescription =
+    taskDescription || 'No task description provided.';
+  const embedFields: {name: string; value: string; inline?: boolean}[] = [];
+
+  embedFields.push(
+    {
+      name: 'Objective',
+      value: embedTaskDescription,
+      inline: false,
+    },
+    {
+      name: 'Progress',
+      value: `${completed} / ${tasks.length}`,
+      inline: true,
+    },
+    {
+      name: 'Expires In',
+      value: `<t:${expiresInUtcS}:R> (${expiresInDays}d ${expiresInHours}h)`,
+      inline: true,
+    },
+    {
+      name: 'Reward',
+      value: `${amount}x ${getCurrencyName(type)}`,
+      inline: true,
+    }
+  );
+
+  if (settingsType === 4) {
+    const tasksDisplay = tasks.map((t, i) => ({
+      completed: progress[i] === 1,
+      planetName: getPlanetName(t.values[2]),
+      progress:
+        campaigns.find(c => c.planetName === getPlanetName(t.values[2]))
+          ?.planetData.liberation || 100,
+    }));
+    let taskString = '';
+    for (const task of tasksDisplay)
+      taskString += `${task.completed ? '✅' : '❌'}: ${task.planetName}\n`;
+
+    embedFields.push(
+      ...tasksDisplay.map(task => ({
+        name: task.planetName,
+        value:
+          task.progress === 100
+            ? '**COMPLETE**'
+            : `${task.progress.toFixed(2)}%`,
+        inline: true,
+      }))
+    );
+  }
+
+  const embed = new EmbedBuilder()
+    .setThumbnail(factionSprites['Humans'])
+    .setColor(FACTION_COLOUR.Humans)
+    .setAuthor({
+      name: 'Super Earth Command Dispatch',
+      iconURL: altSprites['Humans'],
+    })
+    .setTitle(embedTitle)
+    .setDescription(embedDescription)
+    .setFields(embedFields)
+    .setFooter({text: SUBSCRIBE_FOOTER});
+
+  return embed;
+}
+
 export function warStatusEmbeds() {
   const campaigns = getAllCampaigns();
   const players = getAllPlayers();
-  const latestEvent = getLatestEvent();
+  const majorOrder = getLatestAssignment();
 
   const status: Record<Faction, {name: string; value: string}[]> = {
     Terminids: [],
@@ -192,17 +283,7 @@ export function warStatusEmbeds() {
 
   const embeds = [automatonEmbed, terminidEmbed];
 
-  if (latestEvent) {
-    const eventEmbed = new EmbedBuilder()
-      .setThumbnail(factionSprites['Humans'])
-      .setColor(FACTION_COLOUR.Humans)
-      .setAuthor({
-        name: 'Super Earth Command Dispatch',
-      });
-    if (latestEvent.title) eventEmbed.setTitle(latestEvent.title);
-    if (latestEvent.message) eventEmbed.setDescription(latestEvent.message);
-    embeds.push(eventEmbed);
-  }
+  if (majorOrder) embeds.push(majorOrderEmbed(majorOrder));
 
   return embeds;
 }
@@ -274,7 +355,7 @@ export async function campaignEmbeds(planet_name?: string) {
         'Controlled By': owner,
         Attackers: race,
         Defence: `${defence}%`,
-        'Time Left': `${Math.floor((expireTime - Date.now()) / 1000)}s`,
+        'Time Left': `${Math.floor(expireTime - Date.now())}s`,
         'Total Squad Impact': `${squadImpact.toLocaleString()} / ${maxHealth.toLocaleString()}`,
       };
       for (const [key, val] of Object.entries(display)) {

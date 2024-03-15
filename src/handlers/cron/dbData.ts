@@ -30,6 +30,8 @@ export async function dbData() {
       globalEvents: data.Status.globalEvents,
       superEarthWarResults: data.Status.superEarthWarResults,
     },
+    Assignment: data.Assignment,
+    NewsFeed: data.NewsFeed,
     Campaigns: data.Campaigns,
     PlanetEvents: data.PlanetEvents,
     ActivePlanets: data.ActivePlanets,

@@ -1,4 +1,5 @@
-import {Faction, PlanetEventType} from '../types';
+import {Currency, Faction, PlanetEventType} from '../types';
+import currency from './currency.json';
 import factions from './factions.json';
 import planetEvents from './planetEvents.json';
 import planets from './planets.json';
@@ -6,6 +7,10 @@ import sectors from './sectors.json';
 
 interface JsonFile {
   [key: string]: string;
+}
+
+export function getCurrencyName(id: number): Currency {
+  return (currency as JsonFile)[id] as Currency;
 }
 
 export function getFactionName(id: number): Faction {

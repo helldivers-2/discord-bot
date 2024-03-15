@@ -3,6 +3,7 @@ export type Position = {
   y: number;
 };
 
+export type Currency = 'Medals';
 export type Faction = 'Humans' | 'Total' | 'Automaton' | 'Terminids';
 export type PlanetEventType = 'Defend';
 export type CampaignType = 'Defend' | 'Liberation';
@@ -172,6 +173,39 @@ export type Status = {
   superEarthWarResults: any[];
 };
 
+// /api/v2/Assignment/War/{war_id}
+export type Assignment = {
+  id32: number;
+  progress: number[];
+  expiresIn: number;
+  setting: {
+    type: number;
+    overrideTitle: string;
+    overrideBrief: string;
+    taskDescription: string;
+    tasks: {
+      type: number;
+      values: number[];
+      valueTypes: number[];
+    }[];
+    reward: {
+      type: number;
+      id32: number;
+      amount: number;
+    };
+    flags: number;
+  };
+};
+
+// /api/NewsFeed/{war_id}
+export type NewsFeedItem = {
+  id: number;
+  published: number;
+  type: number;
+  tagIds: number[];
+  message: string;
+};
+
 export type WarOverview = {
   warId: number;
   startDate: number;
@@ -185,6 +219,8 @@ export type WarOverview = {
 export type ApiData = {
   WarInfo: WarInfo;
   Status: Status;
+  Assignment: Assignment[];
+  NewsFeed: NewsFeedItem[];
   Planets: MergedPlanetData[];
   Campaigns: MergedCampaignData[];
   PlanetEvents: MergedPlanetEventData[];
@@ -200,6 +236,8 @@ export type ApiData = {
 export type StrippedApiData = {
   WarInfo: Omit<WarInfo, 'planetInfos'>;
   Status: Omit<Status, 'planetStatus'>;
+  Assignment: Assignment[];
+  NewsFeed: NewsFeedItem[];
   Campaigns: MergedCampaignData[];
   PlanetEvents: MergedPlanetEventData[];
   ActivePlanets: MergedPlanetData[];
@@ -214,7 +252,7 @@ export type StrippedApiData = {
 export type WarDifferences = {
   NewCampaigns: MergedCampaignData[];
   NewEvents: GlobalEvent[];
-  NewMajorOrder?: GlobalEvent;
+  NewMajorOrder?: Assignment;
   WonPlanets: MergedCampaignData[];
   LostPlanets: MergedCampaignData[];
   Players: {

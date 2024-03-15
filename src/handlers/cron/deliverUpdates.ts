@@ -4,11 +4,13 @@ import {
   Faction,
   MergedCampaignData,
   GlobalEvent,
+  Assignment,
 } from '../../api-wrapper';
 import {FACTION_COLOUR} from '../../commands/_components';
 import {config, helldiversConfig} from '../../config';
 import {planetNameTransform} from '../custom';
 import {validateChannelArr} from '../discord';
+import {majorOrderEmbed} from '../embed';
 
 const {SUBSCRIBE_FOOTER} = config;
 const {factionSprites, altSprites} = helldiversConfig;
@@ -214,9 +216,22 @@ export async function newEventUpdate(event: GlobalEvent, channelIds: string[]) {
 }
 // TODO: use new endpoint to get this
 // export async function newMajorOrdeUpdater(order: ??, channels: (TextChannel | PublicThreadChannel)[]) {}
+export async function newMajorOrderUpdater(
+  assignment: Assignment,
+  channelIds: string[]
+) {
+  const channels = await validateChannelArr(channelIds);
+
+  const embeds = [majorOrderEmbed(assignment)];
+
+  // send new updates to subscribed channels
+  const promises: Promise<any>[] = [];
+  for (const channel of channels) promises.push(channel.send({embeds: embeds}));
+  await Promise.all(promises);
+  return;
+}
 // TODO: use new endpoint to get this
 // export async function newMessageUpdate(message: ??, channels: (TextChannel | PublicThreadChannel)[]) {}
-
 // LostPlanets
 // NewCampaigns
 // NewEvents

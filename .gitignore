@@ -5,3 +5,5 @@
 foo*
 newrelic_agent.log
 data.json
+strippedData.json
+differences.json

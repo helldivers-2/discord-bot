@@ -43,6 +43,8 @@ export async function compareData(): Promise<WarDifferences | void> {
       globalEvents: data.Status.globalEvents,
       superEarthWarResults: data.Status.superEarthWarResults,
     },
+    Assignment: data.Assignment,
+    NewsFeed: data.NewsFeed,
     Campaigns: data.Campaigns,
     PlanetEvents: data.PlanetEvents,
     ActivePlanets: data.ActivePlanets,
@@ -106,6 +108,7 @@ export async function compareData(): Promise<WarDifferences | void> {
 
   // compare old api snapshot to the new one, check for changes
   // eg. new campaign, planet owner change, new event, new major order etc.
+  // TODO: compare major order
   // compare old and new campaigns
   for (const campaign of newData.Campaigns) {
     const {planetName} = campaign;
@@ -174,7 +177,6 @@ export async function compareData(): Promise<WarDifferences | void> {
   for (const event of newData.Events) {
     const oldEvent = oldData.Events.find(e => e.eventId === event.eventId);
     if (!oldEvent) {
-      if (event.flag === 0) differences.NewMajorOrder = event;
       differences.NewEvents.push(event);
       logger.info(`New event: ${event.title}`, {type: 'info'});
       newEventUpdate(event, channelIds);

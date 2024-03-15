@@ -1,4 +1,6 @@
+export * from './mapping';
 export * from './api';
+export * from './assignment';
 export * from './campaign';
 export * from './events';
 // export * from './info';
