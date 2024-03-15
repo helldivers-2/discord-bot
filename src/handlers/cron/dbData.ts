@@ -46,7 +46,7 @@ export async function dbData() {
   });
 
   if (existingData) {
-    console.log('Data already exists in database!');
+    logger.info('Data already exists in database!', {type: 'info'});
     return;
   }
 

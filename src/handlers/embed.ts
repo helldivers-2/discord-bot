@@ -263,7 +263,7 @@ export async function warStatusEmbeds() {
     const oldData = pastApiData.find(d =>
       d.data.Campaigns.some(c => c.id === campaign.id)
     );
-    console.log(oldData?.createdAt);
+
     let averageChangeStr = '';
     if (oldData) {
       const oldCampaign = oldData.data.Campaigns.find(
