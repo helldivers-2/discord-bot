@@ -3,13 +3,7 @@ import {schedule} from 'node-cron';
 import {commandHash, commandList, presenceCmds} from '../commands';
 import {config} from '../config';
 import {getData, mappedNames} from '../api-wrapper';
-import {
-  compareData,
-  dbData,
-  deliverUpdates,
-  logger,
-  updateMessages,
-} from '../handlers';
+import {compareData, dbData, logger, updateMessages} from '../handlers';
 
 // bot client token, for use with discord API
 const BOT_TOKEN = config.BOT_TOKEN;
@@ -80,9 +74,7 @@ const onReady = async (client: Client) => {
   });
 
   // cron schedule to compare api data
-  schedule(COMPARE_INTERVAL, () =>
-    compareData().then(diff => (diff ? deliverUpdates(diff) : null))
-  );
+  schedule(COMPARE_INTERVAL, () => compareData());
 
   // cron schedule to update presence every 3 seconds
   schedule(STATUS_UPDATE_INTERVAL, () => {

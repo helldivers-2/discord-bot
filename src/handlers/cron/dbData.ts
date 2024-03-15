@@ -1,3 +1,4 @@
+import {logger} from '..';
 import {StrippedApiData, getData} from '../../api-wrapper';
 import {apiData, db, eq, newApiData} from '../../db';
 
@@ -53,5 +54,5 @@ export async function dbData() {
     data: strippedData,
   });
 
-  console.log('Committing new API data to database!');
+  logger.info('Committing new API data to database!', {type: 'info'});
 }
