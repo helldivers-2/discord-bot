@@ -251,12 +251,16 @@ export function warStatusEmbeds() {
 
   for (const campaign of campaigns) {
     const {planetName, campaignType, planetData, planetEvent} = campaign;
+    const {lossPercPerHour} = planetData;
     const title = `${planetName}: ${campaignType.toUpperCase()}`;
 
     if (campaignType === 'Liberation') {
       const {owner, liberation} = planetData;
       const progressBar = drawLoadingBarPerc(liberation, 30);
-      status[owner as Faction].push({name: title, value: progressBar});
+      status[owner as Faction].push({
+        name: title,
+        value: `${progressBar} (-${lossPercPerHour}%/h)`,
+      });
     } else if (campaignType === 'Defend') {
       const {defence, race} = planetEvent as MergedPlanetEventData;
       const progressBar = drawLoadingBarPerc(defence, 30);
