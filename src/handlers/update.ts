@@ -56,25 +56,37 @@ export async function updateMessages() {
         case 10003: // Unknown channel
           promises.push(
             db
-              .update(persistentMessages)
-              .set({deleted: true})
-              .where(eq(persistentMessages.messageId, messageId))
+              .delete(persistentMessages)
+              .where(
+                and(
+                  eq(persistentMessages.messageId, messageId),
+                  eq(persistentMessages.production, isProd)
+                )
+              )
           );
           break;
         case 10008: // Unknown message
           promises.push(
             db
-              .update(persistentMessages)
-              .set({deleted: true})
-              .where(eq(persistentMessages.messageId, messageId))
+              .delete(persistentMessages)
+              .where(
+                and(
+                  eq(persistentMessages.messageId, messageId),
+                  eq(persistentMessages.production, isProd)
+                )
+              )
           );
           break;
         case 50001: // Missing access
           promises.push(
             db
-              .update(persistentMessages)
-              .set({deleted: true})
-              .where(eq(persistentMessages.messageId, messageId))
+              .delete(persistentMessages)
+              .where(
+                and(
+                  eq(persistentMessages.messageId, messageId),
+                  eq(persistentMessages.production, isProd)
+                )
+              )
           );
           break;
         case 50005: // Cannot edit a message authored by another user

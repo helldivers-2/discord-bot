@@ -7,7 +7,7 @@ HellCom StratDef Network is the all-in-one solution for your Helldivers 2 server
 
 HellCom will be continuously updated and improved. It is a community-driven project, so if there's a feature you'd like to see, feel free to suggest it in our Discord! Improvements and addition suggestions are always welcome =)
 
-You can add it to your own server using **[this link (click)](https://discord.com/api/oauth2/authorize?client_id=1213944670288347176&permissions=414464658496&scope=applications.commands%20bot)**.
+You can add it to your own server using **[this link (click)](https://discord.com/api/oauth2/authorize?client_id=1213944670288347176&permissions=274878221376&scope=applications.commands%20bot)**.
 
 ## Features
 
@@ -21,3 +21,7 @@ You can add it to your own server using **[this link (click)](https://discord.co
 > Thanks for reading, have an awesome day!
 
 If you notice any issues, or have a suggestion, feel free to contact me via Discord @`theyodastream`.
+
+## Terms of Service
+
+## Privacy Policy

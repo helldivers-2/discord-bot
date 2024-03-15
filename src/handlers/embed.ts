@@ -251,8 +251,8 @@ export async function warStatusEmbeds() {
     Total: [],
   };
 
-  // todo: get API data from 6~ hours ago (or closer), and calculate the lossPercPerHour
-  const timeCheck = 4 * 60 * 60 * 1000; // 6 hours in milliseconds
+  // todo: get API data from 2~ hours ago (or closer), and calculate the lossPercPerHour
+  const timeCheck = 3 * 60 * 60 * 1000; // 6 hours in milliseconds
   const timestamp = new Date(Date.now() - timeCheck);
   // fetch the first API data entry that is older than 6 hours
   const pastApiData = await db.query.apiData.findMany({
