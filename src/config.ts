@@ -23,10 +23,13 @@ const configObj: Record<string, string | number | undefined> = {
   EMBED_COLOUR: process.env.EMBED_COLOUR || 'DarkPurple',
   FOOTER_MESSAGE:
     'Bug reports and suggestions welcome in Discord!\n' +
-    `/discord | v${version} | made by Major`,
+    `/discord | /support | v${version} | made by Major (@theyodastream)`,
   SUBSCRIBE_FOOTER:
-    'Delivered via /subscribe\n' + `/discord | v${version} | made by Major`,
+    'Delivered via /subscribe\n' +
+    `/discord | /support | v${version} | made by Major (@theyodastream)`,
   DISCORD_INVITE: 'https://discord.gg/levialliance',
+  KOFI_LINK: 'https://ko-fi.com/theyodastream',
+  TOP_GG_LINK: 'https://top.gg/bot/1213944670288347176',
 
   // Project info
   VERSION: version,
@@ -66,6 +69,7 @@ const helldiversConfig = {
   icons: {
     helldiver:
       'https://helldiverscompanionimagescdn.b-cdn.net/icons/factions/diver.png',
+    kofi: 'https://storage.ko-fi.com/cdn/nav-logo-stroke.png',
   },
 };
 

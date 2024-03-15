@@ -28,8 +28,7 @@ const command: Command = {
           )
           .setURL(DISCORD_INVITE)
           .setFooter({text: FOOTER_MESSAGE})
-          .setColor(EMBED_COLOUR)
-          .setTimestamp(),
+          .setColor(EMBED_COLOUR),
       ],
     });
   },

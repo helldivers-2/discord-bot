@@ -5,8 +5,16 @@ import discord from './discord';
 import events from './events';
 import planet from './planet';
 import subscribe from './subscribe';
+import support from './support';
 
-const commandList: Command[] = [planet, events, campaign, subscribe, discord];
+const commandList: Command[] = [
+  planet,
+  events,
+  campaign,
+  subscribe,
+  discord,
+  support,
+];
 const notEphemeral: string[] = [];
 const ephemeralCmds = commandList
   .map(x => x.data.name)
