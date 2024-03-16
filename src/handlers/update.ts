@@ -33,7 +33,9 @@ export async function updateMessages() {
       if (
         messageChannel &&
         (messageChannel.type === ChannelType.GuildText ||
-          messageChannel.type === ChannelType.PublicThread)
+          messageChannel.type === ChannelType.PublicThread ||
+          messageChannel.type === ChannelType.GuildAnnouncement ||
+          messageChannel.type === ChannelType.AnnouncementThread)
       ) {
         // try fetching the message, may throw '10008', message doesn't exist (deleted?)
         const discordMsg = await messageChannel.messages.fetch(messageId);

@@ -139,7 +139,9 @@ async function remove(interaction: CommandInteraction) {
       if (
         messageChannel &&
         (messageChannel.type === ChannelType.GuildText ||
-          messageChannel.type === ChannelType.PublicThread)
+          messageChannel.type === ChannelType.PublicThread ||
+          messageChannel.type === ChannelType.GuildAnnouncement ||
+          messageChannel.type === ChannelType.AnnouncementThread)
       ) {
         const discordMsg = await messageChannel.messages.fetch(
           message.messageId
@@ -231,7 +233,9 @@ async function updates(interaction: CommandInteraction) {
     if (
       messageChannel &&
       (messageChannel.type === ChannelType.GuildText ||
-        messageChannel.type === ChannelType.PublicThread)
+        messageChannel.type === ChannelType.PublicThread ||
+        messageChannel.type === ChannelType.GuildAnnouncement ||
+        messageChannel.type === ChannelType.AnnouncementThread)
     ) {
       await messageChannel.send({
         embeds: subscribeNotifEmbed('war_announcements'),
@@ -336,7 +340,9 @@ async function status(interaction: CommandInteraction) {
     if (
       messageChannel &&
       (messageChannel.type === ChannelType.GuildText ||
-        messageChannel.type === ChannelType.PublicThread)
+        messageChannel.type === ChannelType.PublicThread ||
+        messageChannel.type === ChannelType.GuildAnnouncement ||
+        messageChannel.type === ChannelType.AnnouncementThread)
     ) {
       const discordMsg = await messageChannel.messages.fetch(message.id);
       if (discordMsg)

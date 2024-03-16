@@ -60,6 +60,7 @@ export async function newCampaignUpdate(
   // send new updates to subscribed channels
   const promises: Promise<any>[] = [];
   for (const channel of channels) {
+    // TODO: fix issue where bot can see channel exists (is in the server), but cannot send messages. discord err 50001 Missing Access
     try {
       await channel.send({embeds});
     } catch (err) {
