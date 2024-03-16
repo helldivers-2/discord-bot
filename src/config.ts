@@ -27,6 +27,8 @@ const configObj: Record<string, string | number | undefined> = {
   SUBSCRIBE_FOOTER:
     'Delivered via /subscribe\n' +
     `/discord | /support | v${version} | made by Major (@theyodastream)`,
+  DISCORD_APPLICATION_DIRECTORY:
+    'https://discord.com/application-directory/1213944670288347176',
   DISCORD_INVITE: 'https://discord.gg/levialliance',
   KOFI_LINK: 'https://ko-fi.com/theyodastream',
   TOP_GG_LINK: 'https://top.gg/bot/1213944670288347176',

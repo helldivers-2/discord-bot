@@ -3,7 +3,7 @@ import {Command} from '../interfaces';
 import {EMBED_COLOUR, FOOTER_MESSAGE} from './_components';
 import {config} from '../config';
 
-const DISCORD_INVITE = config.DISCORD_INVITE;
+const {DISCORD_APPLICATION_DIRECTORY, DISCORD_INVITE} = config;
 
 const command: Command = {
   data: new SlashCommandBuilder()
@@ -11,7 +11,6 @@ const command: Command = {
     .setDescription('HellCom Discord invite'),
   run: async interaction => {
     await interaction.editReply({
-      content: DISCORD_INVITE,
       embeds: [
         new EmbedBuilder()
           .setTitle('Leviathan Alliance - Helldivers 2 Community')
@@ -22,7 +21,7 @@ const command: Command = {
               '\n\n' +
               'You may also see patches for the bot, report bugs or give suggestions __for the bot__. ' +
               'If you would like to invite the bot to your own server, you may do so with ' +
-              '__**[this link (click)](https://discord.com/api/oauth2/authorize?client_id=1213944670288347176&permissions=414464658496&scope=applications.commands%20bot)**__ (you must be a server admin).' +
+              `__**[this link (click)](${DISCORD_APPLICATION_DIRECTORY})**__ (you must be a server admin).` +
               '\n\n' +
               'Thanks for your interest in the project! <3'
           )
