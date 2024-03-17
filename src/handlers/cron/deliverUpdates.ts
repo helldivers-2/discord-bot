@@ -1,4 +1,4 @@
-import {EmbedBuilder} from 'discord.js';
+import {ChannelType, EmbedBuilder} from 'discord.js';
 import {
   getPopularCampaign,
   Faction,
@@ -62,7 +62,8 @@ export async function newCampaignUpdate(
   for (const channel of channels) {
     // TODO: fix issue where bot can see channel exists (is in the server), but cannot send messages. discord err 50001 Missing Access
     try {
-      await channel.send({embeds});
+      const message = await channel.send({embeds});
+      if (channel.type === ChannelType.GuildAnnouncement) message.crosspost();
     } catch (err) {
       logger.error(err);
     }
@@ -133,7 +134,8 @@ export async function wonPlanetUpdate(
   const promises: Promise<any>[] = [];
   for (const channel of channels) {
     try {
-      await channel.send({embeds});
+      const message = await channel.send({embeds});
+      if (channel.type === ChannelType.GuildAnnouncement) message.crosspost();
     } catch (err) {
       logger.error(err);
     }
@@ -205,7 +207,8 @@ export async function lostPlanetUpdate(
   const promises: Promise<any>[] = [];
   for (const channel of channels) {
     try {
-      await channel.send({embeds});
+      const message = await channel.send({embeds});
+      if (channel.type === ChannelType.GuildAnnouncement) message.crosspost();
     } catch (err) {
       logger.error(err);
     }
@@ -232,7 +235,8 @@ export async function newEventUpdate(event: GlobalEvent, channelIds: string[]) {
   const promises: Promise<any>[] = [];
   for (const channel of channels) {
     try {
-      await channel.send({embeds: [eventEmbed]});
+      const message = await channel.send({embeds: [eventEmbed]});
+      if (channel.type === ChannelType.GuildAnnouncement) message.crosspost();
     } catch (err) {
       logger.error(err);
     }
@@ -254,7 +258,8 @@ export async function newMajorOrderUpdater(
   const promises: Promise<any>[] = [];
   for (const channel of channels) {
     try {
-      await channel.send({embeds});
+      const message = await channel.send({embeds});
+      if (channel.type === ChannelType.GuildAnnouncement) message.crosspost();
     } catch (err) {
       logger.error(err);
     }
