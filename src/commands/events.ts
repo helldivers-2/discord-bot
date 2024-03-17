@@ -38,7 +38,19 @@ const subcmds: {[key: string]: (job: CommandInteraction) => Promise<void>} = {
 
 async function all(interaction: CommandInteraction) {
   const events = getAllEvents();
-
+  if (events.length === 0) {
+    await interaction.editReply({
+      embeds: [
+        new EmbedBuilder()
+          .setTitle('Zero Active Events')
+          .setDescription('Please check back later for new galactic events!')
+          .setThumbnail(factionSprites['Humans'])
+          .setFooter({text: FOOTER_MESSAGE})
+          .setTimestamp(),
+      ],
+    });
+    return;
+  }
   const embeds: EmbedBuilder[] = [];
   for (const event of events) {
     const title = event.title;
@@ -59,6 +71,19 @@ async function all(interaction: CommandInteraction) {
 
 async function latest(interaction: CommandInteraction) {
   const event = getLatestEvent();
+  if (!event) {
+    await interaction.editReply({
+      embeds: [
+        new EmbedBuilder()
+          .setTitle('Zero Active Events')
+          .setDescription('Please check back later for new galactic events!')
+          .setThumbnail(factionSprites['Humans'])
+          .setFooter({text: FOOTER_MESSAGE})
+          .setTimestamp(),
+      ],
+    });
+    return;
+  }
   const title = event.title;
   let message = event.message;
 
