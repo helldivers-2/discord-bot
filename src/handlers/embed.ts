@@ -3,6 +3,7 @@ import {
   CommandInteraction,
   EmbedBuilder,
   ModalSubmitInteraction,
+  NewsChannel,
   PublicThreadChannel,
   TextChannel,
 } from 'discord.js';
@@ -109,7 +110,7 @@ export function adminCommandEmbed(interaction: CommandInteraction) {
 
 export function subscribeEmbed(
   type: string,
-  channel: TextChannel | PublicThreadChannel
+  channel: NewsChannel | TextChannel | PublicThreadChannel
 ): EmbedBuilder[] {
   const embeds = [];
   const embed = new EmbedBuilder()
