@@ -112,14 +112,40 @@ export async function getData() {
   const assignment = assignmentApi as Assignment[];
 
   //https://api.live.prod.thehelldiversgame.com/api/NewsFeed/801
-  const newsFeedApi = await (
+  // fetch the earliest possible news, then using the latest timestamp, fetch more news until it returns empty
+  const newsFeed: NewsFeedItem[] = [];
+  let newsFeedApi = await (
     await axios.get(`${API_URL}/NewsFeed/${season}`, {
       headers: {
         'Accept-Language': 'en-us',
       },
     })
   ).data;
-  const newsFeed = newsFeedApi as NewsFeedItem[];
+  newsFeed.push(...(newsFeedApi as NewsFeedItem[]));
+  let newsFeedFrom = newsFeed.sort((a, b) => b.published - a.published)[0]
+    .published;
+  let newItemsAdded = true;
+  while (newsFeedApi.length > 0 && newItemsAdded) {
+    newItemsAdded = false;
+    newsFeedApi = await (
+      await axios.get(`${API_URL}/NewsFeed/${season}`, {
+        headers: {
+          'Accept-Language': 'en-us',
+        },
+        params: {
+          fromTimestamp: newsFeedFrom,
+        },
+      })
+    ).data;
+    newsFeedApi.forEach((item: NewsFeedItem) => {
+      if (!newsFeed.find(existingItem => existingItem.id === item.id)) {
+        newsFeed.push(item);
+        newItemsAdded = true;
+      }
+    });
+    newsFeedFrom = newsFeed.sort((a, b) => b.published - a.published)[0]
+      .published;
+  }
 
   const planets: MergedPlanetData[] = [];
   const players = {
