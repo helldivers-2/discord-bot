@@ -6,7 +6,7 @@ import {MergedCampaignData, getCampaignByPlanetName} from '../api-wrapper';
 import {dayjs} from './dates';
 
 const smallChartJSNodeCanvas = new ChartJSNodeCanvas({
-  width: 800,
+  width: 1000,
   height: 400,
   backgroundColour: 'black',
 });
@@ -89,12 +89,13 @@ export async function campaignHistoryGraph(planet: string) {
           },
           ticks: {
             color: 'rgb(255, 255, 255)', // White
-            // callback: value => {
-            //   return +value / 1000 + 'k';
-            // },
           },
         },
         x: {
+          title: {
+            text: 'Time (UTC)',
+            display: true,
+          },
           grid: {
             color: 'rgba(255, 255, 255, 0.1)', // Light white
           },
@@ -104,6 +105,11 @@ export async function campaignHistoryGraph(planet: string) {
         },
       },
       plugins: {
+        title: {
+          text: `${planet} ${liberationType} History`,
+          color: 'rgb(255, 255, 255)', // White
+          display: true,
+        },
         legend: {
           labels: {
             color: 'rgb(255, 255, 255)', // White

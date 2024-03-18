@@ -104,6 +104,10 @@ async function players(interaction: CommandInteraction) {
           },
         },
         x: {
+          title: {
+            text: 'Time (UTC)',
+            display: true,
+          },
           grid: {
             color: 'rgba(255, 255, 255, 0.1)', // Light white
           },
@@ -113,6 +117,11 @@ async function players(interaction: CommandInteraction) {
         },
       },
       plugins: {
+        title: {
+          text: 'Helldivers 2 Player Counts',
+          color: 'rgb(255, 255, 255)', // White
+          display: true,
+        },
         legend: {
           labels: {
             color: 'rgb(255, 255, 255)', // White
@@ -126,8 +135,8 @@ async function players(interaction: CommandInteraction) {
   const image = await renderMediumChart(configuration);
   const attachment = new AttachmentBuilder(image, {name: 'playercount.png'});
   const embed = new EmbedBuilder()
-    .setTitle('Player Count (in UTC)')
-    .setImage('attachment://playercount.png')
+    // .setTitle('Player Count (in UTC)')
+    // .setImage('attachment://playercount.png')
     .setFooter({text: FOOTER_MESSAGE});
 
   // we use editReply because slashcommands are deferred by default

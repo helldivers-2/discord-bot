@@ -61,8 +61,7 @@ async function info(interaction: CommandInteraction) {
   const embeds: EmbedBuilder[] = [
     ...(await campaignEmbeds(userQuery)),
     new EmbedBuilder()
-      .setTitle('Campaign History')
-      .setDescription('Times shown in UTC.')
+      .setTitle(`${userQuery} Campaign History`)
       .setImage('attachment://chart.png')
       .setFooter({text: FOOTER_MESSAGE})
       .setTimestamp(),
