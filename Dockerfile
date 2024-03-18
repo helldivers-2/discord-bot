@@ -1,4 +1,4 @@
-FROM node:16-alpine3.16 as base
+FROM node:20-bullseye-slim as base
 WORKDIR /app
 
 # Copy files for npm install and TS compile
@@ -15,12 +15,8 @@ RUN npm run build \
     && rm -rf node_modules \
     && npm ci --omit=dev
 
-# Deploy stage > copy runtime files, copy build files (prev. stage), install runtime deps
-FROM node:20-alpine3.18 as deploy
-WORKDIR /home/node/app
-
 # - - - FRESH BUILD STAGE - - -
-FROM node:16-alpine3.16 as deploy
+FROM node:20-bullseye-slim as deploy
 WORKDIR /home/node/app
 
 # Set user 'node' as the owner for all copied files
