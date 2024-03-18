@@ -20,10 +20,15 @@ jobs:
         with:
           fetch-depth: 0
 
+      # https://github.com/SeanSobey/ChartjsNodeCanvas/issues/114
       - name: Install Node
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 17
+
+      # https://github.com/Automattic/node-canvas/issues/2257#issuecomment-1708458155
+      # - name: Install dependencies
+      #   run: sudo apt-get install build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
 
       - name: Dry incremement patch version
         id: tag-dry-run
