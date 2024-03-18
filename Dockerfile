@@ -7,6 +7,12 @@ RUN npm ci --quiet
 
 COPY ./src ./src
 
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    # - For node-gyp
+    python make g++ \
+    # - For canvas
+    fontconfig
+
 # Build stage > build project, remove deps and install runtime deps
 FROM base AS build
 WORKDIR /app
