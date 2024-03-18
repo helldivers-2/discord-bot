@@ -129,14 +129,10 @@ async function players(interaction: CommandInteraction) {
     .setTitle('Player Count (in UTC)')
     .setImage('attachment://playercount.png')
     .setFooter({text: FOOTER_MESSAGE});
-  await interaction.editReply({embeds: [embed], files: [attachment]});
 
-  // const image = await renderMediumChart(configuration);
-  // const attachment = new AttachmentBuilder(image, {name: 'playercount.png'});
-  // console.log(`${image.length / 1024} kb of image data`);
   // we use editReply because slashcommands are deferred by default
   // discord requires a response within 3 seconds, so we defer a response and then edit it later
-  await interaction.editReply({files: [attachment]});
+  await interaction.editReply({embeds: [embed], files: [attachment]});
 }
 
 async function sub2(interaction: CommandInteraction) {
