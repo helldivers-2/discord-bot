@@ -4,6 +4,7 @@ import campaign from './campaign';
 import discord from './discord';
 import dispatches from './dispatches';
 import events from './events';
+import history from './history';
 import planet from './planet';
 import subscribe from './subscribe';
 import support from './support';
@@ -16,6 +17,7 @@ const commandList: Command[] = [
   discord,
   support,
   dispatches,
+  history,
 ];
 const notEphemeral: string[] = [];
 const ephemeralCmds = commandList

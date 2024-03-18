@@ -101,6 +101,7 @@ const onInteraction = async (interaction: Interaction) => {
         user: interaction.user.tag,
         guild: interaction.guildId,
         replied: interaction.replied,
+        stack: error.stack,
         ...error,
       });
 

@@ -1,11 +1,13 @@
 import {
+  AttachmentBuilder,
   CommandInteraction,
   EmbedBuilder,
   SlashCommandBuilder,
 } from 'discord.js';
 import {Command} from '../interfaces';
-import {campaignEmbeds} from '../handlers';
+import {campaignEmbeds, campaignHistoryGraph} from '../handlers';
 import {getPopularCampaign} from '../api-wrapper';
+import {FOOTER_MESSAGE} from './_components';
 
 const command: Command = {
   data: new SlashCommandBuilder()
@@ -56,9 +58,21 @@ async function list(interaction: CommandInteraction) {
 async function info(interaction: CommandInteraction) {
   const userQuery = interaction.options.get('planet_name', true)
     .value as string;
-  const embeds: EmbedBuilder[] = await campaignEmbeds(userQuery);
+  const embeds: EmbedBuilder[] = [
+    ...(await campaignEmbeds(userQuery)),
+    new EmbedBuilder()
+      .setTitle('Campaign History')
+      .setDescription('Times shown in UTC.')
+      .setImage('attachment://chart.png')
+      .setFooter({text: FOOTER_MESSAGE})
+      .setTimestamp(),
+  ];
+  const attachment = new AttachmentBuilder(
+    await campaignHistoryGraph(userQuery),
+    {name: 'chart.png'}
+  );
 
-  await interaction.editReply({embeds: embeds});
+  await interaction.editReply({embeds: embeds, files: [attachment]});
 }
 
 async function most(interaction: CommandInteraction) {

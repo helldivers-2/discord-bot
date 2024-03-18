@@ -427,7 +427,8 @@ export async function campaignEmbeds(planet_name?: string) {
       embeds.push(embed);
     }
   }
-  embeds[embeds.length - 1].setFooter({text: FOOTER_MESSAGE}).setTimestamp();
+  if (embeds.length > 1)
+    embeds[embeds.length - 1].setFooter({text: FOOTER_MESSAGE}).setTimestamp();
   return embeds;
 }
 
