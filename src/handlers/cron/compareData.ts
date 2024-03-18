@@ -13,6 +13,7 @@ import {
   lostPlanetUpdate,
   newCampaignUpdate,
   newEventUpdate,
+  newNewsUpdate,
   wonPlanetUpdate,
 } from '.';
 
@@ -87,6 +88,7 @@ export async function compareData(): Promise<WarDifferences | void> {
   const differences: WarDifferences = {
     NewCampaigns: [],
     NewEvents: [],
+    NewNewsFeed: [],
     NewMajorOrder: undefined,
     WonPlanets: [],
     LostPlanets: [],
@@ -171,6 +173,15 @@ export async function compareData(): Promise<WarDifferences | void> {
           lostPlanetUpdate(campaign, channelIds);
         }
       }
+    }
+  }
+  // TODO: compare news feeds
+  for (const item of newData.NewsFeed) {
+    const oldItem = oldData.NewsFeed.find(i => i.id === item.id);
+    if (!oldItem) {
+      differences.NewNewsFeed.push(item);
+      logger.info(`New news feed: ${item.message}`, {type: 'info'});
+      newNewsUpdate(item, channelIds);
     }
   }
   // compare old and new events

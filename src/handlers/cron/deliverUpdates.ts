@@ -5,6 +5,7 @@ import {
   MergedCampaignData,
   GlobalEvent,
   Assignment,
+  NewsFeedItem,
 } from '../../api-wrapper';
 import {FACTION_COLOUR} from '../../commands/_components';
 import {config, helldiversConfig} from '../../config';
@@ -246,7 +247,7 @@ export async function newEventUpdate(event: GlobalEvent, channelIds: string[]) {
 }
 // TODO: use new endpoint to get this
 // export async function newMajorOrdeUpdater(order: ??, channels: (TextChannel | PublicThreadChannel)[]) {}
-export async function newMajorOrderUpdater(
+export async function newMajorOrderUpdate(
   assignment: Assignment,
   channelIds: string[]
 ) {
@@ -267,10 +268,39 @@ export async function newMajorOrderUpdater(
   await Promise.all(promises);
   return;
 }
-// TODO: use new endpoint to get this
-// export async function newMessageUpdate(message: ??, channels: (TextChannel | PublicThreadChannel)[]) {}
-// LostPlanets
-// NewCampaigns
-// NewEvents
-// NewMajorOrder
-// WonPlanets
+
+export async function newNewsUpdate(news: NewsFeedItem, channelIds: string[]) {
+  const channels = await validateChannelArr(channelIds);
+  const {message} = news;
+  const embeds = message.includes('\n')
+    ? [
+        new EmbedBuilder()
+          .setAuthor({
+            name: 'New Dispatch from SE Command!',
+            iconURL: altSprites['Humans'],
+          })
+          .setTitle(message.split('\n')[0])
+          .setDescription(message.split('\n').slice(1).join('\n'))
+          .setFooter({text: SUBSCRIBE_FOOTER})
+          .setTimestamp(),
+      ]
+    : [
+        new EmbedBuilder()
+          .setAuthor({
+            name: 'New Dispatch from SE Command!',
+            iconURL: altSprites['Humans'],
+          })
+          .setDescription(news.message)
+          .setFooter({text: SUBSCRIBE_FOOTER})
+          .setTimestamp(),
+      ];
+
+  for (const channel of channels) {
+    try {
+      const message = await channel.send({embeds});
+      if (channel.type === ChannelType.GuildAnnouncement) message.crosspost();
+    } catch (err) {
+      logger.error(err);
+    }
+  }
+}

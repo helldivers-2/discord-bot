@@ -121,7 +121,12 @@ export async function getData() {
       },
     })
   ).data;
-  newsFeed.push(...(newsFeedApi as NewsFeedItem[]));
+  newsFeed.push(
+    ...(newsFeedApi.map((item: Omit<NewsFeedItem, 'publishedUtc'>) => ({
+      ...item,
+      publishedUtc: data.UTCOffset + item.published * 1000,
+    })) as NewsFeedItem[])
+  );
   let newsFeedFrom = newsFeed.sort((a, b) => b.published - a.published)[0]
     .published;
   let newItemsAdded = true;
@@ -139,13 +144,17 @@ export async function getData() {
     ).data;
     newsFeedApi.forEach((item: NewsFeedItem) => {
       if (!newsFeed.find(existingItem => existingItem.id === item.id)) {
-        newsFeed.push(item);
+        newsFeed.push({
+          ...item,
+          publishedUtc: data.UTCOffset + item.published * 1000,
+        });
         newItemsAdded = true;
       }
     });
     newsFeedFrom = newsFeed.sort((a, b) => b.published - a.published)[0]
       .published;
   }
+  newsFeed.sort((a, b) => b.published - a.published);
 
   const planets: MergedPlanetData[] = [];
   const players = {

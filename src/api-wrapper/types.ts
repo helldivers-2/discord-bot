@@ -201,6 +201,7 @@ export type Assignment = {
 export type NewsFeedItem = {
   id: number;
   published: number;
+  publishedUtc: number;
   type: number;
   tagIds: number[];
   message: string;
@@ -252,6 +253,7 @@ export type StrippedApiData = {
 export type WarDifferences = {
   NewCampaigns: MergedCampaignData[];
   NewEvents: GlobalEvent[];
+  NewNewsFeed: NewsFeedItem[];
   NewMajorOrder?: Assignment;
   WonPlanets: MergedCampaignData[];
   LostPlanets: MergedCampaignData[];
