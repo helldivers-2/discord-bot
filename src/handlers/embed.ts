@@ -337,6 +337,16 @@ export async function warStatusEmbeds() {
   const embeds = [automatonEmbed, terminidEmbed];
 
   if (majorOrder) embeds.push(majorOrderEmbed(majorOrder));
+  else
+    embeds.push(
+      new EmbedBuilder()
+        .setTitle('Awaiting Major Order')
+        .setColor(FACTION_COLOUR.Humans)
+        .setDescription(
+          'Stand by for further orders from Super Earth High Command'
+        )
+        .setThumbnail(factionSprites['Humans'])
+    );
 
   return embeds;
 }
