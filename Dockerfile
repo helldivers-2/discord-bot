@@ -6,6 +6,7 @@ COPY package*.json tsconfig.json ./
 RUN npm ci --quiet
 
 COPY ./src ./src
+COPY ./fonts ./fonts
 
 # Build stage > build project, remove deps and install runtime deps
 FROM base AS build
@@ -23,7 +24,7 @@ WORKDIR /home/node/app
 COPY --chown=node:node --from=build /app/build ./build
 COPY --chown=node:node --from=build /app/node_modules ./node_modules
 COPY --chown=node:node package*.json *.config.js ./
-COPY --chown=node:node --from=build /app/src/fonts ./fonts
+COPY --chown=node:node --from=build /app/fonts ./fonts
 
 # Set 'node' as owner of this directory (permits creating files eg. logs)
 RUN chown -h node:node .
