@@ -10,10 +10,17 @@ const smallChartJSNodeCanvas = new ChartJSNodeCanvas({
   height: 400,
   backgroundColour: 'black',
 });
+smallChartJSNodeCanvas.registerFont('./fonts/Monda-Regular.ttf', {
+  family: 'Monda',
+});
+
 const bigChartJSNodeCanvas = new ChartJSNodeCanvas({
   width: 2000,
   height: 2000,
   backgroundColour: 'black',
+});
+bigChartJSNodeCanvas.registerFont('./fonts/Monda-Regular.ttf', {
+  family: 'Monda',
 });
 
 export async function campaignHistoryGraph(planet: string) {
@@ -111,5 +118,6 @@ export async function campaignHistoryGraph(planet: string) {
 
 export const renderMediumChart = (configuration: ChartConfiguration) =>
   smallChartJSNodeCanvas.renderToBuffer(configuration);
+
 export const renderBigChart = (configuration: ChartConfiguration) =>
   bigChartJSNodeCanvas.renderToBuffer(configuration);

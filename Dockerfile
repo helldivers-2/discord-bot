@@ -7,12 +7,6 @@ RUN npm ci --quiet
 
 COPY ./src ./src
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    # - For node-gyp
-    python make g++ \
-    # - For canvas
-    fontconfig
-
 # Build stage > build project, remove deps and install runtime deps
 FROM base AS build
 WORKDIR /app
@@ -29,6 +23,7 @@ WORKDIR /home/node/app
 COPY --chown=node:node --from=build /app/build ./build
 COPY --chown=node:node --from=build /app/node_modules ./node_modules
 COPY --chown=node:node package*.json *.config.js ./
+COPY --chown=node:node --from=build /app/src/fonts ./fonts
 
 # Set 'node' as owner of this directory (permits creating files eg. logs)
 RUN chown -h node:node .
