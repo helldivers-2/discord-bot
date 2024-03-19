@@ -207,19 +207,13 @@ export function majorOrderEmbed(assignment: Assignment) {
       planetName: getPlanetName(t.values[2]),
       progress:
         campaigns.find(c => c.planetName === getPlanetName(t.values[2]))
-          ?.planetData.liberation ?? 100,
+          ?.planetData.liberation ?? 0,
     }));
-    let taskString = '';
-    for (const task of tasksDisplay)
-      taskString += `${task.completed ? '✅' : '❌'}: ${task.planetName}\n`;
 
     embedFields.push(
       ...tasksDisplay.map(task => ({
         name: task.planetName,
-        value:
-          task.progress === 100
-            ? '**COMPLETE**'
-            : `${task.progress.toFixed(2)}%`,
+        value: task.completed ? '**COMPLETE**' : `${task.progress.toFixed(2)}%`,
         inline: true,
       }))
     );
