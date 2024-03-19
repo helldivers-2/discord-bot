@@ -23,10 +23,10 @@ const configObj: Record<string, string | number | undefined> = {
   EMBED_COLOUR: process.env.EMBED_COLOUR || 'DarkPurple',
   FOOTER_MESSAGE:
     'Bug reports and suggestions welcome in Discord!\n' +
-    `/discord | /support | v${version} | made by Major (@theyodastream)`,
+    `/discord | v${version} | made by Major (@theyodastream)`,
   SUBSCRIBE_FOOTER:
     'Delivered via /subscribe\n' +
-    `/discord | /support | v${version} | made by Major (@theyodastream)`,
+    `/discord | v${version} | made by Major (@theyodastream)`,
   DISCORD_APPLICATION_DIRECTORY:
     'https://discord.com/application-directory/1213944670288347176',
   DISCORD_INVITE: 'https://discord.gg/levialliance',

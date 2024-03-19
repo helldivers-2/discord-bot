@@ -1,13 +1,13 @@
 import {CommandInteraction, ModalSubmitInteraction} from 'discord.js';
 import {Command} from '../interfaces';
 import campaign from './campaign';
+import community from './community';
 import discord from './discord';
 import dispatches from './dispatches';
 import events from './events';
 import history from './history';
 import planet from './planet';
 import subscribe from './subscribe';
-import support from './support';
 
 const commandList: Command[] = [
   planet,
@@ -15,9 +15,9 @@ const commandList: Command[] = [
   campaign,
   subscribe,
   discord,
-  support,
   dispatches,
   history,
+  community,
 ];
 const notEphemeral: string[] = [];
 const ephemeralCmds = commandList
