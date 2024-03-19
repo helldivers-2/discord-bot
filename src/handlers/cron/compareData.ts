@@ -111,22 +111,8 @@ export async function compareData(): Promise<WarDifferences | void> {
   // compare old api snapshot to the new one, check for changes
   // eg. new campaign, planet owner change, new event, new major order etc.
   // TODO: compare major order
-  // compare old and new campaigns
-  for (const campaign of newData.Campaigns) {
-    const {planetName} = campaign;
-    const oldCampaign = oldData.Campaigns.find(
-      c => c.planetName === planetName
-    );
-    if (!oldCampaign) {
-      differences.NewCampaigns.push(campaign);
-      // if there isn't an old campaign, then this is a new campaign
-      logger.info(`New campaign on ${planetName}`, {type: 'info'});
-      newCampaignUpdate(campaign, channelIds);
-    }
-  }
   // check the list of old campaigns to see if it doesn't exist in the new data
   // if not, then we either lost or won a planet
-
   for (const campaign of oldData.Campaigns) {
     const {planetName} = campaign;
     const newCampaign = newData.Campaigns.find(
@@ -175,7 +161,20 @@ export async function compareData(): Promise<WarDifferences | void> {
       }
     }
   }
-  // TODO: compare news feeds
+  // compare old and new campaigns
+  for (const campaign of newData.Campaigns) {
+    const {planetName} = campaign;
+    const oldCampaign = oldData.Campaigns.find(
+      c => c.planetName === planetName
+    );
+    if (!oldCampaign) {
+      differences.NewCampaigns.push(campaign);
+      // if there isn't an old campaign, then this is a new campaign
+      logger.info(`New campaign on ${planetName}`, {type: 'info'});
+      newCampaignUpdate(campaign, channelIds);
+    }
+  }
+  // compare news feeds
   for (const item of newData.NewsFeed) {
     const oldItem = oldData.NewsFeed.find(i => i.id === item.id);
     if (!oldItem) {
