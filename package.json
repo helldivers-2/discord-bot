@@ -30,6 +30,7 @@
   "dependencies": {
     "@newrelic/winston-enricher": "^4.0.1",
     "axios": "^1.6.7",
+    "canvas": "^2.11.2",
     "chart.js": "^3.9.1",
     "chartjs-node-canvas": "^4.1.6",
     "copyfiles": "^2.4.1",

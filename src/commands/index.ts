@@ -6,6 +6,7 @@ import discord from './discord';
 import dispatches from './dispatches';
 import events from './events';
 import history from './history';
+import map from './map';
 import planet from './planet';
 import subscribe from './subscribe';
 
@@ -18,6 +19,7 @@ const commandList: Command[] = [
   dispatches,
   history,
   community,
+  map,
 ];
 const notEphemeral: string[] = [];
 const ephemeralCmds = commandList
@@ -44,7 +46,7 @@ const presenceCmds = Object.keys(commandHash)
   .map(x => `/${x}`);
 
 // commands to offer planet autocomplete suggestions for
-const planetAutoCmds = ['planet'];
+const planetAutoCmds = ['planet', 'map'];
 const campaignAutoCmds = ['campaign'];
 
 // commands to not defer/suggestion etc. instead provide a modal for further input

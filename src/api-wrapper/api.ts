@@ -2,21 +2,16 @@ import {
   WarInfo,
   Status,
   MergedPlanetData,
-  GlobalEvent,
-  Faction,
   MergedCampaignData,
   MergedPlanetEventData,
   ApiData,
-  WarDifferences,
   Assignment,
   NewsFeedItem,
 } from './types';
 import {getFactionName, getPlanetEventType, getPlanetName} from './mapping';
-import {existsSync, mkdirSync, writeFileSync} from 'fs';
-import {dayjs, logger} from '../handlers';
-import path from 'path';
+import {writeFileSync} from 'fs';
 import {getAllPlanets} from './planets';
-import axios from 'axios';
+import axios, {AxiosRequestConfig} from 'axios';
 
 const API_URL = 'https://api.live.prod.thehelldiversgame.com/api';
 
@@ -71,31 +66,22 @@ export let data: ApiData = {
   NewsFeed: [],
 };
 
+const axiosOpts: AxiosRequestConfig = {
+  headers: {
+    'Accept-Language': 'en-us',
+  },
+};
+
 export async function getData() {
   const season = seasons.current;
-  const fileTimestamp = dayjs().format('DD_MM_YYYYTHH_mm_ssZZ[UTC]');
-  // logger.info(`Fetching data for season ${season} at ${fileTimestamp}`, {
-  //   type: 'info',
-  // });
-
-  if (!existsSync(path.join('api_responses', String(season))))
-    mkdirSync(path.join('api_responses', String(season)), {recursive: true});
 
   const warInfoApi = await (
-    await axios.get(`${API_URL}/WarSeason/${season}/WarInfo`, {
-      headers: {
-        'Accept-Language': 'en-us',
-      },
-    })
+    await axios.get(`${API_URL}/WarSeason/${season}/WarInfo`, axiosOpts)
   ).data;
   const warInfo = warInfoApi as WarInfo;
 
   const statusApi = await (
-    await axios.get(`${API_URL}/WarSeason/${season}/Status`, {
-      headers: {
-        'Accept-Language': 'en-us',
-      },
-    })
+    await axios.get(`${API_URL}/WarSeason/${season}/Status`, axiosOpts)
   ).data;
   const status = statusApi as Status;
   status.timeUtc = Date.now();
@@ -103,11 +89,7 @@ export async function getData() {
   // https://api.live.prod.thehelldiversgame.com/api/v2/Assignment/War/801
 
   const assignmentApi = await (
-    await axios.get(`${API_URL}/v2/Assignment/War/${season}`, {
-      headers: {
-        'Accept-Language': 'en-us',
-      },
-    })
+    await axios.get(`${API_URL}/v2/Assignment/War/${season}`, axiosOpts)
   ).data;
   const assignment = assignmentApi as Assignment[];
 
@@ -115,11 +97,7 @@ export async function getData() {
   // fetch the earliest possible news, then using the latest timestamp, fetch more news until it returns empty
   const newsFeed: NewsFeedItem[] = [];
   let newsFeedApi = await (
-    await axios.get(`${API_URL}/NewsFeed/${season}`, {
-      headers: {
-        'Accept-Language': 'en-us',
-      },
-    })
+    await axios.get(`${API_URL}/NewsFeed/${season}`, axiosOpts)
   ).data;
   newsFeed.push(
     ...(newsFeedApi.map((item: Omit<NewsFeedItem, 'publishedUtc'>) => ({
@@ -134,9 +112,7 @@ export async function getData() {
     newItemsAdded = false;
     newsFeedApi = await (
       await axios.get(`${API_URL}/NewsFeed/${season}`, {
-        headers: {
-          'Accept-Language': 'en-us',
-        },
+        ...axiosOpts,
         params: {
           fromTimestamp: newsFeedFrom,
         },
