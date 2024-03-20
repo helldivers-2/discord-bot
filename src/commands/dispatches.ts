@@ -42,7 +42,7 @@ const command: Command = {
       const timestamp = `\n**Recieved**: <t:${Math.floor(
         dispatch.publishedUtc / 1000
       )}:f>`;
-      if (message.includes('\n')) {
+      if (message && message.includes('\n')) {
         const title = message.split('\n')[0];
         const description = message.split('\n').slice(1).join('\n');
 
