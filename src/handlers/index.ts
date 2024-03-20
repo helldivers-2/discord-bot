@@ -1,6 +1,7 @@
 export * from './cron';
 export * from './discord';
 export * from './auth';
+export * from './canvas';
 export * from './client';
 export * from './custom';
 export * from './dates';

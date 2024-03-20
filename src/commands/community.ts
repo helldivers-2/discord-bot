@@ -15,25 +15,32 @@ const command: Command = {
       )
       .setFields(
         {
-          name: 'Helldivers Companion',
+          name: 'Helldivers Companion (Website)',
           value:
             'An awesome website showing ongoing war status with beautiful graphs for historical data!' +
             '\n' +
             'https://helldiverscompanion.com/',
         },
         {
-          name: 'Helldivers Galaxy',
+          name: 'Helldivers Galaxy (Website)',
           value:
             'Interactive Galactic Map for Helldivers' +
             '\n' +
             'https://helldiversgalaxy.io/',
         },
         {
-          name: 'Helldivers Training Manual',
+          name: 'Helldivers Training Manual (Website)',
           value:
             'Incredibly beautiful website for Helldivers 2 information. Features strategem information (and minigames!) with a fully-fledged bestiary and more.' +
             '\n' +
             'https://helldiverstrainingmanual.com/',
+        },
+        {
+          name: 'Helldivers 2 API Discussion (Discord)',
+          value:
+            'Community developer server for discussing the official HD2 API' +
+            '\n' +
+            'https://discord.gg/9euUqtF4kZ',
         }
       )
       .setFooter({text: FOOTER_MESSAGE})

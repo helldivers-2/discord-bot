@@ -8,6 +8,7 @@ import {Command} from '../interfaces';
 import {FOOTER_MESSAGE} from './_components';
 import {data} from '../api-wrapper';
 import {createCanvas, loadImage} from 'canvas';
+import {create2kCanvas, FONT} from '../handlers';
 
 const command: Command = {
   data: new SlashCommandBuilder()
@@ -45,8 +46,21 @@ const subcmds: {[key: string]: (job: CommandInteraction) => Promise<void>} = {
 
 async function galaxy(interaction: CommandInteraction) {
   const planets = data.Planets;
-  const canvas = createCanvas(2000, 2000);
+
+  const canvas = create2kCanvas();
   const context = canvas.getContext('2d');
+
+  // Start a new path for filling in only circle background
+  context.beginPath();
+  // Draw a circle in the middle of the canvas
+  context.arc(
+    canvas.width / 2,
+    canvas.height / 2,
+    Math.min(canvas.width, canvas.height) / 2,
+    0,
+    2 * Math.PI
+  );
+  context.clip(); // Clip rendering to the current circle path
   context.fillStyle = 'black';
   context.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -91,12 +105,14 @@ async function galaxy(interaction: CommandInteraction) {
 
     // Set the fill style for the text
     context.fillStyle = 'white';
-    context.font = '25px Arial';
+    context.font = `25px ${FONT}`;
 
     // Calculate the width of the text
     const textWidth = context.measureText(planet.name).width;
 
-    if (planet.owner === 'Humans') context.globalAlpha = 0.5;
+    // don't render the text if the planet is controlled by us and has no campaign
+    const campaign = data.Campaigns.find(c => c.planetIndex === planet.index);
+    if (planet.owner === 'Humans' && !campaign) continue;
 
     // Draw the planet name next to the point
     // If the planet is too close to the right edge, draw the text to the left of the point
@@ -126,8 +142,20 @@ async function planet(interaction: CommandInteraction) {
     .value as string;
 
   const planets = data.Planets;
-  const canvas = createCanvas(2000, 2000);
+
+  const canvas = create2kCanvas();
   const context = canvas.getContext('2d');
+  // Start a new path for filling in only circle background
+  context.beginPath();
+  // Draw a circle in the middle of the canvas
+  context.arc(
+    canvas.width / 2,
+    canvas.height / 2,
+    Math.min(canvas.width, canvas.height) / 2,
+    0,
+    2 * Math.PI
+  );
+  context.clip(); // Clip rendering to the current circle path
   context.fillStyle = 'black';
   context.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -181,7 +209,7 @@ async function planet(interaction: CommandInteraction) {
     const campaign = data.Campaigns.find(c => c.planetIndex === planet.index);
     let planetText: string = planet.name;
     if (campaign) {
-      context.font = '18px Arial';
+      context.font = `18px ${FONT}`;
 
       planetText += '\n';
       planetText += `Helldivers: ${campaign.planetData.players.toLocaleString()} (${
@@ -192,7 +220,13 @@ async function planet(interaction: CommandInteraction) {
         campaign.campaignType === 'Liberation'
           ? `Liberation: ${campaign.planetData.liberation.toFixed(2)}%`
           : `Defence: ${campaign.planetEvent?.defence.toFixed(2)}%`;
-    } else context.font = '15px Arial';
+    } else if (planet.name === userQuery) {
+      context.font = `18px ${FONT}`;
+      context.globalAlpha = 1;
+    } else {
+      context.font = `15px ${FONT}`;
+      context.globalAlpha = 0.5;
+    }
 
     // Draw the planet name next to the point
     // If the planet is too close to the right edge, draw the text to the left of the point
