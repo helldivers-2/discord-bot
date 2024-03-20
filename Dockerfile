@@ -3,6 +3,9 @@ WORKDIR /app
 
 # Copy files for npm install and TS compile
 COPY package*.json tsconfig.json ./
+RUN apt-get update \
+    && apt-get install build-essential libcairo2-dev libpango1.0-dev -y
+
 RUN npm ci --quiet
 
 COPY ./src ./src
@@ -20,6 +23,9 @@ RUN npm run build \
 # - - - FRESH BUILD STAGE - - -
 FROM node:20-bullseye-slim as deploy
 WORKDIR /home/node/app
+
+RUN apt-get update \
+    && apt-get --no-install-recommends install -y libcairo2-dev libpango1.0-dev
 
 # Set user 'node' as the owner for all copied files
 COPY --chown=node:node --from=build /app/build ./build
