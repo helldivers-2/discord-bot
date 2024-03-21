@@ -3,6 +3,10 @@ on:
   push:
     branches:
       - main
+    # Ignore changes in docs folder
+    paths-ignore:
+      - 'docs/**'
+
 concurrency: cd
 
 jobs:
