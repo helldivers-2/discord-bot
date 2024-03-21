@@ -41,6 +41,13 @@ const command: Command = {
             'Community developer server for discussing the official HD2 API' +
             '\n' +
             'https://discord.gg/9euUqtF4kZ',
+        },
+        {
+          name: 'Helldivers 2 Unofficial API (API)',
+          value:
+            'Python FastAPI proxy service for the Helldivers 2 API.' +
+            '\n' +
+            'https://api.diveharder.com/docs',
         }
       )
       .setFooter({text: FOOTER_MESSAGE})
