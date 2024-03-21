@@ -10,7 +10,7 @@ const configObj: Record<string, string | number | undefined> = {
   BOT_OWNER: process.env.BOT_OWNER || '319226464786710539',
 
   // Cron job intervals
-  PERSISTENT_MESSAGE_INTERVAL: '*/10 * * * *', // every 10 minutes
+  PERSISTENT_MESSAGE_INTERVAL: '0 * * * *', // every hour
   API_UPDATE_INTERVAL: '*/10 * * * * *', // every 10 seconds
   STATUS_UPDATE_INTERVAL: '*/3 * * * * *', // every 3 seconds
   DB_DATA_INTERVAL: '0 * * * *', // every 1 hour
