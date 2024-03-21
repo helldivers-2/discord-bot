@@ -22,8 +22,10 @@ export async function updateMessages() {
       eq(persistentMessages.production, isProd)
     ),
   });
-
-  const promises: Promise<any>[] = [];
+  logger.info(`Updating ${messages.length} persistent messages`, {
+    type: 'update',
+  });
+  // const promises: Promise<any>[] = [];
   for (const message of messages) {
     const {messageId, channelId, type: messageType} = message;
 
@@ -42,11 +44,9 @@ export async function updateMessages() {
         if (discordMsg)
           switch (messageType) {
             case 'war_status':
-              promises.push(
-                discordMsg.edit({
-                  embeds: embeds.curr_war,
-                })
-              );
+              discordMsg.edit({
+                embeds: embeds.curr_war,
+              });
               break;
           }
       }
@@ -102,11 +102,11 @@ export async function updateMessages() {
   }
 
   // await all message edits completion
-  await Promise.all(promises);
-  const time = `${Date.now() - start}ms`;
-  logger.info(`Updated ${messages.length} messages in ${time}`, {
-    type: 'info',
-  });
+  // await Promise.all(promises);
+  // const time = `${Date.now() - start}ms`;
+  // logger.info(`Updated ${messages.length} messages in ${time}`, {
+  //   type: 'info',
+  // });
 }
 
 export async function warStatusPersistentMessage() {

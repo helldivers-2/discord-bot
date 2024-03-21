@@ -22,6 +22,13 @@ const command: Command = {
             'https://helldiverscompanion.com/',
         },
         {
+          name: 'Helldivers 2 Unofficial API (API) - dealloc',
+          value:
+            'Reverse engineered API of the official Helldivers 2 video game, aiming to be a central go-to point for folks looking to build upon HD2 information.' +
+            '\n' +
+            'https://github.com/dealloc/helldivers2-api',
+        },
+        {
           name: 'Helldivers Galaxy (Website)',
           value:
             'Interactive Galactic Map for Helldivers' +
@@ -43,7 +50,7 @@ const command: Command = {
             'https://discord.gg/9euUqtF4kZ',
         },
         {
-          name: 'Helldivers 2 Unofficial API (API)',
+          name: 'Helldivers 2 Unofficial API (API) - chats',
           value:
             'Python FastAPI proxy service for the Helldivers 2 API.' +
             '\n' +

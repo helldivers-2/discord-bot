@@ -98,7 +98,10 @@ const axiosOpts: AxiosRequestConfig = {
 let getDataCounter = 0;
 export async function getData() {
   const season = seasons.current;
-
+  // https://api.live.prod.thehelldiversgame.com/api/WarSeason/801/Status
+  // https://api.live.prod.thehelldiversgame.com/api/WarSeason/801/WarInfo
+  // https://api.live.prod.thehelldiversgame.com/api/NewsFeed/801
+  // https://api.live.prod.thehelldiversgame.com/api/v2/Assignment/War/801
   const warInfoApi = await (
     await axios.get(`${API_URL}/WarSeason/${season}/WarInfo`, axiosOpts)
   ).data;
