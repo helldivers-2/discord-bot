@@ -1,7 +1,7 @@
 import {ChartConfiguration} from 'chart.js';
 import {ChartJSNodeCanvas} from 'chartjs-node-canvas';
 import {apiData, db} from '../db';
-import {asc, desc} from 'drizzle-orm';
+import {desc} from 'drizzle-orm';
 import {MergedCampaignData, getCampaignByPlanetName} from '../api-wrapper';
 import {dayjs} from './dates';
 

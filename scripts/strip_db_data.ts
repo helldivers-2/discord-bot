@@ -1,4 +1,4 @@
-import {db, apiData, eq} from '../src/db';
+import {db} from '../src/db';
 import fs from 'fs';
 
 const main = async () => {

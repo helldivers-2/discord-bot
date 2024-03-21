@@ -4,9 +4,7 @@ import {
   json,
   pgEnum,
   pgTable,
-  serial,
   timestamp,
-  uniqueIndex,
   varchar,
 } from 'drizzle-orm/pg-core';
 import {StrippedApiData} from '../api-wrapper';

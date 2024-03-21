@@ -9,8 +9,6 @@ import {Command} from '../interfaces';
 import {EMBED_COLOUR, FOOTER_MESSAGE} from './_components';
 import {
   client,
-  missingChannelPerms,
-  sleep,
   subscribeEmbed,
   subscribeNotifEmbed,
   warStatusPersistentMessage,
@@ -68,17 +66,6 @@ const command: Command = {
 
   run: async interaction => {
     const subcommand = interaction.options.data[0].name;
-
-    // TODO: re-enable one the bot is approved for priv intents
-    // if (interaction.guild) {
-    //   const user = await interaction.guild.members.fetch(interaction.user.id);
-    //   if (!user.permissions.has('ManageMessages')) {
-    //     // respond with missing perms, then delete the response after 5s
-    //     await interaction.editReply(missingChannelPerms(interaction));
-
-    //     return;
-    //   }
-    // }
 
     await subcmds[subcommand](interaction);
   },

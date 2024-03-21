@@ -3,15 +3,9 @@ import {
   EmbedBuilder,
   SlashCommandBuilder,
 } from 'discord.js';
-import {
-  getAllActivePlanets,
-  getPlanetAttacks,
-  getPlanetByName,
-  getAllPlayers,
-  getAllCampaigns,
-} from '../api-wrapper';
+import {getPlanetByName, getAllCampaigns} from '../api-wrapper';
 import {Command} from '../interfaces';
-import {EMBED_COLOUR, FACTION_COLOUR, FOOTER_MESSAGE} from './_components';
+import {FACTION_COLOUR, FOOTER_MESSAGE} from './_components';
 import {planetNameTransform, warStatusEmbeds} from '../handlers';
 
 const command: Command = {
@@ -70,11 +64,8 @@ async function info(interaction: CommandInteraction) {
   }
 
   const {
-    index,
-    name,
     sector,
     maxHealth,
-    initialOwner,
     owner,
     health,
     lossPercPerHour,

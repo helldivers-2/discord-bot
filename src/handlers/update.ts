@@ -10,7 +10,7 @@ const SUBSCRIBE_FOOTER = config.SUBSCRIBE_FOOTER;
 
 export async function updateMessages() {
   // measure time taken to update all persistent messages
-  const start = Date.now();
+  // const start = Date.now();
 
   const embeds = {
     curr_war: await warStatusPersistentMessage(),

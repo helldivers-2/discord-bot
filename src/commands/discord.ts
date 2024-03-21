@@ -1,7 +1,7 @@
 import {EmbedBuilder, SlashCommandBuilder} from 'discord.js';
 import {Command} from '../interfaces';
 import {EMBED_COLOUR, FOOTER_MESSAGE} from './_components';
-import {config, helldiversConfig} from '../config';
+import {config} from '../config';
 import {client} from '../handlers';
 
 const {
@@ -11,7 +11,6 @@ const {
   TOP_GG_LINK,
   BOT_OWNER,
 } = config;
-const {icons} = helldiversConfig;
 
 const command: Command = {
   data: new SlashCommandBuilder()
@@ -28,24 +27,6 @@ const command: Command = {
             iconURL: owner?.avatarURL?.() || undefined,
           })
           .setTitle('Leviathan Alliance - Helldivers 2 Community')
-          // .setDescription(
-          //   'HellCom is part of **Leviathan Alliance**! ' +
-          //     '\n\n' +
-          //     'Leviathan Alliance is a community of welcoming, like-minded Helldivers who are passionate about Helldivers 2! We also built this server knowing that the official Helldivers Discord can be hectic and overwhelming, so we hope you can find friendly Helldivers more easily here!' +
-          //     '\n\n' +
-          //     'You may also see patches for the bot, report bugs or give suggestions __for the bot__. ' +
-          //     'If you would like to invite the bot to your own server, you may do so with ' +
-          //     `__**[this link (click)](${DISCORD_APPLICATION_DIRECTORY})**__ (you must be a server admin).` +
-          //     '\n\n' +
-          //     ' HellCom is a personal project, worked on in my spare time. ' +
-          //     `If you'd like to help cover hosting costs, or just support me in general, you can with my **[ko-fi link](${KOFI_LINK})**.` +
-          //     '\n' +
-          //     `Another way to support HellCom is via [voting for and/or reviewing it on top.gg](${TOP_GG_LINK}) so fellow Helldivers can find it more easily!` +
-          //     '\n\n' +
-          //     `HellCom is a community-driven project, so I'm always open to suggestions and bug reports. Feel free to join the **[Discord](${DISCORD_INVITE})** and chat with me there!` +
-          //     '\n\n' +
-          //     'Thanks for your interest in the project! <3'
-          // )
           .setFields(
             {
               name: 'HellCom is part of Leviathan Alliance!',

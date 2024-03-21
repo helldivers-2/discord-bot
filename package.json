@@ -1,9 +1,9 @@
 {
-  "name": "helldivers-bot",
-  "description": "Welcome to the repo for Helldivers's discord bot! This bot is intended to be a helper for Helldivers's team and community.",
+  "name": "hellcom-bot",
+  "description": "Welcome to the repo for HellCom Discord bot! This bot is intended to be a helper/utility for Helldivers's community. Democracy!",
   "version": "0.0.0",
   "author": "jgaribsin",
-  "license": "ISC",
+  "license": "AGPL-3.0-only",
   "scripts": {
     "lint": "gts lint",
     "clean": "gts clean",

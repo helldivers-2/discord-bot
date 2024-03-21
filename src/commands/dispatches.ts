@@ -1,8 +1,4 @@
-import {
-  CommandInteraction,
-  EmbedBuilder,
-  SlashCommandBuilder,
-} from 'discord.js';
+import {EmbedBuilder, SlashCommandBuilder} from 'discord.js';
 import {Command} from '../interfaces';
 import {FOOTER_MESSAGE} from './_components';
 import {getAllDispatches} from '../api-wrapper';

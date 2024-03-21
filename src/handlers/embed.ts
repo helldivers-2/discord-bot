@@ -152,7 +152,7 @@ export function subscribeNotifEmbed(type: string): EmbedBuilder[] {
 }
 
 export function majorOrderEmbed(assignment: Assignment) {
-  const {expiresIn, id32, progress, setting} = assignment;
+  const {expiresIn, progress, setting} = assignment;
   const {
     type: settingsType,
     overrideTitle,
@@ -352,7 +352,7 @@ export async function campaignEmbeds(planet_name?: string) {
 
   const embeds = [];
   for (const campaign of campaigns) {
-    const {planetName, type, campaignType, planetData, planetEvent} = campaign;
+    const {planetName, campaignType, planetData, planetEvent} = campaign;
     const title = `${planetName}: ${campaignType.toUpperCase()}`;
     const planetThumbnailUrl = `https://helldiverscompanionimagescdn.b-cdn.net/planet-images/${planetNameTransform(
       planetName
@@ -364,7 +364,6 @@ export async function campaignEmbeds(planet_name?: string) {
         initialOwner,
         owner,
         health,
-        regenPerSecond,
         players,
         playerPerc,
         liberation,
@@ -390,15 +389,8 @@ export async function campaignEmbeds(planet_name?: string) {
         embed.addFields({name: key, value: val.toString(), inline: true});
       }
     } else if (campaignType === 'Defend') {
-      const {
-        maxHealth,
-        health,
-        defence,
-        eventType,
-        race,
-        startTime,
-        expireTime,
-      } = planetEvent as MergedPlanetEventData;
+      const {maxHealth, health, defence, race, expireTime} =
+        planetEvent as MergedPlanetEventData;
       const {players, playerPerc, owner} = planetData;
 
       const embed = new EmbedBuilder()
@@ -424,17 +416,6 @@ export async function campaignEmbeds(planet_name?: string) {
   if (embeds.length > 1)
     embeds[embeds.length - 1].setFooter({text: FOOTER_MESSAGE}).setTimestamp();
   return embeds;
-}
-
-function drawLoadingBar(total: number, current: number, barLength: number) {
-  const percentage = current / total;
-  const progress = Math.round(barLength * percentage);
-  const empty = barLength - progress;
-
-  const progressBar = '[`' + '#'.repeat(progress) + ' '.repeat(empty) + '`]';
-  const percentageText = (percentage * 100).toFixed(2) + '%';
-
-  return progressBar + ' ' + percentageText;
 }
 
 function drawLoadingBarPerc(percentage: number, barLength: number) {

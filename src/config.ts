@@ -1,7 +1,6 @@
 import 'dotenv/config';
 require('newrelic');
 import {version} from '../package.json';
-import {Faction} from './api-wrapper';
 const isProd = process.env.NODE_ENV === 'production';
 
 const configObj: Record<string, string | number | undefined> = {

@@ -5,7 +5,7 @@ import {
   SlashCommandBuilder,
 } from 'discord.js';
 import {Command} from '../interfaces';
-import {EMBED_COLOUR, FACTION_COLOUR, FOOTER_MESSAGE} from './_components';
+import {FOOTER_MESSAGE} from './_components';
 import {apiData, db} from '../db';
 import {desc} from 'drizzle-orm';
 import {ChartConfiguration} from 'chart.js';
@@ -30,10 +30,7 @@ const command: Command = {
 };
 
 const subcmds: {[key: string]: (job: CommandInteraction) => Promise<void>} = {
-  // hashmap of subcommands
-  // TODO:
   players,
-  sub2,
 };
 
 async function players(interaction: CommandInteraction) {
@@ -142,19 +139,6 @@ async function players(interaction: CommandInteraction) {
   // we use editReply because slashcommands are deferred by default
   // discord requires a response within 3 seconds, so we defer a response and then edit it later
   await interaction.editReply({embeds: [embed], files: [attachment]});
-}
-
-async function sub2(interaction: CommandInteraction) {
-  // TODO: implement subcommand
-  const embed = new EmbedBuilder()
-    .setTitle('EMBED_TITLE')
-    .setDescription('EMBED_DESC')
-    .setFooter({text: FOOTER_MESSAGE})
-    .setTimestamp();
-
-  // we use editReply because slashcommands are deferred by default
-  // discord requires a response within 3 seconds, so we defer a response and then edit it later
-  await interaction.editReply({embeds: [embed]});
 }
 
 export default command;
