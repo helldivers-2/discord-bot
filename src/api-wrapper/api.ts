@@ -7,13 +7,17 @@ import {
   ApiData,
   Assignment,
   NewsFeedItem,
+  PlanetStats,
+  PlanetStatsItem,
 } from './types';
 import {getFactionName, getPlanetEventType, getPlanetName} from './mapping';
 import {writeFileSync} from 'fs';
 import {getAllPlanets} from './planets';
 import axios, {AxiosRequestConfig} from 'axios';
+import {config} from '../config';
 
 const API_URL = 'https://api.live.prod.thehelldiversgame.com/api';
+const {IDENTIFIER} = config;
 
 export const seasons = {
   current: 801,
@@ -64,6 +68,25 @@ export let data: ApiData = {
   UTCOffset: 0,
   Assignment: [],
   NewsFeed: [],
+  PlanetStats: {
+    galaxy_stats: {
+      missionsWon: 0,
+      missionsLost: 0,
+      missionTime: 0,
+      bugKills: 0,
+      automatonKills: 0,
+      illuminateKills: 0,
+      bulletsFired: 0,
+      bulletsHit: 0,
+      timePlayed: 0,
+      deaths: 0,
+      revives: 0,
+      friendlies: 0,
+      missionSuccessRate: 0,
+      accurracy: 0,
+    },
+    planets_stats: [],
+  },
 };
 
 const axiosOpts: AxiosRequestConfig = {
@@ -72,6 +95,7 @@ const axiosOpts: AxiosRequestConfig = {
   },
 };
 
+let getDataCounter = 0;
 export async function getData() {
   const season = seasons.current;
 
@@ -86,12 +110,34 @@ export async function getData() {
   const status = statusApi as Status;
   status.timeUtc = Date.now();
 
-  // https://api.live.prod.thehelldiversgame.com/api/v2/Assignment/War/801
-
   const assignmentApi = await (
     await axios.get(`${API_URL}/v2/Assignment/War/${season}`, axiosOpts)
   ).data;
   const assignment = assignmentApi as Assignment[];
+
+  // Unofficial: api wrapper for the authed planetStats endpoint
+  // https://api.diveharder.com/raw/planetStats
+  let planetStats: PlanetStats = data.PlanetStats;
+  if (getDataCounter % 2 === 0) {
+    const planetStatsApi = await (
+      await axios.get('https://api.diveharder.com/raw/planetStats', {
+        ...axiosOpts,
+        params: {
+          source: IDENTIFIER,
+        },
+      })
+    ).data;
+
+    planetStats = {
+      galaxy_stats: planetStatsApi.galaxy_stats,
+      planets_stats: planetStatsApi.planets_stats.map(
+        (p: Omit<PlanetStatsItem, 'planetName'>) => ({
+          ...p,
+          planetName: getPlanetName(p.planetIndex),
+        })
+      ),
+    };
+  }
 
   //https://api.live.prod.thehelldiversgame.com/api/NewsFeed/801
   // fetch the earliest possible news, then using the latest timestamp, fetch more news until it returns empty
@@ -99,6 +145,7 @@ export async function getData() {
   let newsFeedApi = await (
     await axios.get(`${API_URL}/NewsFeed/${season}`, axiosOpts)
   ).data;
+
   newsFeed.push(
     ...(newsFeedApi.map((item: Omit<NewsFeedItem, 'publishedUtc'>) => ({
       ...item,
@@ -194,6 +241,7 @@ export async function getData() {
     Status: status,
     Assignment: assignment,
     NewsFeed: newsFeed,
+    PlanetStats: planetStats,
     Planets: planets,
     Campaigns: campaigns,
     PlanetEvents: planetEvents,
@@ -210,6 +258,7 @@ export async function getData() {
     UTCOffset: Math.floor(status.timeUtc - status.time * 1000), // use this value to add to the time to get the UTC time in seconds
   };
 
+  getDataCounter++;
   writeFileSync('data.json', JSON.stringify(data, null, 2));
   return data;
 }

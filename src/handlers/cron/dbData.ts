@@ -32,6 +32,7 @@ export async function dbData() {
     },
     Assignment: data.Assignment,
     NewsFeed: data.NewsFeed,
+    PlanetStats: data.PlanetStats,
     Campaigns: data.Campaigns,
     PlanetEvents: data.PlanetEvents,
     ActivePlanets: data.ActivePlanets,

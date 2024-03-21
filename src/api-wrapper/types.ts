@@ -217,11 +217,36 @@ export type WarOverview = {
   Events: GlobalEvent[];
 };
 
+export type PlanetStatsItem = {
+  planetIndex: number;
+  planetName: string;
+  missionsWon: number;
+  missionsLost: number;
+  missionTime: number;
+  bugKills: number;
+  automatonKills: number;
+  illuminateKills: number;
+  bulletsFired: number;
+  bulletsHit: number;
+  timePlayed: number;
+  deaths: number;
+  revives: number;
+  friendlies: number;
+  missionSuccessRate: number;
+  accurracy: number;
+};
+
+export type PlanetStats = {
+  galaxy_stats: Omit<PlanetStatsItem, 'planetIndex' | 'planetName'>;
+  planets_stats: PlanetStatsItem[];
+};
+
 export type ApiData = {
   WarInfo: WarInfo;
   Status: Status;
   Assignment: Assignment[];
   NewsFeed: NewsFeedItem[];
+  PlanetStats: PlanetStats;
   Planets: MergedPlanetData[];
   Campaigns: MergedCampaignData[];
   PlanetEvents: MergedPlanetEventData[];
@@ -239,6 +264,7 @@ export type StrippedApiData = {
   Status: Omit<Status, 'planetStatus'>;
   Assignment: Assignment[];
   NewsFeed: NewsFeedItem[];
+  PlanetStats: PlanetStats;
   Campaigns: MergedCampaignData[];
   PlanetEvents: MergedPlanetEventData[];
   ActivePlanets: MergedPlanetData[];

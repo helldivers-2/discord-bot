@@ -35,6 +35,7 @@ const configObj: Record<string, string | number | undefined> = {
 
   // Project info
   VERSION: version,
+  IDENTIFIER: 'hellcom' + (isProd ? '' : '-dev'),
 };
 
 const config: Record<string, string> = {};
