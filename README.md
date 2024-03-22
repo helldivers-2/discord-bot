@@ -9,7 +9,8 @@ HellCom will be continuously updated and improved. It is a community-driven proj
 You can add it to your own server using **[this link (click)](https://discord.com/application-directory/1213944670288347176)**.
 
 ## Commands
-
+<details>
+  <summary>Discord Slash Commands </summary>
 - `/campaign`: Campaign-related information (playable planets)
   - `/campaign list`: Gives an overview of all currently active planets with some stats for each one
   - `/campaign most`: Gives an overview of the campaign with the most active players
@@ -31,14 +32,18 @@ You can add it to your own server using **[this link (click)](https://discord.co
 - `/subscribe`
   - `/subscribe event`: Allows users to "subscribe" a channel to event updated. The bot will then post updates about the war in that channel as it happens -- stuff like winning (or losing!) a campaign, getting access to a new planet, new dispatch messages, new major orders.
   - `/subscribe status`: Sends a message in the channel the command was used, displays summary information (identical to `/planet list`) and will update after certain intervals automatically.
-
+</details>
 If you notice any issues, or have a suggestion, feel free to contact me via Discord @`theyodastream`.
 
 ## Development
-
-Created using [TypeScript](https://www.typescriptlang.org/) and [discord.js](https://discord.js.org/#/), using [Supabase](https://supabase.com/) for a PG db/backend, and [New Relic](https://newrelic.com/platform) for logging/metrics. Using [gts (Google TypeScript Style)](https://github.com/google/gts) for styling/formatting.
-
-Deployed using Docker (currently) with k8s. Container images are built via [GitHub Actions](/.github/workflows/build.yml) and uploaded to GitHub Container Registry (this repo's GHCR). GH Actions also handles semantic versioning using commit message substrings, saving them as GitHub tags (eg. `v0.0.30):
+Styled with [![Code Style: Google](https://img.shields.io/badge/code%20style-google-blueviolet.svg)](https://github.com/google/gts)  
+Created with [![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)[![Static Badge](https://img.shields.io/badge/discord.js-0a168d?style=for-the-badge)](https://discord.js.org/)  
+Postgres DB on [![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)  
+Logging/Metrics with [![Static Badge](https://img.shields.io/badge/New%20Relic-2fdd88?style=for-the-badge)](https://newrelic.com/platform)   
+Deployed with ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)![Kubernetes](https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white)  
+  
+Container images are built via [GitHub Actions](/.github/workflows/build.yml) and uploaded to GitHub Container Registry (this repo's GHCR).  
+GH Actions also handles semantic versioning using commit message substrings, saving them as GitHub tags (eg. `v0.0.30):
 
 - `#skip-ci`: Skips the workflow completely; Useful if changing things unrelated to code (eg. README)
 - `#none`: Builds new image, but with no semver change (eg. `v1.2.3` -> `v.1.2.3`)
