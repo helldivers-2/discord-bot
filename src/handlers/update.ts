@@ -25,7 +25,9 @@ export async function updateMessages() {
   // const promises: Promise<any>[] = [];
   for (const message of messages) {
     const {messageId, channelId, type: messageType} = message;
-    logger.debug(`Attempting to update message ${messageId}`, {
+    logger.info(`Attempting to update message ${messageId}`, {
+      ...message,
+      message_type: messageType,
       type: 'update',
     });
 
@@ -37,25 +39,37 @@ export async function updateMessages() {
         // force: true,
       });
       if (!channel) {
-        logger.debug(`Channel not found: ${channelId}`, {type: 'update'});
+        logger.info(`Channel not found: ${channelId}`, {
+          ...message,
+          message_type: messageType,
+          type: 'update',
+        });
         continue;
       }
       if (channel.isTextBased()) {
         const msg = await channel.messages.edit(messageId, {
           embeds: embeds[messageType],
         });
-        logger.debug(
+        logger.info(
           `Successfully updated message ${msg.id} in ${msg.channel.id}`,
-          {type: 'update'}
+          {
+            ...message,
+            message_type: messageType,
+            type: 'update',
+          }
         );
       } else
-        logger.debug(`Channel not text-based: ${channelId}`, {type: 'update'});
+        logger.info(`Channel not text-based: ${channelId}`, {
+          ...message,
+          message_type: messageType,
+          type: 'update',
+        });
     } catch (err) {
-      logger.warn(err);
+      logger.error(err);
       const discordErr = err as DiscordAPIError;
       // discord API error codes
       // https://github.com/meew0/discord-api-docs-1/blob/master/docs/topics/RESPONSE_CODES.md#json-error-response
-      logger.warn(`Error updating message: ${discordErr.message}`, {
+      logger.error(`Error updating message: ${discordErr.message}`, {
         type: 'update',
         ...discordErr,
       });
