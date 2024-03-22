@@ -1,4 +1,4 @@
-import {ChannelType, DiscordAPIError, EmbedBuilder} from 'discord.js';
+import {DiscordAPIError, EmbedBuilder, TextBasedChannel} from 'discord.js';
 import {and, eq} from 'drizzle-orm';
 import {config, isProd} from '../config';
 import {db, persistentMessages} from '../db';
@@ -9,9 +9,6 @@ import {logger} from './logging';
 const SUBSCRIBE_FOOTER = config.SUBSCRIBE_FOOTER;
 
 export async function updateMessages() {
-  // measure time taken to update all persistent messages
-  // const start = Date.now();
-
   const embeds = {
     curr_war: await warStatusPersistentMessage(),
   };
@@ -31,17 +28,16 @@ export async function updateMessages() {
 
     try {
       // try fetching the channel, may throw '50001', bot can't see channel
-      const messageChannel = await client.channels.fetch(channelId);
-      if (
-        messageChannel &&
-        (messageChannel.type === ChannelType.GuildText ||
-          messageChannel.type === ChannelType.PublicThread ||
-          messageChannel.type === ChannelType.GuildAnnouncement ||
-          messageChannel.type === ChannelType.AnnouncementThread)
-      ) {
-        // try fetching the message, may throw '10008', message doesn't exist (deleted?)
-        const discordMsg = await messageChannel.messages.fetch(messageId);
-        if (discordMsg)
+      const messageChannel = await client.channels.fetch(channelId, {
+        // https://old.discordjs.dev/#/docs/discord.js/14.14.1/typedef/FetchChannelOptions
+        allowUnknownGuild: true,
+      });
+
+      if (messageChannel && messageChannel.isTextBased()) {
+        const textChannel = messageChannel as TextBasedChannel;
+        const discordMsg = await textChannel.messages.fetch(messageId);
+
+        if (discordMsg) {
           switch (messageType) {
             case 'war_status':
               discordMsg.edit({
@@ -49,8 +45,10 @@ export async function updateMessages() {
               });
               break;
           }
+        }
       }
     } catch (err) {
+      logger.warn(err);
       const discordErr = err as DiscordAPIError;
       // discord API error codes
       // https://github.com/meew0/discord-api-docs-1/blob/master/docs/topics/RESPONSE_CODES.md#json-error-response
@@ -100,13 +98,6 @@ export async function updateMessages() {
       // }
     }
   }
-
-  // await all message edits completion
-  // await Promise.all(promises);
-  // const time = `${Date.now() - start}ms`;
-  // logger.info(`Updated ${messages.length} messages in ${time}`, {
-  //   type: 'info',
-  // });
 }
 
 export async function warStatusPersistentMessage() {
