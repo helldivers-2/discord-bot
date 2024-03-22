@@ -40,13 +40,25 @@ export async function updateMessages() {
         if (discordMsg) {
           switch (messageType) {
             case 'war_status':
-              discordMsg.edit({
-                embeds: embeds.curr_war,
+              logger.debug(`Attempting to update message ${messageId}`, {
+                type: 'update',
               });
+              discordMsg
+                .edit({
+                  embeds: embeds.curr_war,
+                })
+                .then(msg => {
+                  logger.debug(
+                    `Successfully updated message ${msg.id} in ${msg.channel.id}`,
+                    {
+                      type: 'update',
+                    }
+                  );
+                });
               break;
           }
         }
-      }
+      } else logger.debug(`Channel not found: ${channelId}`, {type: 'update'});
     } catch (err) {
       logger.warn(err);
       const discordErr = err as DiscordAPIError;
