@@ -9,8 +9,8 @@ import {logger} from './logging';
 const SUBSCRIBE_FOOTER = config.SUBSCRIBE_FOOTER;
 
 export async function updateMessages() {
-  const embeds = {
-    curr_war: await warStatusPersistentMessage(),
+  const embeds: Record<string, EmbedBuilder[]> = {
+    war_status: await warStatusPersistentMessage(),
   };
 
   const messages = await db.query.persistentMessages.findMany({
@@ -25,40 +25,31 @@ export async function updateMessages() {
   // const promises: Promise<any>[] = [];
   for (const message of messages) {
     const {messageId, channelId, type: messageType} = message;
+    logger.debug(`Attempting to update message ${messageId}`, {
+      type: 'update',
+    });
 
     try {
       // try fetching the channel, may throw '50001', bot can't see channel
-      const messageChannel = await client.channels.fetch(channelId, {
+      const channel = await client.channels.fetch(channelId, {
         // https://old.discordjs.dev/#/docs/discord.js/14.14.1/typedef/FetchChannelOptions
-        allowUnknownGuild: true,
+        // allowUnknownGuild: true,
+        // force: true,
       });
-
-      if (messageChannel && messageChannel.isTextBased()) {
-        const textChannel = messageChannel as TextBasedChannel;
-        const discordMsg = await textChannel.messages.fetch(messageId);
-
-        if (discordMsg) {
-          switch (messageType) {
-            case 'war_status':
-              logger.debug(`Attempting to update message ${messageId}`, {
-                type: 'update',
-              });
-              discordMsg
-                .edit({
-                  embeds: embeds.curr_war,
-                })
-                .then(msg => {
-                  logger.debug(
-                    `Successfully updated message ${msg.id} in ${msg.channel.id}`,
-                    {
-                      type: 'update',
-                    }
-                  );
-                });
-              break;
-          }
-        }
-      } else logger.debug(`Channel not found: ${channelId}`, {type: 'update'});
+      if (!channel) {
+        logger.debug(`Channel not found: ${channelId}`, {type: 'update'});
+        continue;
+      }
+      if (channel.isTextBased()) {
+        const msg = await channel.messages.edit(messageId, {
+          embeds: embeds[messageType],
+        });
+        logger.debug(
+          `Successfully updated message ${msg.id} in ${msg.channel.id}`,
+          {type: 'update'}
+        );
+      } else
+        logger.debug(`Channel not text-based: ${channelId}`, {type: 'update'});
     } catch (err) {
       logger.warn(err);
       const discordErr = err as DiscordAPIError;
