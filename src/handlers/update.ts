@@ -114,7 +114,7 @@ export async function warStatusPersistentMessage() {
 
   const updateEmbed = new EmbedBuilder()
     .setDescription(
-      `This message is periodically updated! It was last updated <t:${timestamp}:R>.`
+      `This message is updated every 15 minutes! It was last updated <t:${timestamp}:R>.`
     )
     .setFooter({text: SUBSCRIBE_FOOTER})
     .setTimestamp();
