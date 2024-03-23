@@ -8,7 +8,15 @@ import {logger} from './logging';
 
 const SUBSCRIBE_FOOTER = config.SUBSCRIBE_FOOTER;
 
+let isUpdateInProgress = false;
+
 export async function updateMessages() {
+  if (isUpdateInProgress) {
+    logger.info('Update already in progress, skipping', {type: 'update'});
+    return;
+  }
+  isUpdateInProgress = true;
+
   const start = Date.now();
   const embeds: Record<string, EmbedBuilder[]> = {
     war_status: await warStatusPersistentMessage(),
@@ -48,6 +56,8 @@ export async function updateMessages() {
 
   // eslint-disable-next-line node/no-unsupported-features/es-builtins
   await Promise.allSettled(updatePromises);
+  isUpdateInProgress = false;
+
   const taken = `${(Date.now() - start).toLocaleString()}ms`;
   logger.info(
     `Updated ${updatePromises.length} persistent messages in ${taken}`,
