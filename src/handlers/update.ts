@@ -1,4 +1,4 @@
-import {DiscordAPIError, EmbedBuilder, TextBasedChannel} from 'discord.js';
+import {EmbedBuilder} from 'discord.js';
 import {and, eq} from 'drizzle-orm';
 import {config, isProd} from '../config';
 import {db, persistentMessages} from '../db';
@@ -9,6 +9,7 @@ import {logger} from './logging';
 const SUBSCRIBE_FOOTER = config.SUBSCRIBE_FOOTER;
 
 export async function updateMessages() {
+  const start = Date.now();
   const embeds: Record<string, EmbedBuilder[]> = {
     war_status: await warStatusPersistentMessage(),
   };
@@ -22,99 +23,38 @@ export async function updateMessages() {
   logger.info(`Updating ${messages.length} persistent messages`, {
     type: 'update',
   });
-  // const promises: Promise<any>[] = [];
-  for (const message of messages) {
-    const {messageId, channelId, type: messageType} = message;
-    logger.info(`Attempting to update message ${messageId}`, {
-      ...message,
-      message_type: messageType,
-      type: 'update',
-    });
 
-    try {
-      // try fetching the channel, may throw '50001', bot can't see channel
-      const channel = await client.channels.fetch(channelId, {
-        // https://old.discordjs.dev/#/docs/discord.js/14.14.1/typedef/FetchChannelOptions
-        // allowUnknownGuild: true,
-        // force: true,
-      });
-      if (!channel) {
-        logger.info(`Channel not found: ${channelId}`, {
-          ...message,
-          message_type: messageType,
+  const channelFetchPromises = messages.map(message =>
+    client.channels.fetch(message.channelId).catch(() => null)
+  );
+  const channels = await Promise.all(channelFetchPromises);
+
+  const updatePromises = messages.map((message, index) => {
+    const channel = channels[index];
+    if (!channel || !channel.isTextBased()) return null;
+
+    return channel.messages
+      .edit(message.messageId, {
+        embeds: embeds[message.type],
+      })
+      .catch(err => {
+        logger.error(`Error updating message: ${err.message}`, {
           type: 'update',
+          ...err,
         });
-        continue;
-      }
-      if (channel.isTextBased()) {
-        const msg = await channel.messages.edit(messageId, {
-          embeds: embeds[messageType],
-        });
-        logger.info(
-          `Successfully updated message ${msg.id} in ${msg.channel.id}`,
-          {
-            ...message,
-            message_type: messageType,
-            type: 'update',
-          }
-        );
-      } else
-        logger.info(`Channel not text-based: ${channelId}`, {
-          ...message,
-          message_type: messageType,
-          type: 'update',
-        });
-    } catch (err) {
-      logger.error(err);
-      const discordErr = err as DiscordAPIError;
-      // discord API error codes
-      // https://github.com/meew0/discord-api-docs-1/blob/master/docs/topics/RESPONSE_CODES.md#json-error-response
-      logger.error(`Error updating message: ${discordErr.message}`, {
-        type: 'update',
-        ...discordErr,
+        return null;
       });
-      // switch (discordErr.code) {
-      //   case 10003: // Unknown channel
-      //     promises.push(
-      //       db
-      //         .delete(persistentMessages)
-      //         .where(
-      //           and(
-      //             eq(persistentMessages.messageId, messageId),
-      //             eq(persistentMessages.production, isProd)
-      //           )
-      //         )
-      //     );
-      //     break;
-      //   case 10008: // Unknown message
-      //     promises.push(
-      //       db
-      //         .delete(persistentMessages)
-      //         .where(
-      //           and(
-      //             eq(persistentMessages.messageId, messageId),
-      //             eq(persistentMessages.production, isProd)
-      //           )
-      //         )
-      //     );
-      //     break;
-      //   case 50001: // Missing access
-      //     promises.push(
-      //       db
-      //         .delete(persistentMessages)
-      //         .where(
-      //           and(
-      //             eq(persistentMessages.messageId, messageId),
-      //             eq(persistentMessages.production, isProd)
-      //           )
-      //         )
-      //     );
-      //     break;
-      //   case 50005: // Cannot edit a message authored by another user
-      //     break;
-      // }
+  });
+
+  // eslint-disable-next-line node/no-unsupported-features/es-builtins
+  await Promise.allSettled(updatePromises);
+  const taken = `${(Date.now() - start).toLocaleString()}ms`;
+  logger.info(
+    `Updated ${updatePromises.length} persistent messages in ${taken}`,
+    {
+      type: 'update',
     }
-  }
+  );
 }
 
 export async function warStatusPersistentMessage() {
