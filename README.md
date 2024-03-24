@@ -9,6 +9,7 @@ HellCom will be continuously updated and improved. It is a community-driven proj
 You can add it to your own server using **[this link (click)](https://discord.com/application-directory/1213944670288347176)**.
 
 ## Commands
+
 <details>
   <summary>Discord Slash Commands </summary>
 - `/campaign`: Campaign-related information (playable planets)
@@ -35,13 +36,101 @@ You can add it to your own server using **[this link (click)](https://discord.co
 </details>
 If you notice any issues, or have a suggestion, feel free to contact me via Discord @`theyodastream`.
 
+## Contributing
+
+### Wiki Source
+
+The `/wiki` command uses JSON files as the source for its "categories" and "pages", found in [this directory](./wiki/). The aim is to allow people who aren't familiar with programming to still contribute, as it is mostly just text fields. To add/change/remove categories/pages, only the JSON files need to be modified.
+
+```txt
+root
+├── src
+│   └── ...
+└── wiki
+    ├── index.json
+    ├──  automatons
+    │   └── berserker.json
+    │   └── ... other json files (pages)
+    ├─── terminids
+    │   └── bile_titan.json
+    │   └── ... other json files (pages)
+    └── ... other folders (categories)
+```
+
+`index.json` root file. This file defines the categories and related information (eg. display name, emoji, description, etc.)
+
+```json
+[
+  // Example, filled out categories page
+  {
+    "directory": "eagles",
+    "display_name": "Eagles",
+    "content": "As a commander of a Destroyer, you can call in an Eagle to provide air support. Eagle call-ins are quite fast, having little to no call-in times, making them a versatile choice for your loadout.\n\nEagles have a certain number of uses per re-arm, after which it returns to the Super Destroyer for an extended period to resupply before coming back online. The number of uses varies depending on the types selected, with chaff-clearers (such as Clusters, or Strafing) having a higher number of uses, while heavy-hitters (such as the 500KG Bomb) tend to have fewer uses.",
+    "fields": [
+      {
+        "name": "Base Rearm Time",
+        "value": "150 seconds",
+        "inline": false
+      }
+    ],
+    "emoji": "<:eagle_strafing_run:1220789245724065792>",
+    "thumbnail": "https://xywpvislkizlfztycqhf.supabase.co/storage/v1/object/public/hellcom/stratagems/eagle_strafing_run.png",
+    "image": "https://cdn.discordapp.com/attachments/1220852151769894993/1220852308833992866/eagle_fly_in.gif?ex=66107250&is=65fdfd50&hm=e41f85c2cc8a4b76ed5522658336380a39a004d2236142711b85203207241643&"
+  },
+  // JSON structure
+  {
+    // defining a category, each item in the index.json arr is a category
+    "directory": "", // relative directory name, used to load json pages
+    "display_name": "", // display name of the category, should be pretty -- include caps, spaces
+    "content": "", // text content on the category page, supports discord markdown
+    "fields": [
+      // discord embed fields,
+      {
+        "name": "", // title of a field, bolded
+        "value": "", // contents of the field, supports discord markdown
+        "inline": true // bool val for displaying this field in-line with others
+      }
+    ],
+    "emoji": "", // discord emoji, to display as the icon when selecting a category
+    "thumbnail": "", // image to show at the top left, smaller image
+    "image": "" // image to show as the bottom, primary image
+  }
+]
+```
+
+Individual page JSON file. Located within each category directory. An example ~completed file can be found at [here](./wiki/terminids/bile_titan.json).
+
+```json
+// JSON structure
+{
+  "page": "", // page id, lowercase, no spaces, must be unique
+  "title": "", // display name of the category, should be pretty -- include caps, spaces
+  "description": "", // short description shown when selecting a page
+  "content": "", // text content on the category page, supports discord markdown
+  "fields": [
+    // discord embed fields,
+    {
+      "name": "", // title of a field, bolded
+      "value": "", // contents of the field, supports discord markdown
+      "inline": true // bool val for displaying this field in-line with others
+    }
+  ],
+  "emoji": "", // discord emoji, to display as the icon when selecting a category
+  "thumbnail": "", // image to show at the top left, smaller image
+  "image": "" // image to show as the bottom, primary image
+}
+```
+
+TODO: add image examples
+
 ## Development
+
 Styled with [![Code Style: Google](https://img.shields.io/badge/code%20style-google-blueviolet.svg)](https://github.com/google/gts)  
 Created with [![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)[![Static Badge](https://img.shields.io/badge/discord.js-0a168d?style=for-the-badge)](https://discord.js.org/)  
 Postgres DB on [![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)  
-Logging/Metrics with [![Static Badge](https://img.shields.io/badge/New%20Relic-2fdd88?style=for-the-badge)](https://newrelic.com/platform)   
-Deployed with ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)![Kubernetes](https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white)  
-  
+Logging/Metrics with [![Static Badge](https://img.shields.io/badge/New%20Relic-2fdd88?style=for-the-badge)](https://newrelic.com/platform)  
+Deployed with ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)![Kubernetes](https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white)
+
 Container images are built via [GitHub Actions](/.github/workflows/build.yml) and uploaded to GitHub Container Registry (this repo's GHCR).  
 GH Actions also handles semantic versioning using commit message substrings, saving them as GitHub tags (eg. `v0.0.30):
 
