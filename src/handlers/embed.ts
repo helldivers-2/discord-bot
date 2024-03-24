@@ -423,7 +423,7 @@ function drawLoadingBarPerc(percentage: number, barLength: number) {
   const progress = Math.round(barLength * percMult);
   const empty = barLength - progress;
 
-  const progressBar = '[`' + '#'.repeat(progress) + ' '.repeat(empty) + '`]';
+  const progressBar = '[`' + '█'.repeat(progress) + ' '.repeat(empty) + '`]';
 
   return `${progressBar} ${percentage.toFixed(2)}%`;
 }
