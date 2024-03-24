@@ -21,7 +21,7 @@ const command: Command = {
       .setDescription(
         'This "wiki" is heavily WIP. As the game changes, this information will be updated as quickly as possible! ' +
           'It is maintained by the community and is not affiliated in any way with Arrowhead Game Studios. ' +
-          'If you would like to contribute, please visit the [repository here](https://github.com/jgaribsin/hellcom).' +
+          'If you would like to contribute, please see the [wiki contrib documentation](https://github.com/jgaribsin/hellcom?tab=readme-ov-file#wiki-source).' +
           '\n\n' +
           'Pages are organised under major categories. Select one below to view the available pages:'
       )
@@ -121,9 +121,9 @@ const command: Command = {
       if (page.content) embed.setDescription(page.content);
       else
         embed.setDescription(
-          `Wiki page is work in progress!` +
+          'Wiki page is work in progress!' +
             '\n\n' +
-            `If you would like to contribute, please visit the [repository here](https://github.com/jgaribsin/hellcom)!`
+            'If you would like to contribute, please see the [wiki contrib documentation](https://github.com/jgaribsin/hellcom?tab=readme-ov-file#wiki-source)!'
         );
       if (page.fields) embed.setFields(page.fields);
       if (page.thumbnail) embed.setThumbnail(page.thumbnail);
