@@ -8,6 +8,7 @@ RUN npm ci
 COPY ./src ./src
 COPY ./fonts ./fonts
 COPY ./images ./images
+COPY ./wiki ./wiki
 # Build the project, then re-install only runtime dependencies
 RUN npm run build \ 
     && npm ci --omit=dev
@@ -22,6 +23,7 @@ COPY --chown=node:node --from=build /app/node_modules ./node_modules
 COPY --chown=node:node package*.json *.config.js ./
 COPY --chown=node:node --from=build /app/fonts ./fonts
 COPY --chown=node:node --from=build /app/images ./images
+COPY --chown=node:node --from=build /app/wiki ./wiki
 # Set 'node' as owner of this directory (permits creating files eg. logs)
 RUN chown -h node:node .
 USER node

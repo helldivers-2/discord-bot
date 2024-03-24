@@ -1,0 +1,89 @@
+[
+  {
+    "directory": "automatons",
+    "display_name": "Automatons",
+    "content": "",
+    "fields": [],
+    "emoji": "<:Automatons:1220627981513392138>",
+    "thumbnail": "",
+    "image": ""
+  },
+  {
+    "directory": "terminids",
+    "display_name": "Terminids",
+    "content": "",
+    "fields": [],
+    "emoji": "<:Terminids:1220627978837426177>",
+    "thumbnail": "",
+    "image": ""
+  },
+  {
+    "directory": "support_weapons",
+    "display_name": "Support Weapons",
+    "content": "",
+    "fields": [],
+    "emoji": "<railgun:1220789294285979678>",
+    "thumbnail": "",
+    "image": ""
+  },
+  {
+    "directory": "backpacks",
+    "display_name": "Backpacks",
+    "content": "",
+    "fields": [],
+    "emoji": "<supply_pack:1220789644455579658>",
+    "thumbnail": "",
+    "image": ""
+  },
+  {
+    "directory": "eagles",
+    "display_name": "Eagles",
+    "content": "As a commander of a Destroyer, you can call in an Eagle to provide air support. Eagle call-ins are quite fast, having little to no call-in times, making them a versatile choice for your loadout.\n\nEagles have a certain number of uses per re-arm, after which it returns to the Super Destroyer for an extended period to resupply before coming back online. The number of uses varies depending on the types selected, with chaff-clearers (such as Clusters, or Strafing) having a higher number of uses, while heavy-hitters (such as the 500KG Bomb) tend to have fewer uses.",
+    "fields": [
+      {
+        "name": "Base Rearm Time",
+        "value": "150 seconds",
+        "inline": false
+      }
+    ],
+    "emoji": "<:eagle_strafing_run:1220789245724065792>",
+    "thumbnail": "https://xywpvislkizlfztycqhf.supabase.co/storage/v1/object/public/hellcom/stratagems/eagle_strafing_run.png",
+    "image": "https://cdn.discordapp.com/attachments/1220852151769894993/1220852308833992866/eagle_fly_in.gif?ex=66107250&is=65fdfd50&hm=e41f85c2cc8a4b76ed5522658336380a39a004d2236142711b85203207241643&"
+  },
+  {
+    "directory": "orbitals",
+    "display_name": "Orbitals",
+    "content": "",
+    "fields": [],
+    "emoji": "<orbital_precision_strike:1220789632271257802>",
+    "thumbnail": "",
+    "image": ""
+  },
+  {
+    "directory": "emplacements",
+    "display_name": "Emplacements",
+    "content": "",
+    "fields": [],
+    "emoji": "<machine_gun_sentry:1220789268234895542>",
+    "thumbnail": "",
+    "image": ""
+  },
+  {
+    "directory": "vehicles",
+    "display_name": "Vehicles",
+    "content": "",
+    "fields": [],
+    "emoji": "<patriot_exosuit:1220789636406972507>",
+    "thumbnail": "",
+    "image": ""
+  },
+  {
+    "directory": "boosters",
+    "display_name": "Boosters",
+    "content": "",
+    "fields": [],
+    "emoji": "",
+    "thumbnail": "",
+    "image": ""
+  }
+]
