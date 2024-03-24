@@ -42,6 +42,7 @@ export const apiData = pgTable('api_data', {
 export const prevData = pgTable('prev_data', {
   warId: integer('war_id').primaryKey(),
   time: integer('time').notNull(),
+  production: boolean('production').notNull(),
   data: json('data').notNull().$type<StrippedApiData>(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('created_at').notNull(),
