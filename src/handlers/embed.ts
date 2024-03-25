@@ -14,6 +14,7 @@ import {
   Faction,
   MergedCampaignData,
   MergedPlanetEventData,
+  data,
   getAllCampaigns,
   getAllPlayers,
   getCampaignByPlanetName,
@@ -302,11 +303,17 @@ export async function warStatusEmbeds() {
         value: `${progressBar}` + averageChangeStr,
       });
     } else if (campaignType === 'Defend') {
-      const {defence, race} = planetEvent as MergedPlanetEventData;
+      const {defence, race, expireTime} = planetEvent as MergedPlanetEventData;
+      const expiresInS = expireTime - data.Status.time;
+      const expireTimeUtc = Math.floor(Date.now() + expiresInS * 1000);
+      const expiresInUtcS = Math.floor(expireTimeUtc / 1000);
       const progressBar = drawLoadingBarPerc(defence, 30);
       status[race as Faction].push({
         name: title,
-        value: `${progressBar}` + averageChangeStr,
+        value:
+          `${progressBar}` +
+          averageChangeStr +
+          `\n**Defence Ends**: <t:${expiresInUtcS}:R>`,
       });
     }
   }
@@ -392,11 +399,19 @@ export async function campaignEmbeds(planet_name?: string) {
       const {maxHealth, health, defence, race, expireTime} =
         planetEvent as MergedPlanetEventData;
       const {players, playerPerc, owner} = planetData;
+      const statusTime = data.Status.time;
 
       const embed = new EmbedBuilder()
         .setTitle(title)
         .setColor(FACTION_COLOUR[race])
         .setImage(planetThumbnailUrl);
+
+      const expiresInS = expireTime - statusTime;
+      const expireTimeUtc = Math.floor(Date.now() + expiresInS * 1000);
+
+      const expiresInUtcS = Math.floor(expireTimeUtc / 1000);
+      const expiresInDays = Math.floor(expiresInS / 86400);
+      const expiresInHours = Math.floor((expiresInS % 86400) / 3600);
 
       const squadImpact = maxHealth - health;
       const display = {
@@ -404,7 +419,7 @@ export async function campaignEmbeds(planet_name?: string) {
         'Controlled By': owner,
         Attackers: race,
         Defence: `${defence}%`,
-        'Time Left': `${Math.floor(expireTime - Date.now())}s`,
+        'Campaign Ends': `<t:${expiresInUtcS}:R> (${expiresInDays}d ${expiresInHours}h)`,
         'Total Squad Impact': `${squadImpact.toLocaleString()} / ${maxHealth.toLocaleString()}`,
       };
       for (const [key, val] of Object.entries(display)) {

@@ -145,8 +145,13 @@ export async function getData() {
   //https://api.live.prod.thehelldiversgame.com/api/NewsFeed/801
   // fetch the earliest possible news, then using the latest timestamp, fetch more news until it returns empty
   const newsFeed: NewsFeedItem[] = [];
-  let newsFeedApi = await (
-    await axios.get(`${API_URL}/NewsFeed/${season}`, axiosOpts)
+  const newsFeedApi = await (
+    await axios.get(`${API_URL}/NewsFeed/${season}`, {
+      ...axiosOpts,
+      params: {
+        maxEntries: 512,
+      },
+    })
   ).data;
 
   newsFeed.push(
@@ -155,31 +160,6 @@ export async function getData() {
       publishedUtc: data.UTCOffset + item.published * 1000,
     })) as NewsFeedItem[])
   );
-  let newsFeedFrom = newsFeed.sort((a, b) => b.published - a.published)[0]
-    .published;
-  let newItemsAdded = true;
-  while (newsFeedApi.length > 0 && newItemsAdded) {
-    newItemsAdded = false;
-    newsFeedApi = await (
-      await axios.get(`${API_URL}/NewsFeed/${season}`, {
-        ...axiosOpts,
-        params: {
-          fromTimestamp: newsFeedFrom,
-        },
-      })
-    ).data;
-    newsFeedApi.forEach((item: NewsFeedItem) => {
-      if (!newsFeed.find(existingItem => existingItem.id === item.id)) {
-        newsFeed.push({
-          ...item,
-          publishedUtc: data.UTCOffset + item.published * 1000,
-        });
-        newItemsAdded = true;
-      }
-    });
-    newsFeedFrom = newsFeed.sort((a, b) => b.published - a.published)[0]
-      .published;
-  }
   newsFeed.sort((a, b) => b.published - a.published);
 
   const planets: MergedPlanetData[] = [];
