@@ -3,7 +3,29 @@
     "title": "FS-23 Battle Master",
     "description": "",
     "content": "",
-    "fields": [],
+    "fields": [
+        {
+            "name": "Armour Type", "value": "Heavy Armour"
+        },
+        {
+            "name": "Fortified", "value": "Further reduced recoil when crouching or prone by 30%.\nProvides 50% resistance to explosives."
+        },
+        {
+            "name": "Armour Rating", "value": "144"
+        },
+        {
+            "name": "Speed", "value": "456"
+        },
+        {
+            "name": "Stamina Regen", "value": "56"
+        },
+        {
+            "name": "Mobalize Warbond Price (Body Armour)", "value": "35 Medals"
+        },
+        {
+            "name": "Mobalize Warbond Price (Helmet)", "value": "25 Medals"
+        }
+    ],
     "emoji": "",
     "thumbnail": "",
     "image": ""
