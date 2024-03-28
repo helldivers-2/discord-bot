@@ -1,6 +1,6 @@
 # Home!
 
-HellCom StratDef Network, a Helldivers 2 Discord bot. This project is meant to be a utility/helper bot for any Helldivers Discords!
+HellCom StratDef Network, a Helldivers 2 Community-driven Discord bot. This project is meant to be a utility/helper bot for any Helldivers Discords!
 
 ## Discord App Directory (Invite)
 

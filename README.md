@@ -10,8 +10,9 @@ You can add it to your own server using **[this link (click)](https://discord.co
 
 ## Commands
 
-<details>
+<details open>
   <summary>Discord Slash Commands </summary>
+
 - `/campaign`: Campaign-related information (playable planets)
   - `/campaign list`: Gives an overview of all currently active planets with some stats for each one
   - `/campaign most`: Gives an overview of the campaign with the most active players
@@ -33,6 +34,7 @@ You can add it to your own server using **[this link (click)](https://discord.co
 - `/subscribe`
   - `/subscribe event`: Allows users to "subscribe" a channel to event updated. The bot will then post updates about the war in that channel as it happens -- stuff like winning (or losing!) a campaign, getting access to a new planet, new dispatch messages, new major orders.
   - `/subscribe status`: Sends a message in the channel the command was used, displays summary information (identical to `/planet list`) and will update after certain intervals automatically.
+
 </details>
 If you notice any issues, or have a suggestion, feel free to contact me via Discord @`theyodastream`.
 
@@ -149,7 +151,7 @@ To set things up:
 
 ```shell
 # Clone the repository locally
-git clone https://github.com/jgaribsin/helldivers2-bot.git
+git clone https://github.com/helldivers-2/discord-bot.git
 cd helldivers2-bot
 # Install dependencies
 npm install
