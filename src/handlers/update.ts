@@ -1,4 +1,4 @@
-import {ChannelType, DiscordAPIError, EmbedBuilder} from 'discord.js';
+import {EmbedBuilder} from 'discord.js';
 import {and, eq} from 'drizzle-orm';
 import {config, isProd} from '../config';
 import {db, persistentMessages} from '../db';
@@ -8,12 +8,18 @@ import {logger} from './logging';
 
 const SUBSCRIBE_FOOTER = config.SUBSCRIBE_FOOTER;
 
-export async function updateMessages() {
-  // measure time taken to update all persistent messages
-  // const start = Date.now();
+let isUpdateInProgress = false;
 
-  const embeds = {
-    curr_war: await warStatusPersistentMessage(),
+export async function updateMessages() {
+  if (isUpdateInProgress) {
+    logger.info('Update already in progress, skipping', {type: 'update'});
+    return;
+  }
+  isUpdateInProgress = true;
+
+  const start = Date.now();
+  const embeds: Record<string, EmbedBuilder[]> = {
+    war_status: await warStatusPersistentMessage(),
   };
 
   const messages = await db.query.persistentMessages.findMany({
@@ -25,88 +31,40 @@ export async function updateMessages() {
   logger.info(`Updating ${messages.length} persistent messages`, {
     type: 'update',
   });
-  // const promises: Promise<any>[] = [];
-  for (const message of messages) {
-    const {messageId, channelId, type: messageType} = message;
 
-    try {
-      // try fetching the channel, may throw '50001', bot can't see channel
-      const messageChannel = await client.channels.fetch(channelId);
-      if (
-        messageChannel &&
-        (messageChannel.type === ChannelType.GuildText ||
-          messageChannel.type === ChannelType.PublicThread ||
-          messageChannel.type === ChannelType.GuildAnnouncement ||
-          messageChannel.type === ChannelType.AnnouncementThread)
-      ) {
-        // try fetching the message, may throw '10008', message doesn't exist (deleted?)
-        const discordMsg = await messageChannel.messages.fetch(messageId);
-        if (discordMsg)
-          switch (messageType) {
-            case 'war_status':
-              discordMsg.edit({
-                embeds: embeds.curr_war,
-              });
-              break;
-          }
-      }
-    } catch (err) {
-      const discordErr = err as DiscordAPIError;
-      // discord API error codes
-      // https://github.com/meew0/discord-api-docs-1/blob/master/docs/topics/RESPONSE_CODES.md#json-error-response
-      logger.warn(`Error updating message: ${discordErr.message}`, {
-        type: 'update',
-        ...discordErr,
+  const channelFetchPromises = messages.map(message =>
+    client.channels.fetch(message.channelId).catch(() => null)
+  );
+  const channels = await Promise.all(channelFetchPromises);
+
+  const updatePromises = messages.map((message, index) => {
+    const channel = channels[index];
+    if (!channel || !channel.isTextBased()) return null;
+
+    return channel.messages
+      .edit(message.messageId, {
+        embeds: embeds[message.type],
+      })
+      .catch(err => {
+        logger.error(`Error updating message: ${err.message}`, {
+          type: 'update',
+          ...err,
+        });
+        return null;
       });
-      // switch (discordErr.code) {
-      //   case 10003: // Unknown channel
-      //     promises.push(
-      //       db
-      //         .delete(persistentMessages)
-      //         .where(
-      //           and(
-      //             eq(persistentMessages.messageId, messageId),
-      //             eq(persistentMessages.production, isProd)
-      //           )
-      //         )
-      //     );
-      //     break;
-      //   case 10008: // Unknown message
-      //     promises.push(
-      //       db
-      //         .delete(persistentMessages)
-      //         .where(
-      //           and(
-      //             eq(persistentMessages.messageId, messageId),
-      //             eq(persistentMessages.production, isProd)
-      //           )
-      //         )
-      //     );
-      //     break;
-      //   case 50001: // Missing access
-      //     promises.push(
-      //       db
-      //         .delete(persistentMessages)
-      //         .where(
-      //           and(
-      //             eq(persistentMessages.messageId, messageId),
-      //             eq(persistentMessages.production, isProd)
-      //           )
-      //         )
-      //     );
-      //     break;
-      //   case 50005: // Cannot edit a message authored by another user
-      //     break;
-      // }
-    }
-  }
+  });
 
-  // await all message edits completion
-  // await Promise.all(promises);
-  // const time = `${Date.now() - start}ms`;
-  // logger.info(`Updated ${messages.length} messages in ${time}`, {
-  //   type: 'info',
-  // });
+  // eslint-disable-next-line node/no-unsupported-features/es-builtins
+  await Promise.allSettled(updatePromises);
+  isUpdateInProgress = false;
+
+  const taken = `${(Date.now() - start).toLocaleString()}ms`;
+  logger.info(
+    `Updated ${updatePromises.length} persistent messages in ${taken}`,
+    {
+      type: 'update',
+    }
+  );
 }
 
 export async function warStatusPersistentMessage() {
@@ -114,7 +72,7 @@ export async function warStatusPersistentMessage() {
 
   const updateEmbed = new EmbedBuilder()
     .setDescription(
-      `This message is updated every 15 minutes! It was last updated <t:${timestamp}:R>.`
+      `This message is updated every 30 minutes! It was last updated <t:${timestamp}:R>.`
     )
     .setFooter({text: SUBSCRIBE_FOOTER})
     .setTimestamp();

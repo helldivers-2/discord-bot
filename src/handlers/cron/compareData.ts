@@ -66,6 +66,7 @@ export async function compareData(): Promise<WarDifferences | void> {
       data: newData,
       time: newData.Status.time,
       warId: newData.WarInfo.warId,
+      production: isProd,
       updatedAt: new Date(),
     });
     return;
@@ -79,7 +80,12 @@ export async function compareData(): Promise<WarDifferences | void> {
       time: newData.Status.time,
       updatedAt: new Date(),
     })
-    .where(eq(prevData.warId, newData.WarInfo.warId));
+    .where(
+      and(
+        eq(prevData.warId, newData.WarInfo.warId),
+        eq(prevData.production, isProd)
+      )
+    );
 
   // Continue, compare the old and new data
   // NOTE: if testing, set this var to the old data

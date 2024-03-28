@@ -25,7 +25,10 @@ export async function validateChannel(
     return;
   } catch (err) {
     const discordErr = err as DiscordAPIError;
-    logger.error(discordErr.message, {type: 'error'});
+    logger.error(`${id} - ${discordErr.message}`, {
+      channel_id: id,
+      type: 'error',
+    });
     return;
   }
 }

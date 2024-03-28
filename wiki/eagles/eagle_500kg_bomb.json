@@ -1,0 +1,31 @@
+{
+  "page": "eagle_500kg_bomb",
+  "title": "Eagle 500KG Bomb",
+  "description": "",
+  "content": "A large bomb obliterating almost any target close to impact. Make sure to clear the area.\n\nDeals damage in a cone around and above it, within a ??m radius. Effective against both infantry and heavily armoured targets. It is also effective against structures, such as fabricators or research buildings.",
+  "fields": [
+    {
+      "name": "Uses",
+      "value": "1",
+      "inline": true
+    },
+    {
+      "name": "Cooldown",
+      "value": "15 seconds",
+      "inline": true
+    },
+    {
+      "name": "Traits",
+      "value": "- Eagle\n- Explosive",
+      "inline": true
+    },
+    {
+      "name": "Rearm Time",
+      "value": "2 minutes, 30 seconds",
+      "inline": true
+    }
+  ],
+  "emoji": "<eagle_500kg_bomb:1220789238887616624>",
+  "thumbnail": "https://xywpvislkizlfztycqhf.supabase.co/storage/v1/object/public/hellcom/stratagems/eagle_500kg_bomb.png",
+  "image": "https://cdn.discordapp.com/attachments/1220852151769894993/1220852311849435166/eagle_500kg_bomb.gif?ex=66107251&is=65fdfd51&hm=6050562fd8f9830dc22f3a419f671eb13f2d717ccc09ea366650703aa97b0812&"
+}

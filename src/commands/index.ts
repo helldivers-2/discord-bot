@@ -1,4 +1,9 @@
-import {CommandInteraction, ModalSubmitInteraction} from 'discord.js';
+import {
+  ButtonBuilder,
+  CommandInteraction,
+  ModalSubmitInteraction,
+  StringSelectMenuBuilder,
+} from 'discord.js';
 import {Command} from '../interfaces';
 import campaign from './campaign';
 import community from './community';
@@ -9,6 +14,8 @@ import history from './history';
 import map from './map';
 import planet from './planet';
 import subscribe from './subscribe';
+import wiki from './wiki';
+import {Category, WikiData} from '../handlers';
 
 const commandList: Command[] = [
   planet,
@@ -20,6 +27,7 @@ const commandList: Command[] = [
   history,
   community,
   map,
+  wiki,
 ];
 const notEphemeral: string[] = [];
 const ephemeralCmds = commandList
@@ -52,6 +60,19 @@ const campaignAutoCmds = ['campaign'];
 // commands to not defer/suggestion etc. instead provide a modal for further input
 const modalCmds: string[] = [];
 
+// load the wiki pages
+const wikiCmd: {
+  buttons: ButtonBuilder[];
+  dirSelect: Record<string, StringSelectMenuBuilder>;
+  categories: Category[];
+  pages: WikiData[];
+} = {
+  buttons: [],
+  dirSelect: {},
+  categories: [],
+  pages: [],
+};
+
 export {
   commandList,
   commandHash,
@@ -62,4 +83,5 @@ export {
   ephemeralCmds,
   planetAutoCmds,
   campaignAutoCmds,
+  wikiCmd,
 };

@@ -37,7 +37,7 @@ async function players(interaction: CommandInteraction) {
   // get all API data for 24 hours ago
   const pastData = await db.query.apiData.findMany({
     orderBy: desc(apiData.time),
-    limit: 24,
+    limit: 24 * 14,
   });
   pastData.sort((a, b) => a.time - b.time);
 
