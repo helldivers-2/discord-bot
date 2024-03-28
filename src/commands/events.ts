@@ -55,7 +55,7 @@ async function all(interaction: CommandInteraction) {
   for (const event of events) {
     const title = event.title;
     let message = event.message;
-    message = message.replace(/<i=1>/g, '*').replace(/<\/i>/g, '*');
+    message = message.replace(/\<i\=\d\>/g, '*').replace(/<\/i>/g, '*');
     const embed = new EmbedBuilder()
       .setTitle(title)
       .setThumbnail(factionSprites['Humans'])
@@ -87,7 +87,7 @@ async function latest(interaction: CommandInteraction) {
   const title = event.title;
   let message = event.message;
 
-  message = message.replace(/<i=1>/g, '*').replace(/<\/i>/g, '*');
+  message = message.replace(/\<i\=\d\>/g, '*').replace(/<\/i>/g, '*');
   const embed = new EmbedBuilder()
     .setTitle(title)
     .setThumbnail(factionSprites['Humans'])
