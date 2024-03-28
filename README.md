@@ -36,6 +36,7 @@ You can add it to your own server using **[this link (click)](https://discord.co
   - `/subscribe status`: Sends a message in the channel the command was used, displays summary information (identical to `/planet list`) and will update after certain intervals automatically.
 
 </details>
+
 If you notice any issues, or have a suggestion, feel free to contact me via Discord @`theyodastream`.
 
 ## Contributing

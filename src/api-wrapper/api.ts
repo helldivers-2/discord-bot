@@ -120,27 +120,32 @@ export async function getData() {
 
   // Unofficial: api wrapper for the authed planetStats endpoint
   // https://api.diveharder.com/raw/planetStats
-  let planetStats: PlanetStats = data.PlanetStats;
-  if (getDataCounter % 2 === 0) {
-    const planetStatsApi = await (
-      await axios.get('https://api.diveharder.com/raw/planetStats', {
-        ...axiosOpts,
-        params: {
-          source: IDENTIFIER,
-        },
-      })
-    ).data;
+  const statsApi = await (
+    await axios.get(`${API_URL}/Stats/War/${season}/Summary`, axiosOpts)
+  ).data;
+  const planetStats = statsApi as PlanetStats;
 
-    planetStats = {
-      galaxy_stats: planetStatsApi.galaxy_stats,
-      planets_stats: planetStatsApi.planets_stats.map(
-        (p: Omit<PlanetStatsItem, 'planetName'>) => ({
-          ...p,
-          planetName: getPlanetName(p.planetIndex),
-        })
-      ),
-    };
-  }
+  // let planetStats: PlanetStats = data.PlanetStats;
+  // if (getDataCounter % 2 === 0) {
+  //   const planetStatsApi = await (
+  //     await axios.get('https://api.diveharder.com/raw/planetStats', {
+  //       ...axiosOpts,
+  //       params: {
+  //         source: IDENTIFIER,
+  //       },
+  //     })
+  //   ).data;
+
+  //   planetStats = {
+  //     galaxy_stats: stats.galaxy_stats,
+  //     planets_stats: stats.planets_stats.map(
+  //       (p: Omit<PlanetStatsItem, 'planetName'>) => ({
+  //         ...p,
+  //         planetName: getPlanetName(p.planetIndex),
+  //       })
+  //     ),
+  //   };
+  // }
 
   //https://api.live.prod.thehelldiversgame.com/api/NewsFeed/801
   // fetch the earliest possible news, then using the latest timestamp, fetch more news until it returns empty
