@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: helldivers2-bot
-          image: ghcr.io/jgaribsin/helldivers2-bot:latest
+          image: ghcr.io/helldivers-2/discord-bot:latest
           imagePullPolicy: Always
           resources:
             limits:

@@ -54,7 +54,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: |
-            ghcr.io/${{ github.repository_owner }}/helldivers2-bot
+            ghcr.io/${{ github.repository_owner }}/discord-bot
           tags: |
             type=semver,pattern={{major}},value=${{ env.version }}
             type=semver,pattern={{major}}.{{minor}},value=${{ env.version }}
