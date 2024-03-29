@@ -39,8 +39,17 @@ const command: Command = {
         dispatch.publishedUtc / 1000
       )}:f>`;
       if (message && message.includes('\n')) {
-        const title = message.split('\n')[0];
-        const description = message.split('\n').slice(1).join('\n');
+        const title = message
+          .split('\n')[0]
+          .replace(/<i=\d>/g, '**')
+          .replace(/<\/i>/g, '**');
+        const description = message
+          .split('\n')
+          .slice(1)
+          .join('\n')
+          // .replace(/\<i\=\d\>/g, '*')
+          .replace(/<i=\d>/g, '**')
+          .replace(/<\/i>/g, '**');
 
         if (title.length > 256)
           embed.addFields({name: '\u200b', value: message + timestamp});
