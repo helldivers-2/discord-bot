@@ -13,7 +13,7 @@ import {
   subscribeNotifEmbed,
   warStatusPersistentMessage,
 } from '../handlers';
-import {isProd} from '../config';
+import {config, isProd} from '../config';
 import {
   announcementChannels,
   db,
@@ -185,6 +185,8 @@ async function remove(interaction: CommandInteraction) {
 
 async function updates(interaction: CommandInteraction) {
   const channel = interaction.options.get('channel')?.value as string;
+  const isOwner = interaction.user.id === config.BOT_OWNER;
+
   const existing = await db.query.announcementChannels.findFirst({
     where: and(
       eq(announcementChannels.guildId, interaction.guildId ?? ''),
@@ -192,7 +194,7 @@ async function updates(interaction: CommandInteraction) {
       eq(persistentMessages.production, isProd)
     ),
   });
-  if (existing) {
+  if (existing && !isOwner) {
     await interaction.editReply({
       embeds: [
         new EmbedBuilder()
@@ -266,6 +268,8 @@ async function updates(interaction: CommandInteraction) {
 }
 
 async function status(interaction: CommandInteraction) {
+  const isOwner = interaction.user.id === config.BOT_OWNER;
+
   // check whether this guild already has a persistent message
   const existingMessage = await db.query.persistentMessages.findFirst({
     where: and(
@@ -275,7 +279,7 @@ async function status(interaction: CommandInteraction) {
       eq(persistentMessages.production, isProd)
     ),
   });
-  if (existingMessage) {
+  if (existingMessage && !isOwner) {
     await interaction.editReply({
       embeds: [
         new EmbedBuilder()
