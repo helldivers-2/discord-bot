@@ -1,0 +1,16 @@
+{
+  "page": "upload_escape_pod_data",
+  "title": "Upload Escape Pod Data",
+  "description": "",
+  "content": "",
+  "fields": [
+    {
+      "name": "Primary Objective",
+      "value": "Difficulty: 1-2",
+      "inline": true
+    }
+  ],
+  "emoji": "",
+  "thumbnail": "",
+  "image": ""
+}

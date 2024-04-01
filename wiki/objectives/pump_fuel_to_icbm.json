@@ -1,0 +1,16 @@
+{
+  "page": "pump_fuel_to_icbm",
+  "title": "Pump Fuel To ICBM",
+  "description": "",
+  "content": "",
+  "fields": [
+    {
+      "name": "Primary Objective",
+      "value": "Difficulty: 1-2",
+      "inline": true
+    }
+  ],
+  "emoji": "",
+  "thumbnail": "",
+  "image": ""
+}

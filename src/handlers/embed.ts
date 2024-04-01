@@ -203,20 +203,33 @@ export function majorOrderEmbed(assignment: Assignment) {
   );
 
   if (settingsType === 4) {
-    const tasksDisplay = tasks.map((t, i) => ({
-      completed: progress[i] === 1,
-      planetName: getPlanetName(t.values[2]),
-      progress:
-        campaigns.find(c => c.planetName === getPlanetName(t.values[2]))
-          ?.planetData.liberation ?? 0,
-    }));
+    const tasksDisplay = tasks.map((t, i) => {
+      const campaign = campaigns.find(
+        c => c.planetName === getPlanetName(t.values[2])
+      );
+      return {
+        completed: progress[i] === 1,
+        planetName: getPlanetName(t.values[2]),
+        type: campaign?.campaignType,
+        progress:
+          campaign?.campaignType === 'Defend'
+            ? campaign?.planetEvent?.defence ?? 0
+            : campaign?.planetData.liberation ?? 0,
+      };
+    });
 
     embedFields.push(
-      ...tasksDisplay.map(task => ({
-        name: task.planetName,
-        value: task.completed ? '**COMPLETE**' : `${task.progress.toFixed(2)}%`,
-        inline: true,
-      }))
+      ...tasksDisplay.map(task => {
+        const {completed, planetName, progress, type} = task;
+        let text = '';
+        if (type) text += `**${type}**: ${progress.toFixed(2)}%`;
+        else text += '**COMPLETE**';
+        return {
+          name: planetName,
+          value: text,
+          inline: true,
+        };
+      })
     );
   }
 

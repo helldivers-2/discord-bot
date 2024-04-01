@@ -1,0 +1,16 @@
+{
+  "page": "retrieve_essential_personnel",
+  "title": "Retrieve Essential Personnel",
+  "description": "",
+  "content": "",
+  "fields": [
+    {
+      "name": "Primary Objective",
+      "value": "All planets",
+      "inline": true
+    }
+  ],
+  "emoji": "",
+  "thumbnail": "",
+  "image": ""
+}

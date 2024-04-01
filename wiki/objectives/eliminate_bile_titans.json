@@ -1,0 +1,16 @@
+{
+  "page": "eliminate_bile_titans",
+  "title": "Eliminate Bile Titans",
+  "description": "",
+  "content": "",
+  "fields": [
+    {
+      "name": "Primary Objective",
+      "value": "All planets",
+      "inline": true
+    }
+  ],
+  "emoji": "",
+  "thumbnail": "",
+  "image": ""
+}

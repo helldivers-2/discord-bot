@@ -1,0 +1,16 @@
+{
+  "page": "activate_e_710_pumps",
+  "title": "Activate E-710 Pumps",
+  "description": "",
+  "content": "",
+  "fields": [
+    {
+      "name": "Primary Objective",
+      "value": "All planets",
+      "inline": true
+    }
+  ],
+  "emoji": "",
+  "thumbnail": "",
+  "image": ""
+}

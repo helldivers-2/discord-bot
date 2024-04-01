@@ -1,0 +1,16 @@
+{
+  "page": "destroy_command_bunkers",
+  "title": "Destroy Command Bunkers",
+  "description": "",
+  "content": "",
+  "fields": [
+    {
+      "name": "Primary Objective",
+      "value": "Difficulty: 7+",
+      "inline": true
+    }
+  ],
+  "emoji": "",
+  "thumbnail": "",
+  "image": ""
+}

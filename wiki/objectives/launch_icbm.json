@@ -1,0 +1,16 @@
+{
+  "page": "launch_icbm",
+  "title": "Launch ICBM",
+  "description": "",
+  "content": "",
+  "fields": [
+    {
+      "name": "Primary Objective",
+      "value": "Difficulty: 3+",
+      "inline": true
+    }
+  ],
+  "emoji": "",
+  "thumbnail": "",
+  "image": ""
+}

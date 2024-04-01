@@ -1,0 +1,16 @@
+{
+  "page": "activate_terminid_control_system",
+  "title": "Activate Terminid Control System",
+  "description": "",
+  "content": "",
+  "fields": [
+    {
+      "name": "Primary Objective",
+      "value": "All planets",
+      "inline": true
+    }
+  ],
+  "emoji": "",
+  "thumbnail": "",
+  "image": ""
+}

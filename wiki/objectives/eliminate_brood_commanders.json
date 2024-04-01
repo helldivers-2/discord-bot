@@ -1,0 +1,16 @@
+{
+  "page": "eliminate_brood_commanders",
+  "title": "Eliminate Brood Commanders",
+  "description": "",
+  "content": "",
+  "fields": [
+    {
+      "name": "Primary Objective",
+      "value": "All planets",
+      "inline": true
+    }
+  ],
+  "emoji": "",
+  "thumbnail": "",
+  "image": ""
+}

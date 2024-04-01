@@ -298,8 +298,14 @@ export async function newEventUpdate(event: GlobalEvent, channelIds: string[]) {
       iconURL: altSprites['Humans'],
     })
     .setFooter({text: SUBSCRIBE_FOOTER});
-  if (event.title) eventEmbed.setTitle(event.title);
-  if (event.message) eventEmbed.setDescription(event.message);
+  if (event.title)
+    eventEmbed.setTitle(
+      event.title.replace(/<i=\d>/g, '**').replace(/<\/i>/g, '**')
+    );
+  if (event.message)
+    eventEmbed.setDescription(
+      event.message.replace(/<i=\d>/g, '**').replace(/<\/i>/g, '**')
+    );
 
   // send new updates to subscribed channels
   const promises: Promise<any>[] = [];
@@ -348,8 +354,20 @@ export async function newNewsUpdate(news: NewsFeedItem, channelIds: string[]) {
             name: 'New Dispatch from SE Command!',
             iconURL: altSprites['Humans'],
           })
-          .setTitle(message.split('\n')[0])
-          .setDescription(message.split('\n').slice(1).join('\n'))
+          .setTitle(
+            message
+              .split('\n')[0]
+              .replace(/<i=\d>/g, '**')
+              .replace(/<\/i>/g, '**')
+          )
+          .setDescription(
+            message
+              .split('\n')
+              .slice(1)
+              .join('\n')
+              .replace(/<i=\d>/g, '**')
+              .replace(/<\/i>/g, '**')
+          )
           .setFooter({text: SUBSCRIBE_FOOTER})
           .setTimestamp(),
       ]
@@ -359,7 +377,9 @@ export async function newNewsUpdate(news: NewsFeedItem, channelIds: string[]) {
             name: 'New Dispatch from SE Command!',
             iconURL: altSprites['Humans'],
           })
-          .setDescription(news.message)
+          .setDescription(
+            news.message.replace(/<i=\d>/g, '**').replace(/<\/i>/g, '**')
+          )
           .setFooter({text: SUBSCRIBE_FOOTER})
           .setTimestamp(),
       ];

@@ -1,0 +1,16 @@
+{
+  "page": "eradicate_automaton_forces",
+  "title": "Eradicate Automaton Forces",
+  "description": "",
+  "content": "",
+  "fields": [
+    {
+      "name": "Primary Objective",
+      "value": "All planets",
+      "inline": true
+    }
+  ],
+  "emoji": "",
+  "thumbnail": "",
+  "image": ""
+}

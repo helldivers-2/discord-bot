@@ -1,0 +1,16 @@
+{
+  "page": "retrieve_valuable_data",
+  "title": "Retrieve Valuable Data",
+  "description": "",
+  "content": "",
+  "fields": [
+    {
+      "name": "Primary Objective",
+      "value": "All planets",
+      "inline": true
+    }
+  ],
+  "emoji": "",
+  "thumbnail": "",
+  "image": ""
+}

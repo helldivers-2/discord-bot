@@ -1,0 +1,16 @@
+{
+  "page": "eliminate_automaton_hulks",
+  "title": "Eliminate Automaton Hulks",
+  "description": "",
+  "content": "",
+  "fields": [
+    {
+      "name": "Primary Objective",
+      "value": "All planets",
+      "inline": true
+    }
+  ],
+  "emoji": "",
+  "thumbnail": "",
+  "image": ""
+}

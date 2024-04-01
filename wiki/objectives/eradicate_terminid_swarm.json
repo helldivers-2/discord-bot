@@ -1,0 +1,16 @@
+{
+  "page": "eradicate_terminid_swarm",
+  "title": "Eradicate Terminid Swarm",
+  "description": "",
+  "content": "",
+  "fields": [
+    {
+      "name": "Primary Objective",
+      "value": "All planets",
+      "inline": true
+    }
+  ],
+  "emoji": "",
+  "thumbnail": "",
+  "image": ""
+}

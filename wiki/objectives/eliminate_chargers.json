@@ -1,0 +1,16 @@
+{
+  "page": "eliminate_chargers",
+  "title": "Eliminate Chargers",
+  "description": "",
+  "content": "",
+  "fields": [
+    {
+      "name": "Primary Objective",
+      "value": "All planets",
+      "inline": true
+    }
+  ],
+  "emoji": "",
+  "thumbnail": "",
+  "image": ""
+}
