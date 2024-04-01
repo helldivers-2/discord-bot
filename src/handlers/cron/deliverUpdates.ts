@@ -6,6 +6,7 @@ import {
   GlobalEvent,
   Assignment,
   NewsFeedItem,
+  data,
 } from '../../api-wrapper';
 import {FACTION_COLOUR} from '../../commands/_components';
 import {config, helldiversConfig} from '../../config';
@@ -33,15 +34,23 @@ export async function newCampaignUpdate(
   const planetThumbnailUrl = `https://helldiverscompanionimagescdn.b-cdn.net/planet-images/${planetNameTransform(
     planetName
   )}.png`;
+  let description =
+    `A new campaign has started on **${planetName}**! ` +
+    `Helldivers are requested to assist in ${campaignType.toLowerCase()} efforts against the ${displayRace}!`;
+  if (campaignType === 'Defend' && campaign.planetEvent) {
+    const {expireTime} = campaign.planetEvent;
+    const expiresInS = expireTime - data.Status.time;
+    const expireTimeUtc = Math.floor(Date.now() + expiresInS * 1000);
+    const expiresInUtcS = Math.floor(expireTimeUtc / 1000);
+
+    description += `\n\n**Defence Ends**: <t:${expiresInUtcS}:R>`;
+  }
   const embeds = [
     new EmbedBuilder()
       .setAuthor({name: 'Helldivers Needed!'})
       .setThumbnail(factionSprites[race as Faction])
       .setTitle(`${typeDisplay} ${campaign.planetName}`)
-      .setDescription(
-        `A new campaign has started on **${planetName}**! ` +
-          `Helldivers are requested to assist in ${campaignType.toLowerCase()} efforts against the ${displayRace}!`
-      )
+      .setDescription(description)
       .addFields(
         {
           name: 'Faction',
@@ -202,6 +211,66 @@ export async function lostPlanetUpdate(
       )
       .setImage(planetThumbnailUrl)
       .setColor(FACTION_COLOUR[race])
+      .setFooter({text: SUBSCRIBE_FOOTER}),
+  ];
+  // send new updates to subscribed channels
+  const promises: Promise<any>[] = [];
+  for (const channel of channels) {
+    try {
+      const message = await channel.send({embeds});
+      if (channel.type === ChannelType.GuildAnnouncement) message.crosspost();
+    } catch (err) {
+      logger.error(err);
+    }
+  }
+  await Promise.all(promises);
+  return;
+}
+
+export async function lostDefenceUpdate(
+  campaign: MergedCampaignData,
+  channelIds: string[]
+) {
+  const channels = await validateChannelArr(channelIds);
+
+  const {planetName, campaignType, planetData} = campaign;
+  const {players} = planetData;
+
+  const planetThumbnailUrl = `https://helldiverscompanionimagescdn.b-cdn.net/planet-images/${planetNameTransform(
+    planetName
+  )}.png`;
+  const race = campaign.planetEvent?.race as string;
+  const displayRace = race.endsWith('s') ? race.slice(0, -1) : race;
+
+  const embeds = [
+    new EmbedBuilder()
+      .setTitle(`${planetName}: Defeat.`)
+      .setThumbnail(factionSprites[race as Faction])
+      .setDescription(
+        `${displayRace} combatants have prevailed on **${planetName}**. ` +
+          `Occupying Super Earth forces have been forced to retreat with Helldivers failing ${campaignType.toLowerCase()} efforts.` +
+          'There is no time for lost, we must now focus on liberating the fallen planet.' +
+          `\n\n**${players.toLocaleString()}** Helldivers are to continue planetary excursions.`
+      )
+      .addFields(
+        {
+          name: '[SUGGESTION]',
+          value: planetName,
+          inline: true,
+        },
+        {
+          name: 'Helldiver Forces',
+          value: players.toLocaleString(),
+          inline: true,
+        },
+        {
+          name: 'Faction',
+          value: displayRace,
+          inline: true,
+        }
+      )
+      .setImage(planetThumbnailUrl)
+      .setColor(FACTION_COLOUR[displayRace])
       .setFooter({text: SUBSCRIBE_FOOTER}),
   ];
   // send new updates to subscribed channels

@@ -10,6 +10,7 @@ import {logger} from '../logging';
 import {and} from 'drizzle-orm';
 import {writeFileSync} from 'fs';
 import {
+  lostDefenceUpdate,
   lostPlanetUpdate,
   newCampaignUpdate,
   newEventUpdate,
@@ -179,6 +180,15 @@ export async function compareData(): Promise<WarDifferences | void> {
       // if there isn't an old campaign, then this is a new campaign
       logger.info(`New campaign on ${planetName}`, {type: 'info'});
       newCampaignUpdate(campaign, channelIds);
+    }
+    // if old campaign was defend, and new is liberate, then we failed a defend mission
+    else if (
+      oldCampaign.campaignType === 'Defend' &&
+      campaign.campaignType === 'Liberation'
+    ) {
+      differences.LostPlanets.push(campaign);
+      logger.info(`Planet ${planetName} DEFENCE has failed`, {type: 'info'});
+      lostDefenceUpdate(campaign, channelIds);
     }
   }
   // compare news feeds

@@ -191,8 +191,7 @@ export async function getData() {
       const playerPerc = (planetStatus.players / players['Total']) * 100;
       const owner = getFactionName(planetStatus.owner);
       const initialOwner = getFactionName(planet.initialOwner);
-      players[owner] += planetStatus.players;
-      // players['Total'] += planetStatus.players;
+
       planets.push({
         name: getPlanetName(index),
         liberation: +liberation.toFixed(4),
@@ -223,6 +222,12 @@ export async function getData() {
     campaignType:
       planetEvents.find(p => p.campaignId === c.id)?.eventType || 'Liberation',
   }));
+
+  for (const campaign of campaigns) {
+    const {planetData, planetEvent} = campaign;
+    if (planetEvent) players[planetEvent.race] += planetData.players;
+    else players[planetData.owner] += planetData.players;
+  }
 
   data = {
     WarInfo: warInfo,
