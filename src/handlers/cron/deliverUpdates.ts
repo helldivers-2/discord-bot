@@ -239,7 +239,7 @@ export async function lostDefenceUpdate(
   const planetThumbnailUrl = `https://helldiverscompanionimagescdn.b-cdn.net/planet-images/${planetNameTransform(
     planetName
   )}.png`;
-  const race = campaign.planetEvent?.race as string;
+  const race = campaign.planetEvent!.race;
   const displayRace = race.endsWith('s') ? race.slice(0, -1) : race;
 
   const embeds = [
@@ -249,8 +249,7 @@ export async function lostDefenceUpdate(
       .setDescription(
         `${displayRace} combatants have prevailed on **${planetName}**. ` +
           `Occupying Super Earth forces have been forced to retreat with Helldivers failing ${campaignType.toLowerCase()} efforts.` +
-          'There is no time for lost, we must now focus on liberating the fallen planet.' +
-          `\n\n**${players.toLocaleString()}** Helldivers are to continue planetary excursions.`
+          `\n\n**${players.toLocaleString()}** Helldivers are to focus on liberating the fallen planet.`
       )
       .addFields(
         {
@@ -270,7 +269,7 @@ export async function lostDefenceUpdate(
         }
       )
       .setImage(planetThumbnailUrl)
-      .setColor(FACTION_COLOUR[displayRace])
+      .setColor(FACTION_COLOUR[race])
       .setFooter({text: SUBSCRIBE_FOOTER}),
   ];
   // send new updates to subscribed channels
