@@ -173,6 +173,40 @@ export type Status = {
   superEarthWarResults: any[];
 };
 
+// export type Task = {
+//   type: number;
+//   values: keyof TaskTypeMappings[];
+//   valueTypes: keyof ValueTypeMappings[];
+// };
+
+// export type TaskTypeMappings = {
+//   // [key: number]: string;
+//   3: 'Eradicate';
+//   11: 'Liberation';
+//   12: 'Defense';
+//   13: 'Control';
+// };
+
+// export type ValueTypeMappings = {
+//   // [key: number]: string;
+//   1: 'race';
+//   3: 'goal';
+//   11: 'liberate';
+//   12: 'planet_index';
+// };
+
+export type MappedTask = {
+  type: number;
+  name: string;
+  race?: Faction; // 1
+  goal: number; // 3
+  progress: number; // in assignment progress field
+  liberate?: boolean; // 11
+  planetIndex?: number; // 12 (0 means "many")
+  values: number[];
+  valueTypes: number[];
+};
+
 // /api/v2/Assignment/War/{war_id}
 export type Assignment = {
   id32: number;
@@ -206,6 +240,28 @@ export type NewsFeedItem = {
   tagIds: number[];
   message: string;
 };
+
+export type SteamNewsItem = {
+  title: string;
+  url: string;
+  date: Date;
+  contents: string;
+  // id: string;
+  // author: string;
+};
+
+export type SteamNewsFeed = SteamNewsItem[];
+
+export type RawSteamNewsItem = {
+  id: string;
+  author: string;
+  title: string;
+  url: string;
+  date: Date;
+  content: string;
+};
+
+export type RawSteamNewsFeed = RawSteamNewsItem[];
 
 export type WarOverview = {
   warId: number;

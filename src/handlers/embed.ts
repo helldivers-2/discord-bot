@@ -12,6 +12,7 @@ import {client, formatPlayers, planetNameTransform} from '.';
 import {
   Assignment,
   Faction,
+  MappedTask,
   MergedCampaignData,
   MergedPlanetEventData,
   data,
@@ -19,6 +20,7 @@ import {
   getAllPlayers,
   getCampaignByPlanetName,
   getCurrencyName,
+  getFactionName,
   getLatestAssignment,
   getPlanetName,
 } from '../api-wrapper';
@@ -152,6 +154,20 @@ export function subscribeNotifEmbed(type: string): EmbedBuilder[] {
   return embeds;
 }
 
+const taskTypeMappings = {
+  3: 'Eradicate',
+  11: 'Liberation',
+  12: 'Defense',
+  13: 'Control',
+};
+
+const valueTypeMappings = {
+  1: 'race',
+  3: 'goal',
+  11: 'liberate',
+  12: 'planet_index',
+};
+
 export function majorOrderEmbed(assignment: Assignment) {
   const {expiresIn, progress, setting} = assignment;
   const {
@@ -186,51 +202,77 @@ export function majorOrderEmbed(assignment: Assignment) {
       inline: false,
     },
     {
-      name: 'Progress',
-      value: `${completed} / ${tasks.length}`,
-      inline: true,
-    },
-    {
       name: 'Expires In',
       value: `<t:${expiresInUtcS}:R> (${expiresInDays}d ${expiresInHours}h)`,
       inline: true,
-    },
-    {
-      name: 'Reward',
-      value: `${amount}x ${getCurrencyName(type)}`,
-      inline: true,
     }
   );
+  // TODO: task progress here
+  embedFields.push({
+    name: 'Reward',
+    value: `${amount}x ${getCurrencyName(type)}`,
+    inline: true,
+  });
 
-  if (settingsType === 4) {
-    const tasksDisplay = tasks.map((t, i) => {
-      const campaign = campaigns.find(
-        c => c.planetName === getPlanetName(t.values[2])
-      );
-      return {
-        completed: progress[i] === 1,
-        planetName: getPlanetName(t.values[2]),
-        type: campaign?.campaignType,
-        progress:
-          campaign?.campaignType === 'Defend'
-            ? campaign?.planetEvent?.defence ?? 0
-            : campaign?.planetData.liberation ?? 0,
-      };
-    });
+  const mappedTasks: MappedTask[] = [];
+  for (const [taskIndex, task] of tasks.entries()) {
+    const {type, values, valueTypes} = task;
+    // skip loop execution if task type not mapped
+    if (!(type in taskTypeMappings)) continue;
 
-    embedFields.push(
-      ...tasksDisplay.map(task => {
-        const {completed, planetName, progress, type} = task;
-        let text = '';
-        if (type) text += `**${type}**: ${progress.toFixed(2)}%`;
-        else text += '**COMPLETE**';
-        return {
-          name: planetName,
-          value: text,
-          inline: true,
-        };
-      })
-    );
+    const mappedTask: MappedTask = {
+      type: type,
+      name: taskTypeMappings[type as keyof typeof taskTypeMappings],
+      goal: -1,
+      progress: -1,
+      values: values,
+      valueTypes: valueTypes,
+    };
+    for (const [valueIndex, valueType] of valueTypes.entries()) {
+      // 1: 'race',
+      // 3: 'goal',
+      // 11: 'liberate',
+      // 12: 'planet_index',
+      if (valueType === 1) mappedTask.race = getFactionName(values[valueIndex]);
+      if (valueType === 3) mappedTask.goal = values[valueIndex];
+      if (valueType === 3) mappedTask.progress = progress[taskIndex];
+      if (valueType === 11) mappedTask.liberate = values[valueIndex] === 1;
+      if (valueType === 12) mappedTask.planetIndex = values[valueIndex];
+    }
+    mappedTasks.push(mappedTask);
+  }
+
+  for (const task of mappedTasks) {
+    const {type, name, race, goal, progress, liberate, planetIndex} = task;
+    const percent = ((progress / goal) * 100).toFixed(2);
+    if (type === 3) {
+      embedFields.push({
+        name: `${name} ${race}`,
+        value: `${progress.toLocaleString()} / ${goal.toLocaleString()} (${percent}%)`,
+        inline: true,
+      });
+    } else if (type === 11 || type === 13) {
+      const campaign = campaigns.find(c => c.planetIndex === planetIndex);
+      const campaignProgress =
+        campaign?.campaignType === 'Defend'
+          ? campaign?.planetEvent?.defence ?? 0
+          : campaign?.planetData.liberation ?? 0;
+      let text = '';
+      if (campaign)
+        text = `**${campaign.campaignType}**: ${campaignProgress.toFixed(2)}%`;
+      else text = '**COMPLETE**';
+      embedFields.push({
+        name: planetIndex ? getPlanetName(planetIndex) : 'Unknown Planet',
+        value: text,
+        inline: true,
+      });
+    } else if (type === 12) {
+      embedFields.push({
+        name: `Defend ${goal} Planets`,
+        value: `${progress} / ${goal} (${percent})%`,
+        inline: true,
+      });
+    }
   }
 
   const embed = new EmbedBuilder()

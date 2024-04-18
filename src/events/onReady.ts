@@ -150,6 +150,9 @@ const onReady = async (client: Client) => {
         });
     }
   });
+
+  // update messages on startup
+  updateMessages();
 };
 
 export {onReady};
