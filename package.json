@@ -1,7 +1,7 @@
 {
   "name": "hellcom-bot",
   "description": "Welcome to the repo for HellCom Discord bot! This bot is intended to be a helper/utility for Helldivers's community. Democracy!",
-  "version": "0.1.6",
+  "version": "0.0.0",
   "author": "jgaribsin",
   "license": "AGPL-3.0-only",
   "scripts": {
