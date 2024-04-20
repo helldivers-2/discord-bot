@@ -241,6 +241,25 @@ export type NewsFeedItem = {
   message: string;
 };
 
+export type StoreItem = {
+  name: string;
+  description: string;
+  type: 'Light' | 'Medium' | 'Heavy';
+  slot: 'Head' | 'Body' | 'Cloak';
+  armor_rating: number;
+  speed: number;
+  stamina_regen: number;
+  passive: {
+    name: string;
+    description: string;
+  };
+};
+
+export type StoreRotation = {
+  expire_time: Date;
+  items: StoreItem[];
+};
+
 export type SteamNewsItem = {
   title: string;
   url: string;
@@ -309,6 +328,7 @@ export type ApiData = {
   ActivePlanets: MergedPlanetData[];
   PlanetAttacks: {source: string; target: string}[];
   Events: GlobalEvent[];
+  SuperStore?: StoreRotation;
   Players: {
     [key in Faction]: number;
   };

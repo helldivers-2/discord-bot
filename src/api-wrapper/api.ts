@@ -15,8 +15,10 @@ import {writeFileSync} from 'fs';
 import {getAllPlanets} from './planets';
 import axios, {AxiosRequestConfig} from 'axios';
 import {config} from '../config';
+import {logger} from '../handlers';
 
 const API_URL = 'https://api.live.prod.thehelldiversgame.com/api';
+const CHATS_URL = 'https://api.diveharder.com/v1/all';
 const {IDENTIFIER} = config;
 
 export const seasons = {
@@ -92,10 +94,10 @@ export let data: ApiData = {
 const axiosOpts: AxiosRequestConfig = {
   headers: {
     'Accept-Language': 'en-us',
+    'User-Agent': 'HellComBot/1.0',
   },
 };
 
-let getDataCounter = 0;
 export async function getData() {
   const season = seasons.current;
   // https://api.live.prod.thehelldiversgame.com/api/WarSeason/801/Status
@@ -124,6 +126,19 @@ export async function getData() {
     await axios.get(`${API_URL}/Stats/War/${season}/Summary`, axiosOpts)
   ).data;
   const planetStats = statsApi as PlanetStats;
+
+  let chatsAPI;
+  try {
+    // Unofficial: api wrapper for the authed chats endpoint
+    chatsAPI = await (
+      await axios.get(CHATS_URL, {...axiosOpts, timeout: 10_000})
+    ).data;
+  } catch (err) {
+    logger.error('Failed to fetch chats data.', {
+      type: 'API',
+      ...(err as Error),
+    });
+  }
 
   // let planetStats: PlanetStats = data.PlanetStats;
   // if (getDataCounter % 2 === 0) {
@@ -250,8 +265,13 @@ export async function getData() {
     // this is the starting point in unix for whatever time thing they use
     UTCOffset: Math.floor(status.timeUtc - status.time * 1000), // use this value to add to the time to get the UTC time in seconds
   };
+  if (
+    chatsAPI &&
+    chatsAPI['store_rotation'] &&
+    chatsAPI['store_rotation'].items
+  )
+    data.SuperStore = chatsAPI['store_rotation'];
 
-  getDataCounter++;
   writeFileSync('data.json', JSON.stringify(data, null, 2));
   return data;
 }

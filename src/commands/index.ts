@@ -12,8 +12,10 @@ import dispatches from './dispatches';
 import events from './events';
 import history from './history';
 import map from './map';
+import steam from './steam';
 import planet from './planet';
 import subscribe from './subscribe';
+import superstore from './superstore';
 import wiki from './wiki';
 import {Category, WikiData} from '../handlers';
 
@@ -27,7 +29,9 @@ const commandList: Command[] = [
   history,
   community,
   map,
-  wiki,
+  // steam,
+  // wiki,
+  superstore,
 ];
 const notEphemeral: string[] = [];
 const ephemeralCmds = commandList

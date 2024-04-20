@@ -1,24 +1,9 @@
-import {
-  ActivityType,
-  ButtonBuilder,
-  ButtonStyle,
-  Client,
-  REST,
-  Routes,
-  StringSelectMenuBuilder,
-  StringSelectMenuOptionBuilder,
-} from 'discord.js';
+import {ActivityType, Client, REST, Routes} from 'discord.js';
 import {schedule} from 'node-cron';
 import {commandHash, commandList, presenceCmds, wikiCmd} from '../commands';
 import {config} from '../config';
 import {getData, mappedNames} from '../api-wrapper';
-import {
-  compareData,
-  dbData,
-  loadWikiFiles,
-  logger,
-  updateMessages,
-} from '../handlers';
+import {compareData, dbData, logger, updateMessages} from '../handlers';
 
 // bot client token, for use with discord API
 const BOT_TOKEN = config.BOT_TOKEN;
@@ -76,47 +61,47 @@ const onReady = async (client: Client) => {
   });
 
   // load wiki pages
-  const wiki = loadWikiFiles('./wiki');
-  wikiCmd.buttons = wiki.categories.map(c => {
-    const {directory, display_name, content, emoji, thumbnail, image} = c;
-
-    const button = new ButtonBuilder()
-      .setCustomId(directory)
-      .setLabel(display_name)
-      .setStyle(ButtonStyle.Secondary);
-
-    if (emoji) button.setEmoji(emoji);
-    return button;
-  });
-  wikiCmd.dirSelect = wiki.categories.reduce(
-    (acc, c) => {
-      acc[c.directory] = new StringSelectMenuBuilder()
-        .setCustomId(c.directory)
-        .setPlaceholder('Select a page from this category...')
-        .addOptions(
-          wiki.pages
-            .filter(page => page.page.startsWith(c.directory))
-            .map(page => {
-              const option = new StringSelectMenuOptionBuilder()
-                .setLabel(page.title)
-                .setValue(page.page);
-
-              if (page.description) option.setDescription(page.description);
-              if (page.emoji) option.setEmoji(page.emoji);
-              return option;
-            })
-        );
-      return acc;
-    },
-    {} as Record<string, StringSelectMenuBuilder>
-  );
-  wikiCmd.pages = wiki.pages;
-  wikiCmd.categories = wiki.categories;
-
-  time = `${Date.now() - start}ms`;
-  logger.info(`Loaded ${wiki.pages.length} wiki pages in ${time}`, {
-    type: 'startup',
-  });
+  // const wiki = loadWikiFiles('./wiki');
+  // wikiCmd.buttons = wiki.categories.map(c => {
+  //   const {directory, display_name, content, emoji, thumbnail, image} = c;
+  //
+  //   const button = new ButtonBuilder()
+  //     .setCustomId(directory)
+  //     .setLabel(display_name)
+  //     .setStyle(ButtonStyle.Secondary);
+  //
+  //   if (emoji) button.setEmoji(emoji);
+  //   return button;
+  // });
+  // wikiCmd.dirSelect = wiki.categories.reduce(
+  //   (acc, c) => {
+  //     acc[c.directory] = new StringSelectMenuBuilder()
+  //       .setCustomId(c.directory)
+  //       .setPlaceholder('Select a page from this category...')
+  //       .addOptions(
+  //         wiki.pages
+  //           .filter(page => page.page.startsWith(c.directory))
+  //           .map(page => {
+  //             const option = new StringSelectMenuOptionBuilder()
+  //               .setLabel(page.title)
+  //               .setValue(page.page);
+  //
+  //             if (page.description) option.setDescription(page.description);
+  //             if (page.emoji) option.setEmoji(page.emoji);
+  //             return option;
+  //           })
+  //       );
+  //     return acc;
+  //   },
+  //   {} as Record<string, StringSelectMenuBuilder>
+  // );
+  // wikiCmd.pages = wiki.pages;
+  // wikiCmd.categories = wiki.categories;
+  //
+  // time = `${Date.now() - start}ms`;
+  // logger.info(`Loaded ${wiki.pages.length} wiki pages in ${time}`, {
+  //   type: 'startup',
+  // });
 
   // cron schedule to update messages
   schedule(PERSISTENT_MESSAGE_INTERVAL, () => updateMessages());

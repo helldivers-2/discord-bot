@@ -320,7 +320,7 @@ export async function newEventUpdate(event: GlobalEvent, channelIds: string[]) {
   return;
 }
 // TODO: use new endpoint to get this
-// export async function newMajorOrdeUpdater(order: ??, channels: (TextChannel | PublicThreadChannel)[]) {}
+// export async function newMajorOrderUpdater(order: ??, channels: (TextChannel | PublicThreadChannel)[]) {}
 export async function newMajorOrderUpdate(
   assignment: Assignment,
   channelIds: string[]
@@ -346,47 +346,56 @@ export async function newMajorOrderUpdate(
 export async function newNewsUpdate(news: NewsFeedItem, channelIds: string[]) {
   const channels = await validateChannelArr(channelIds);
   const {message} = news;
-  const embeds = message.includes('\n')
-    ? [
-        new EmbedBuilder()
-          .setAuthor({
-            name: 'New Dispatch from SE Command!',
-            iconURL: altSprites['Humans'],
-          })
-          .setTitle(
-            message
-              .split('\n')[0]
-              .replace(/<i=\d>/g, '**')
-              .replace(/<\/i>/g, '**')
-          )
-          .setDescription(
-            message
-              .split('\n')
-              .slice(1)
-              .join('\n')
-              .replace(/<i=\d>/g, '**')
-              .replace(/<\/i>/g, '**')
-          )
-          .setFooter({text: SUBSCRIBE_FOOTER})
-          .setTimestamp(),
-      ]
-    : [
-        new EmbedBuilder()
-          .setAuthor({
-            name: 'New Dispatch from SE Command!',
-            iconURL: altSprites['Humans'],
-          })
-          .setDescription(
-            news.message.replace(/<i=\d>/g, '**').replace(/<\/i>/g, '**')
-          )
-          .setFooter({text: SUBSCRIBE_FOOTER})
-          .setTimestamp(),
-      ];
+  const splitMessage = message.split('\n');
+  // check whether the dispatch reasonably has a title (short string before newline)
+  const title = splitMessage[0].length < 256 ? splitMessage[0] : undefined;
+  const embeds: EmbedBuilder[] = [];
+
+  // if it does have a title, parse it and include it as an embed title
+  if (title)
+    embeds.push(
+      new EmbedBuilder()
+        .setAuthor({
+          name: 'New Dispatch from SE Command!',
+          iconURL: altSprites['Humans'],
+        })
+        .setTitle(
+          message
+            .split('\n')[0]
+            .replace(/<i=\d>/g, '**')
+            .replace(/<\/i>/g, '**')
+        )
+        .setDescription(
+          message
+            .split('\n')
+            .slice(1)
+            .join('\n')
+            .replace(/<i=\d>/g, '**')
+            .replace(/<\/i>/g, '**')
+        )
+        .setFooter({text: SUBSCRIBE_FOOTER})
+        .setTimestamp()
+    );
+  // otherwise, no title, just description
+  else
+    embeds.push(
+      new EmbedBuilder()
+        .setAuthor({
+          name: 'New Dispatch from SE Command!',
+          iconURL: altSprites['Humans'],
+        })
+        .setDescription(
+          news.message.replace(/<i=\d>/g, '**').replace(/<\/i>/g, '**')
+        )
+        .setFooter({text: SUBSCRIBE_FOOTER})
+        .setTimestamp()
+    );
 
   for (const channel of channels) {
     try {
       const message = await channel.send({embeds});
-      if (channel.type === ChannelType.GuildAnnouncement) message.crosspost();
+      if (channel.type === ChannelType.GuildAnnouncement)
+        await message.crosspost();
     } catch (err) {
       logger.error(err);
     }
