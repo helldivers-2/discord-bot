@@ -210,7 +210,9 @@ export function majorOrderEmbed(assignment: Assignment) {
   // TODO: task progress here
   embedFields.push({
     name: 'Reward',
-    value: `${amount}x ${getCurrencyName(type)}`,
+    value:
+      `${amount}x ` +
+      (type === 1 ? '<:warbond_medal:1231439956640010261>' : type.toString()),
     inline: true,
   });
 

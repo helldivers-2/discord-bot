@@ -4,6 +4,8 @@ import {FOOTER_MESSAGE} from './_components';
 import {data} from '../api-wrapper';
 import {dayjs} from '../handlers/dates';
 
+const sc_emoji = '<:super_credits:1231439957848096828>';
+
 const command: Command = {
   data: new SlashCommandBuilder()
     .setName('superstore')
@@ -26,7 +28,9 @@ const command: Command = {
     const embeds: EmbedBuilder[] = [];
     for (const item of SuperStore.items) {
       const embed = new EmbedBuilder()
-        .setTitle(`${item.name} (${item.type} ${item.slot})`)
+        .setTitle(
+          `${item.store_cost} ${sc_emoji} │ ${item.name} (${item.type} ${item.slot})`
+        )
         .setDescription(item.description)
         .addFields(
           {

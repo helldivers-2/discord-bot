@@ -253,6 +253,7 @@ export type StoreItem = {
     name: string;
     description: string;
   };
+  store_cost: number;
 };
 
 export type StoreRotation = {
