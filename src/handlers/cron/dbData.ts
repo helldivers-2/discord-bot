@@ -38,6 +38,7 @@ export async function dbData() {
     ActivePlanets: data.ActivePlanets,
     PlanetAttacks: data.PlanetAttacks,
     Events: data.Events,
+    SuperStore: data.SuperStore,
     Players: data.Players,
     UTCOffset: data.UTCOffset,
   };

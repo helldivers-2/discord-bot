@@ -28,9 +28,10 @@ const configObj: Record<string, string | number | undefined> = {
     `/discord | v${version} | made by Major (@theyodastream)`,
   DISCORD_APPLICATION_DIRECTORY:
     'https://discord.com/application-directory/1213944670288347176',
-  DISCORD_INVITE: 'https://discord.gg/levialliance',
-  KOFI_LINK: 'https://ko-fi.com/theyodastream',
+  DISCORD_INVITE: 'https://discord.gg/kbhWz6mYfx',
+  KOFI_LINK: 'https://ko-fi.com/hellcombot',
   TOP_GG_LINK: 'https://top.gg/bot/1213944670288347176',
+  GITHUB_LINK: 'https://github.com/helldivers-2/discord-bot',
 
   // Project info
   VERSION: version,

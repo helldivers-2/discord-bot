@@ -53,6 +53,7 @@ export async function compareData(): Promise<WarDifferences | void> {
     ActivePlanets: data.ActivePlanets,
     PlanetAttacks: data.PlanetAttacks,
     Events: data.Events,
+    SuperStore: data.SuperStore,
     Players: data.Players,
     UTCOffset: data.UTCOffset,
   };
@@ -121,27 +122,27 @@ export async function compareData(): Promise<WarDifferences | void> {
   // TODO: compare major order
   // check the list of old campaigns to see if it doesn't exist in the new data
   // if not, then we either lost or won a planet
-  for (const campaign of oldData.Campaigns) {
-    const {planetName} = campaign;
+  for (const oldCampaign of oldData.Campaigns) {
+    const {planetName} = oldCampaign;
     const newCampaign = newData.Campaigns.find(
       c => c.planetName === planetName
     );
 
     if (!newCampaign) {
       logger.info(`Campaign on ${planetName} has ended`, {type: 'info'});
-      const oldOwner = campaign.planetData.owner;
+      const oldOwner = oldCampaign.planetData.owner;
       const newOwner = data.Planets.find(p => p.name === planetName)?.owner;
 
       // if there is an old campaign, check if the owner has changed
       // if both the old and new owner are humans, then we won a defence
       if (oldOwner === 'Humans' && newOwner === 'Humans') {
         differences.WonPlanets.push({
-          ...campaign,
+          ...oldCampaign,
         });
         logger.info(`Planet ${planetName} has been successfully defended`, {
           type: 'info',
         });
-        wonPlanetUpdate(campaign, channelIds);
+        wonPlanetUpdate(oldCampaign, channelIds);
       }
       // if it changed, then we either liberated something, or failed to defend
       if (oldOwner !== newOwner) {
@@ -149,46 +150,46 @@ export async function compareData(): Promise<WarDifferences | void> {
           // we won the campaign
           // eg. helldivers have successfully liberated <planet>!
           differences.WonPlanets.push({
-            ...campaign,
+            ...oldCampaign,
           });
           logger.info(`Planet ${planetName} has been successfully LIBERATED`, {
             type: 'info',
           });
-          wonPlanetUpdate(campaign, channelIds);
+          wonPlanetUpdate(oldCampaign, channelIds);
         } else if (oldOwner === 'Humans') {
           // we lost the campaign (probably a defend planet)
           // eg. helldivers were not able to defend <planet>!
           differences.LostPlanets.push({
-            ...campaign,
+            ...oldCampaign,
           });
           logger.info(`Planet ${planetName} DEFENCE has failed`, {
             type: 'info',
           });
-          lostPlanetUpdate(campaign, channelIds);
+          lostPlanetUpdate(oldCampaign, channelIds);
         }
       }
     }
   }
   // compare old and new campaigns
-  for (const campaign of newData.Campaigns) {
-    const {planetName} = campaign;
+  for (const newCampaign of newData.Campaigns) {
+    const {planetName} = newCampaign;
     const oldCampaign = oldData.Campaigns.find(
       c => c.planetName === planetName
     );
     if (!oldCampaign) {
-      differences.NewCampaigns.push(campaign);
+      differences.NewCampaigns.push(newCampaign);
       // if there isn't an old campaign, then this is a new campaign
       logger.info(`New campaign on ${planetName}`, {type: 'info'});
-      newCampaignUpdate(campaign, channelIds);
+      newCampaignUpdate(newCampaign, channelIds);
     }
     // if old campaign was defend, and new is liberate, then we failed a defend mission
     else if (
       oldCampaign.campaignType === 'Defend' &&
-      campaign.campaignType === 'Liberation'
+      newCampaign.campaignType === 'Liberation'
     ) {
-      differences.LostPlanets.push(campaign);
+      differences.LostPlanets.push(newCampaign);
       logger.info(`Planet ${planetName} DEFENCE has failed`, {type: 'info'});
-      lostDefenceUpdate(campaign, channelIds);
+      lostDefenceUpdate(oldCampaign, channelIds);
     }
   }
   // compare news feeds

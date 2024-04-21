@@ -46,10 +46,13 @@ export async function updateMessages() {
         embeds: embeds[message.type],
       })
       .catch(err => {
-        logger.error(`Error updating message: ${err.message}`, {
+        logger.info(`Error updating message: ${err.message}`, {
           type: 'update',
           ...err,
         });
+        db.delete(persistentMessages)
+          .where(eq(persistentMessages.messageId, message.messageId))
+          .catch();
         return null;
       });
   });

@@ -346,6 +346,7 @@ export type StrippedApiData = {
   ActivePlanets: MergedPlanetData[];
   PlanetAttacks: {source: string; target: string}[];
   Events: GlobalEvent[];
+  SuperStore?: StoreRotation;
   Players: {
     [key in Faction]: number;
   };

@@ -51,8 +51,10 @@ const subcmds: {[key: string]: (job: CommandInteraction) => Promise<void>} = {
 
 async function list(interaction: CommandInteraction) {
   const embeds: EmbedBuilder[] = await campaignEmbeds();
-
-  await interaction.editReply({embeds: embeds});
+  if (embeds.length > 10) {
+    await interaction.editReply({embeds: embeds.slice(0, 10)});
+    await interaction.followUp({embeds: embeds.slice(10), ephemeral: true});
+  } else await interaction.editReply({embeds: embeds});
 }
 
 async function info(interaction: CommandInteraction) {

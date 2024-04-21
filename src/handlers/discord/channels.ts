@@ -7,6 +7,8 @@ import {
 } from 'discord.js';
 import {client} from '../client';
 import {logger} from '../logging';
+import {announcementChannels, db} from '../../db';
+import {eq} from 'drizzle-orm';
 
 export async function validateChannel(
   id: string
@@ -25,10 +27,13 @@ export async function validateChannel(
     return;
   } catch (err) {
     const discordErr = err as DiscordAPIError;
-    logger.error(`${id} - ${discordErr.message}`, {
+    logger.info(`${id} - ${discordErr.message}`, {
       channel_id: id,
       type: 'error',
     });
+    db.delete(announcementChannels)
+      .where(eq(announcementChannels.channelId, id))
+      .catch(err => logger.error(err));
     return;
   }
 }

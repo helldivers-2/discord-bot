@@ -9,11 +9,13 @@ import {
   data,
 } from '../../api-wrapper';
 import {FACTION_COLOUR} from '../../commands/_components';
-import {config, helldiversConfig} from '../../config';
+import {config, helldiversConfig, isProd} from '../../config';
 import {planetNameTransform} from '../custom';
 import {validateChannelArr} from '../discord';
 import {majorOrderEmbed} from '../embed';
 import {logger} from '../logging';
+import {announcementChannels, db} from '../../db';
+import {and, eq} from 'drizzle-orm';
 
 const {SUBSCRIBE_FOOTER} = config;
 const {factionSprites, altSprites} = helldiversConfig;
@@ -75,7 +77,16 @@ export async function newCampaignUpdate(
       const message = await channel.send({embeds});
       if (channel.type === ChannelType.GuildAnnouncement) message.crosspost();
     } catch (err) {
-      logger.error(err);
+      logger.info(err);
+      await db
+        .delete(announcementChannels)
+        .where(
+          and(
+            eq(announcementChannels.production, isProd),
+            eq(announcementChannels.channelId, channel.id)
+          )
+        )
+        .catch(err => logger.error(err));
     }
   }
   await Promise.all(promises);
@@ -147,7 +158,16 @@ export async function wonPlanetUpdate(
       const message = await channel.send({embeds});
       if (channel.type === ChannelType.GuildAnnouncement) message.crosspost();
     } catch (err) {
-      logger.error(err);
+      logger.info(err);
+      await db
+        .delete(announcementChannels)
+        .where(
+          and(
+            eq(announcementChannels.production, isProd),
+            eq(announcementChannels.channelId, channel.id)
+          )
+        )
+        .catch(err => logger.error(err));
     }
   }
 
@@ -220,7 +240,16 @@ export async function lostPlanetUpdate(
       const message = await channel.send({embeds});
       if (channel.type === ChannelType.GuildAnnouncement) message.crosspost();
     } catch (err) {
-      logger.error(err);
+      logger.info(err);
+      await db
+        .delete(announcementChannels)
+        .where(
+          and(
+            eq(announcementChannels.production, isProd),
+            eq(announcementChannels.channelId, channel.id)
+          )
+        )
+        .catch(err => logger.error(err));
     }
   }
   await Promise.all(promises);
@@ -279,7 +308,16 @@ export async function lostDefenceUpdate(
       const message = await channel.send({embeds});
       if (channel.type === ChannelType.GuildAnnouncement) message.crosspost();
     } catch (err) {
-      logger.error(err);
+      logger.info(err);
+      await db
+        .delete(announcementChannels)
+        .where(
+          and(
+            eq(announcementChannels.production, isProd),
+            eq(announcementChannels.channelId, channel.id)
+          )
+        )
+        .catch(err => logger.error(err));
     }
   }
   await Promise.all(promises);
@@ -313,7 +351,16 @@ export async function newEventUpdate(event: GlobalEvent, channelIds: string[]) {
       const message = await channel.send({embeds: [eventEmbed]});
       if (channel.type === ChannelType.GuildAnnouncement) message.crosspost();
     } catch (err) {
-      logger.error(err);
+      logger.info(err);
+      await db
+        .delete(announcementChannels)
+        .where(
+          and(
+            eq(announcementChannels.production, isProd),
+            eq(announcementChannels.channelId, channel.id)
+          )
+        )
+        .catch(err => logger.error(err));
     }
   }
   await Promise.all(promises);
@@ -336,7 +383,11 @@ export async function newMajorOrderUpdate(
       const message = await channel.send({embeds});
       if (channel.type === ChannelType.GuildAnnouncement) message.crosspost();
     } catch (err) {
-      logger.error(err);
+      logger.info(err);
+      await db
+        .delete(announcementChannels)
+        .where(eq(announcementChannels.channelId, channel.id))
+        .catch(err => logger.error(err));
     }
   }
   await Promise.all(promises);
@@ -397,7 +448,11 @@ export async function newNewsUpdate(news: NewsFeedItem, channelIds: string[]) {
       if (channel.type === ChannelType.GuildAnnouncement)
         await message.crosspost();
     } catch (err) {
-      logger.error(err);
+      logger.info(err);
+      await db
+        .delete(announcementChannels)
+        .where(eq(announcementChannels.channelId, channel.id))
+        .catch(err => logger.error(err));
     }
   }
 }

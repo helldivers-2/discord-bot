@@ -27,7 +27,7 @@ const commandList: Command[] = [
   discord,
   dispatches,
   history,
-  community,
+  // community,
   map,
   // steam,
   // wiki,
