@@ -7,4 +7,4 @@ primary_region = 'sea'
 [[vm]]
   size = 'shared-cpu-1x'
   memory = '256mb'
-  swap_size_mb = 512
+  swap_size = '512mb'
