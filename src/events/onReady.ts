@@ -137,7 +137,7 @@ const onReady = async (client: Client) => {
   });
 
   // update messages on startup
-  updateMessages();
+  // updateMessages();
 };
 
 export {onReady};

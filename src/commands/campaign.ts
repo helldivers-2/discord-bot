@@ -5,7 +5,7 @@ import {
   SlashCommandBuilder,
 } from 'discord.js';
 import {Command} from '../interfaces';
-import {campaignEmbeds, campaignHistoryGraph} from '../handlers';
+import {planetEmbeds, campaignHistoryGraph} from '../handlers';
 import {getPopularCampaign} from '../api-wrapper';
 import {FOOTER_MESSAGE} from './_components';
 
@@ -50,7 +50,7 @@ const subcmds: {[key: string]: (job: CommandInteraction) => Promise<void>} = {
 };
 
 async function list(interaction: CommandInteraction) {
-  const embeds: EmbedBuilder[] = await campaignEmbeds();
+  const embeds: EmbedBuilder[] = await planetEmbeds();
   if (embeds.length > 10) {
     await interaction.editReply({embeds: embeds.slice(0, 10)});
     await interaction.followUp({embeds: embeds.slice(10), ephemeral: true});
@@ -61,7 +61,7 @@ async function info(interaction: CommandInteraction) {
   const userQuery = interaction.options.get('planet_name', true)
     .value as string;
   const embeds: EmbedBuilder[] = [
-    ...(await campaignEmbeds(userQuery)),
+    ...(await planetEmbeds(userQuery)),
     new EmbedBuilder()
       .setTitle(`${userQuery} Campaign History`)
       .setImage('attachment://chart.png')
@@ -79,7 +79,7 @@ async function info(interaction: CommandInteraction) {
 async function most(interaction: CommandInteraction) {
   const campaign = getPopularCampaign();
   campaign.planetName;
-  const embeds: EmbedBuilder[] = await campaignEmbeds(campaign.planetName);
+  const embeds: EmbedBuilder[] = await planetEmbeds(campaign.planetName);
 
   await interaction.editReply({embeds: embeds});
 }

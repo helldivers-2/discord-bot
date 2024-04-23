@@ -8,23 +8,28 @@ import {
   Assignment,
   NewsFeedItem,
   PlanetStats,
-  PlanetStatsItem,
+  StoreRotation,
+  AdditionalPlanetInfo,
 } from './types';
 import {getFactionName, getPlanetEventType, getPlanetName} from './mapping';
 import {writeFileSync} from 'fs';
 import {getAllPlanets} from './planets';
-import axios, {AxiosRequestConfig} from 'axios';
+import axios from 'axios';
 import {config} from '../config';
 import {logger} from '../handlers';
 
-const API_URL = 'https://api.live.prod.thehelldiversgame.com/api';
+// const API_URL = 'https://api.live.prod.thehelldiversgame.com/api';
 const CHATS_URL = 'https://api.diveharder.com/v1/all';
+const CHATS_URL_RAW = 'https://api.diveharder.com/raw/all';
+const FALLBACK_URL = 'https://helldivers-2-dotnet.fly.dev/raw/api';
 const {IDENTIFIER} = config;
 
-export const seasons = {
-  current: 801,
-  seasons: [801, 805],
-};
+const apiClient = axios.create({
+  headers: {
+    'Accept-Language': 'en-us',
+    'User-Agent': IDENTIFIER,
+  },
+});
 
 // create an empty object to store the data
 export let data: ApiData = {
@@ -56,6 +61,7 @@ export let data: ApiData = {
     superEarthWarResults: [],
   },
   Planets: [],
+  additionalPlanetInfo: {},
   Campaigns: [],
   PlanetEvents: [],
   ActivePlanets: [],
@@ -91,48 +97,21 @@ export let data: ApiData = {
   },
 };
 
-const axiosOpts: AxiosRequestConfig = {
-  headers: {
-    'Accept-Language': 'en-us',
-    'User-Agent': 'HellComBot/1.0',
-  },
-};
-
 export async function getData() {
-  const season = seasons.current;
-  // https://api.live.prod.thehelldiversgame.com/api/WarSeason/801/Status
-  // https://api.live.prod.thehelldiversgame.com/api/WarSeason/801/WarInfo
-  // https://api.live.prod.thehelldiversgame.com/api/NewsFeed/801
-  // https://api.live.prod.thehelldiversgame.com/api/v2/Assignment/War/801
-  const warInfoApi = await (
-    await axios.get(`${API_URL}/WarSeason/${season}/WarInfo`, axiosOpts)
-  ).data;
-  const warInfo = warInfoApi as WarInfo;
-
-  const statusApi = await (
-    await axios.get(`${API_URL}/WarSeason/${season}/Status`, axiosOpts)
-  ).data;
-  const status = statusApi as Status;
-  status.timeUtc = Date.now();
-
-  const assignmentApi = await (
-    await axios.get(`${API_URL}/v2/Assignment/War/${season}`, axiosOpts)
-  ).data;
-  const assignment = assignmentApi as Assignment[];
-
-  // Unofficial: api wrapper for the authed planetStats endpoint
-  // https://api.diveharder.com/raw/planetStats
-  const statsApi = await (
-    await axios.get(`${API_URL}/Stats/War/${season}/Summary`, axiosOpts)
-  ).data;
-  const planetStats = statsApi as PlanetStats;
-
   let chatsAPI;
+
+  let warInfo: WarInfo;
+  let status: Status;
+  let UTCOffset: number;
+  let assignment: Assignment[];
+  let planetStats: PlanetStats;
+  let newsFeed: NewsFeedItem[];
+  let storeRotation: StoreRotation | undefined = undefined;
+  let additionalPlanetInfo: AdditionalPlanetInfo | undefined = undefined;
+
   try {
     // Unofficial: api wrapper for the authed chats endpoint
-    chatsAPI = await (
-      await axios.get(CHATS_URL, {...axiosOpts, timeout: 10_000})
-    ).data;
+    chatsAPI = await (await apiClient.get(CHATS_URL)).data;
   } catch (err) {
     logger.error('Failed to fetch chats data.', {
       type: 'API',
@@ -140,47 +119,41 @@ export async function getData() {
     });
   }
 
-  // let planetStats: PlanetStats = data.PlanetStats;
-  // if (getDataCounter % 2 === 0) {
-  //   const planetStatsApi = await (
-  //     await axios.get('https://api.diveharder.com/raw/planetStats', {
-  //       ...axiosOpts,
-  //       params: {
-  //         source: IDENTIFIER,
-  //       },
-  //     })
-  //   ).data;
-
-  //   planetStats = {
-  //     galaxy_stats: stats.galaxy_stats,
-  //     planets_stats: stats.planets_stats.map(
-  //       (p: Omit<PlanetStatsItem, 'planetName'>) => ({
-  //         ...p,
-  //         planetName: getPlanetName(p.planetIndex),
-  //       })
-  //     ),
-  //   };
-  // }
-
-  //https://api.live.prod.thehelldiversgame.com/api/NewsFeed/801
-  // fetch the earliest possible news, then using the latest timestamp, fetch more news until it returns empty
-  const newsFeed: NewsFeedItem[] = [];
-  const newsFeedApi = await (
-    await axios.get(`${API_URL}/NewsFeed/${season}`, {
-      ...axiosOpts,
-      params: {
-        maxEntries: 512,
-      },
-    })
-  ).data;
-
-  newsFeed.push(
-    ...(newsFeedApi.map((item: Omit<NewsFeedItem, 'publishedUtc'>) => ({
+  if (chatsAPI) {
+    warInfo = chatsAPI['war_info'] as WarInfo;
+    status = chatsAPI['status'] as Status;
+    status.timeUtc = Date.now();
+    UTCOffset = Math.floor(status.timeUtc - status.time * 1000); // use this value to add to the time to get the UTC time in seconds
+    assignment = chatsAPI['major_order'] as Assignment[];
+    planetStats = chatsAPI['planet_stats'] as PlanetStats;
+    newsFeed = chatsAPI['news_feed'].map(
+      (item: Omit<NewsFeedItem, 'publishedUtc'>) => ({
+        ...item,
+        publishedUtc: UTCOffset + item.published * 1000,
+      })
+    ) as NewsFeedItem[];
+    newsFeed.sort((a, b) => b.published - a.published);
+    storeRotation = chatsAPI['store_rotation'] as StoreRotation;
+    additionalPlanetInfo = chatsAPI['planets'] as AdditionalPlanetInfo;
+  } else {
+    logger.warn('Fallback to dealloc APIs', {type: 'API'});
+    // create a fallback API client
+    apiClient.defaults.baseURL = FALLBACK_URL;
+    const {id} = await (await apiClient.get('/WarSeason/current/WarID')).data;
+    warInfo = await (await apiClient.get(`/WarSeason/${id}/WarInfo`)).data;
+    status = await (await apiClient.get(`/WarSeason/${id}/Status`)).data;
+    status.timeUtc = Date.now();
+    UTCOffset = Math.floor(status.timeUtc - status.time * 1000); // use this value to add to the time to get the UTC time in seconds
+    assignment = await (await apiClient.get(`/v2/Assignment/War/${id}`)).data;
+    planetStats = await (await apiClient.get(`/Stats/War/${id}/Summary`)).data;
+    newsFeed = (await (
+      await apiClient.get(`/NewsFeed/${id}`)
+    ).data.map((item: Omit<NewsFeedItem, 'publishedUtc'>) => ({
       ...item,
-      publishedUtc: data.UTCOffset + item.published * 1000,
-    })) as NewsFeedItem[])
-  );
-  newsFeed.sort((a, b) => b.published - a.published);
+      publishedUtc: UTCOffset + item.published * 1000,
+    }))) as NewsFeedItem[];
+    newsFeed.sort((a, b) => b.published - a.published);
+  }
 
   const planets: MergedPlanetData[] = [];
   const players = {
@@ -216,6 +189,9 @@ export async function getData() {
         ...planetStatus,
         initialOwner: initialOwner,
         owner: owner,
+        sectorName: additionalPlanetInfo?.[index]?.sector,
+        biome: additionalPlanetInfo?.[index]?.biome,
+        environmentals: additionalPlanetInfo?.[index]?.environmentals,
       });
     }
   }
@@ -251,6 +227,7 @@ export async function getData() {
     NewsFeed: newsFeed,
     PlanetStats: planetStats,
     Planets: planets,
+    // additionalPlanetInfo: additionalPlanetInfo,
     Campaigns: campaigns,
     PlanetEvents: planetEvents,
     ActivePlanets: planets.filter(
@@ -261,16 +238,13 @@ export async function getData() {
       target: getPlanetName(p.target),
     })),
     Events: status.globalEvents,
+    // SuperStore: storeRotation,
     Players: players,
     // this is the starting point in unix for whatever time thing they use
     UTCOffset: Math.floor(status.timeUtc - status.time * 1000), // use this value to add to the time to get the UTC time in seconds
   };
-  if (
-    chatsAPI &&
-    chatsAPI['store_rotation'] &&
-    chatsAPI['store_rotation'].items
-  )
-    data.SuperStore = chatsAPI['store_rotation'];
+  if (additionalPlanetInfo) data.additionalPlanetInfo = additionalPlanetInfo;
+  if (storeRotation) data.SuperStore = storeRotation;
 
   writeFileSync('data.json', JSON.stringify(data, null, 2));
   return data;
@@ -288,5 +262,3 @@ export const mappedNames: {
   sectors: [],
 };
 export const planetNames = getAllPlanets().map(p => p.name);
-
-export {API_URL};

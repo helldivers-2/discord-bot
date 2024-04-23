@@ -10,10 +10,10 @@ const configObj: Record<string, string | number | undefined> = {
 
   // Cron job intervals
   PERSISTENT_MESSAGE_INTERVAL: '*/30 * * * *', // every 30 minutes
-  API_UPDATE_INTERVAL: '*/10 * * * * *', // every 10 seconds
+  API_UPDATE_INTERVAL: '*/20 * * * * *', // every 20 seconds
   STATUS_UPDATE_INTERVAL: '*/3 * * * * *', // every 3 seconds
   DB_DATA_INTERVAL: '0 * * * *', // every 1 hour
-  COMPARE_INTERVAL: '*/10 * * * * *', // every 10 seconds
+  COMPARE_INTERVAL: '*/20 * * * * *', // every 20 seconds
 
   // Database config
   DATABASE_URL: process.env.DATABASE_URL,
@@ -32,10 +32,11 @@ const configObj: Record<string, string | number | undefined> = {
   KOFI_LINK: 'https://ko-fi.com/hellcombot',
   TOP_GG_LINK: 'https://top.gg/bot/1213944670288347176',
   GITHUB_LINK: 'https://github.com/helldivers-2/discord-bot',
+  HD_COMPANION_LINK: 'https://helldiverscompanion.com/',
 
   // Project info
   VERSION: version,
-  IDENTIFIER: 'hellcom' + (isProd ? '' : '-dev'),
+  IDENTIFIER: 'HellComBot' + (isProd ? '' : 'Dev') + `/v${version}`,
 };
 
 const config: Record<string, string> = {};

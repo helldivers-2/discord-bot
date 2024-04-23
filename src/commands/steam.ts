@@ -46,7 +46,7 @@ async function patchnotes(interaction: CommandInteraction) {
     },
   };
   const apiData = (await (
-    await axios.get('http://api.diveharder.com/raw/updates', {
+    await axios.get('https://api.diveharder.com/raw/updates', {
       ...axiosOpts,
       params: {
         maxEntries: 512,

@@ -1,0 +1,9 @@
+app = 'hellcom'
+primary_region = 'sea'
+
+[build]
+  image = 'ghcr.io/helldivers-2/discord-bot:latest'
+
+[[vm]]
+  size = 'shared-cpu-1x'
+  memory = '256mb'
