@@ -6,7 +6,6 @@ import {
 } from 'discord.js';
 import {Command} from '../interfaces';
 import campaign from './campaign';
-import community from './community';
 import discord from './discord';
 import dispatches from './dispatches';
 import events from './events';
@@ -15,6 +14,7 @@ import map from './map';
 import steam from './steam';
 import planet from './planet';
 import subscribe from './subscribe';
+import summary from './summary';
 import superstore from './superstore';
 import wiki from './wiki';
 import {Category, WikiData} from '../handlers';
@@ -27,11 +27,11 @@ const commandList: Command[] = [
   discord,
   dispatches,
   history,
-  // community,
   map,
   // steam,
   // wiki,
   superstore,
+  summary,
 ];
 const notEphemeral: string[] = [];
 const ephemeralCmds = commandList

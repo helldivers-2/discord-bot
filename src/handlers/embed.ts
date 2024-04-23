@@ -8,7 +8,7 @@ import {
   TextChannel,
 } from 'discord.js';
 import {config, helldiversConfig} from '../config';
-import {client, formatPlayers, planetNameTransform} from '.';
+import {client, formatPlayers, planetBiomeTransform} from '.';
 import {
   Assignment,
   Faction,
@@ -23,6 +23,8 @@ import {
   getFactionName,
   getLatestAssignment,
   getPlanetName,
+  getPlanetByName,
+  MergedPlanetData,
 } from '../api-wrapper';
 import {FACTION_COLOUR} from '../commands/_components';
 import {apiData, db} from '../db';
@@ -271,7 +273,7 @@ export function majorOrderEmbed(assignment: Assignment) {
     } else if (type === 12) {
       embedFields.push({
         name: `Defend ${goal} Planets`,
-        value: `${progress} / ${goal} (${percent})%`,
+        value: `${progress} / ${goal} (${percent}%)`,
         inline: true,
       });
     }
@@ -409,81 +411,129 @@ export async function warStatusEmbeds() {
   return embeds;
 }
 
-export async function campaignEmbeds(planet_name?: string) {
-  const campaigns: MergedCampaignData[] = planet_name
-    ? [getCampaignByPlanetName(planet_name) as MergedCampaignData]
-    : getAllCampaigns();
+export async function planetEmbeds(planet_name?: string) {
+  const planets: MergedPlanetData[] = planet_name
+    ? [getPlanetByName(planet_name) as MergedPlanetData]
+    : getAllCampaigns().map(c => c.planetData);
 
   const embeds = [];
-  for (const campaign of campaigns) {
-    const {planetName, campaignType, planetData, planetEvent} = campaign;
-    const title = `${planetName}: ${campaignType.toUpperCase()}`;
-    const planetThumbnailUrl = `https://helldiverscompanionimagescdn.b-cdn.net/planet-images/${planetNameTransform(
-      planetName
-    )}.png`;
+  for (const planet of planets) {
+    const {
+      name: planetName,
+      index,
+      sector,
+      sectorName,
+      biome,
+      environmentals,
+    } = planet;
+    const campaign = getCampaignByPlanetName(planetName);
+    const embed = new EmbedBuilder();
+    embeds.push(embed);
 
-    if (campaignType === 'Liberation') {
-      const {
-        maxHealth,
-        initialOwner,
-        owner,
-        health,
-        players,
-        playerPerc,
-        liberation,
-        lossPercPerHour,
-      } = planetData;
-
-      const embed = new EmbedBuilder()
-        .setTitle(title)
-        .setColor(FACTION_COLOUR[owner])
-        .setImage(planetThumbnailUrl);
-      embeds.push(embed);
-      const squadImpact = maxHealth - health;
-
-      const display = {
-        Players: `${players.toLocaleString()} (${playerPerc}%)`,
-        'Controlled By': owner,
-        'Initial Owner': initialOwner,
-        Liberation: `${liberation}%`,
-        'Loss Per Hour': `${lossPercPerHour}%`,
-        'Total Squad Impact': `${squadImpact.toLocaleString()} / ${maxHealth.toLocaleString()}`,
-      };
-      for (const [key, val] of Object.entries(display)) {
-        embed.addFields({name: key, value: val.toString(), inline: true});
-      }
-    } else if (campaignType === 'Defend') {
-      const {maxHealth, health, defence, race, expireTime} =
-        planetEvent as MergedPlanetEventData;
-      const {players, playerPerc, owner} = planetData;
-      const statusTime = data.Status.time;
-
-      const embed = new EmbedBuilder()
-        .setTitle(title)
-        .setColor(FACTION_COLOUR[race])
-        .setImage(planetThumbnailUrl);
-
-      const expiresInS = expireTime - statusTime;
-      const expireTimeUtc = Math.floor(Date.now() + expiresInS * 1000);
-
-      const expiresInUtcS = Math.floor(expireTimeUtc / 1000);
-      const expiresInDays = Math.floor(expiresInS / 86400);
-      const expiresInHours = Math.floor((expiresInS % 86400) / 3600);
-
-      const squadImpact = maxHealth - health;
-      const display = {
-        Players: `${players.toLocaleString()} (${playerPerc}%)`,
-        'Controlled By': owner,
-        Attackers: race,
-        Defence: `${defence}%`,
-        'Campaign Ends': `<t:${expiresInUtcS}:R> (${expiresInDays}d ${expiresInHours}h)`,
-        'Total Squad Impact': `${squadImpact.toLocaleString()} / ${maxHealth.toLocaleString()}`,
-      };
-      for (const [key, val] of Object.entries(display)) {
-        embed.addFields({name: key, value: val.toString(), inline: true});
-      }
-      embeds.push(embed);
+    let title = `${planetName}`;
+    let description = ``;
+    if (sectorName) title += ` (${sectorName} Sector)`;
+    if (biome) {
+      description = biome.description;
+      embed.setImage(
+        `https://helldiverscompanion.com/biomes/${planetBiomeTransform(
+          biome.name
+        )}.webp`
+      );
     }
+    for (const e of environmentals ?? []) {
+      description += `\n\n` + `**${e.name}**` + `\n` + e.description;
+    }
+    if (description) embed.setDescription(description);
+
+    let display: Record<string, string | number> = {};
+    if (campaign) {
+      const {planetName, campaignType, planetData, planetEvent} = campaign;
+      title += `: ${campaignType.toUpperCase()}`;
+      if (campaignType === 'Liberation') {
+        const {
+          maxHealth,
+          initialOwner,
+          owner,
+          health,
+          players,
+          playerPerc,
+          liberation,
+          lossPercPerHour,
+        } = planetData;
+
+        embed.setColor(FACTION_COLOUR[owner]);
+        const squadImpact = maxHealth - health;
+
+        display = {
+          ...display,
+          Players: `${players.toLocaleString()} (${playerPerc}%)`,
+          'Controlled By': owner,
+          'Initial Owner': initialOwner,
+          Liberation: `${liberation}%`,
+          'Loss Per Hour': `${lossPercPerHour}%`,
+          'Total Squad Impact': `${squadImpact.toLocaleString()} / ${maxHealth.toLocaleString()}`,
+        };
+      } else if (campaignType === 'Defend') {
+        const {maxHealth, health, defence, race, expireTime} =
+          planetEvent as MergedPlanetEventData;
+        const {players, playerPerc, owner} = planetData;
+        const statusTime = data.Status.time;
+
+        embed.setColor(FACTION_COLOUR[race]);
+
+        const expiresInS = expireTime - statusTime;
+        const expireTimeUtc = Math.floor(Date.now() + expiresInS * 1000);
+
+        const expiresInUtcS = Math.floor(expireTimeUtc / 1000);
+        const expiresInDays = Math.floor(expiresInS / 86400);
+        const expiresInHours = Math.floor((expiresInS % 86400) / 3600);
+
+        const squadImpact = maxHealth - health;
+        display = {
+          ...display,
+          Players: `${players.toLocaleString()} (${playerPerc}%)`,
+          'Controlled By': owner,
+          Attackers: race,
+          Defence: `${defence}%`,
+          'Campaign Ends': `<t:${expiresInUtcS}:R> (${expiresInDays}d ${expiresInHours}h)`,
+          'Total Squad Impact': `${squadImpact.toLocaleString()} / ${maxHealth.toLocaleString()}`,
+        };
+      }
+    }
+    const planetStats = data.PlanetStats.planets_stats.find(
+      p => p.planetIndex === planet.index
+    );
+    if (planetStats) {
+      const {
+        missionsWon,
+        missionsLost,
+        missionTime,
+        deaths,
+        bugKills,
+        automatonKills,
+        illuminateKills,
+      } = planetStats;
+      const successRate = (missionsWon / (missionsWon + missionsLost)) * 100;
+      const failRate = (missionsLost / (missionsWon + missionsLost)) * 100;
+
+      display[
+        'Missions Won'
+      ] = `${missionsWon.toLocaleString()} (${successRate.toFixed(2)}%)`;
+      display[
+        'Missions Lost'
+      ] = `${missionsLost.toLocaleString()} (${failRate.toFixed(2)}%)`;
+      display['Mission Time'] = `${(missionTime / 3600).toFixed(2)} hours`;
+      display['Helldivers Killed'] = deaths.toLocaleString();
+      if (bugKills) display['Bug Kills'] = bugKills.toLocaleString();
+      if (automatonKills)
+        display['Automaton Kills'] = automatonKills.toLocaleString();
+      if (illuminateKills)
+        display['Illuminate Kills'] = illuminateKills.toLocaleString();
+    }
+    embed.setTitle(title);
+    for (const [key, val] of Object.entries(display))
+      embed.addFields({name: key, value: val.toString(), inline: true});
   }
   if (embeds.length > 1)
     embeds[embeds.length - 1].setFooter({text: FOOTER_MESSAGE}).setTimestamp();

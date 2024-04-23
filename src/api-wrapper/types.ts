@@ -8,6 +8,45 @@ export type Faction = 'Humans' | 'Total' | 'Automaton' | 'Terminids';
 export type PlanetEventType = 'Defend';
 export type CampaignType = 'Defend' | 'Liberation';
 
+export type PlanetBiome = {
+  name: string;
+  description: string;
+};
+
+export type PlanetEnvironment = {
+  name: string;
+  description: string;
+};
+
+export type TranslationLangs =
+  | 'en-US'
+  | 'en-GB'
+  | 'pt-BR'
+  | 'de-DE'
+  | 'es-ES'
+  | 'fr-FR'
+  | 'it-IT'
+  | 'ja-JP'
+  | 'ko-KO'
+  | 'ms-MY'
+  | 'pl-PL'
+  | 'pt-PT'
+  | 'ru-RU'
+  | 'zh-Hans'
+  | 'zh-Hant';
+
+export type AdditionalPlanetInfo = {
+  [key: string]: {
+    name: string;
+    sector: string;
+    biome: PlanetBiome;
+    environmentals: PlanetEnvironment[];
+    names: {
+      [key in TranslationLangs]: string;
+    };
+  };
+};
+
 export type PlanetInfo = {
   index: number;
   settingsHash: number;
@@ -94,6 +133,9 @@ export type MergedPlanetData = {
   players: number;
   playerPerc: number;
   liberation: number;
+  sectorName?: string;
+  biome?: PlanetBiome;
+  environmentals?: PlanetEnvironment[];
 };
 /*
 Defend missions are a race against the clock
@@ -324,6 +366,7 @@ export type ApiData = {
   NewsFeed: NewsFeedItem[];
   PlanetStats: PlanetStats;
   Planets: MergedPlanetData[];
+  additionalPlanetInfo?: AdditionalPlanetInfo;
   Campaigns: MergedCampaignData[];
   PlanetEvents: MergedPlanetEventData[];
   ActivePlanets: MergedPlanetData[];

@@ -1,4 +1,10 @@
-import {EmbedBuilder} from 'discord.js';
+import {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  EmbedBuilder,
+  InteractionEditReplyOptions,
+} from 'discord.js';
 import {and, eq} from 'drizzle-orm';
 import {config, isProd} from '../config';
 import {db, persistentMessages} from '../db';
@@ -7,6 +13,8 @@ import {warStatusEmbeds} from './embed';
 import {logger} from './logging';
 
 const SUBSCRIBE_FOOTER = config.SUBSCRIBE_FOOTER;
+const DISCORD_INVITE = config.DISCORD_INVITE;
+const HD_COMPANION_LINK = config.HD_COMPANION_LINK;
 
 let isUpdateInProgress = false;
 
@@ -18,8 +26,32 @@ export async function updateMessages() {
   isUpdateInProgress = true;
 
   const start = Date.now();
-  const embeds: Record<string, EmbedBuilder[]> = {
-    war_status: await warStatusPersistentMessage(),
+  const warStatusEmbeds = await warStatusPersistentMessage();
+  let {description} = warStatusEmbeds[warStatusEmbeds.length - 1].data;
+  description += `\n\nFor support, suggestions, or to report bugs pertaining to the bot, join the [HellCom Support Discord](${DISCORD_INVITE})!`;
+  description += `\n\nFor more detailed information about the war, visit the [Helldivers Companion website](${HD_COMPANION_LINK})!`;
+  warStatusEmbeds[warStatusEmbeds.length - 1].setDescription(
+    description ?? null
+  );
+
+  const updateMessage: Record<string, InteractionEditReplyOptions> = {
+    war_status: {
+      embeds: warStatusEmbeds,
+      components: [
+        new ActionRowBuilder<ButtonBuilder>().addComponents([
+          new ButtonBuilder()
+            .setLabel('HellCom Support Discord')
+            .setEmoji('<:hellcom:1232123669560430693>')
+            .setStyle(ButtonStyle.Link)
+            .setURL(DISCORD_INVITE),
+          new ButtonBuilder()
+            .setLabel('Helldivers Companion')
+            .setEmoji('<:helldiverscompanion:1232123938394607656>')
+            .setStyle(ButtonStyle.Link)
+            .setURL(HD_COMPANION_LINK),
+        ]),
+      ],
+    },
   };
 
   const messages = await db.query.persistentMessages.findMany({
@@ -42,9 +74,7 @@ export async function updateMessages() {
     if (!channel || !channel.isTextBased()) return null;
 
     return channel.messages
-      .edit(message.messageId, {
-        embeds: embeds[message.type],
-      })
+      .edit(message.messageId, updateMessage[message.type])
       .catch(err => {
         logger.info(`Error updating message: ${err.message}`, {
           type: 'update',

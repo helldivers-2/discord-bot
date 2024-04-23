@@ -11,6 +11,15 @@ export function planetNameTransform(planetName: string) {
     .replace(/\s/g, '_'); // Replace spaces with underscores
 }
 
+const biomeMap: Record<string, string> = {
+  Crimsonmoor: 'Crimson',
+  Toxic: 'Acidic',
+  Desolate: 'Inferno',
+};
+export function planetBiomeTransform(biome: string) {
+  return (biomeMap[biome] || biome).toLowerCase();
+}
+
 export function formatPlayers(players: number) {
   if (players >= 1000000) {
     return (players / 1000000).toFixed(2) + 'm';
