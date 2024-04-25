@@ -136,7 +136,7 @@ export async function getData() {
     storeRotation = chatsAPI['store_rotation'] as StoreRotation;
     additionalPlanetInfo = chatsAPI['planets'] as AdditionalPlanetInfo;
   } else {
-    logger.warn('Fallback to dealloc APIs', {type: 'API'});
+    logger.error('Fallback to dealloc APIs', {type: 'API'});
     // create a fallback API client
     apiClient.defaults.baseURL = FALLBACK_URL;
     const {id} = await (await apiClient.get('/WarSeason/current/WarID')).data;
