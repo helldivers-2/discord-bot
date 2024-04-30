@@ -21,7 +21,7 @@ import {logger} from '../handlers';
 // const API_URL = 'https://api.live.prod.thehelldiversgame.com/api';
 const CHATS_URL = 'https://api.diveharder.com/v1/all';
 const CHATS_URL_RAW = 'https://api.diveharder.com/raw/all';
-const FALLBACK_URL = 'https://helldivers-2-dotnet.fly.dev/raw/api';
+const FALLBACK_URL = 'https://api.helldivers2.dev/raw/api';
 const {IDENTIFIER} = config;
 const {CONTACT} = config;
 
