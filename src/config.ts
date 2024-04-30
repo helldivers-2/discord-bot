@@ -37,6 +37,7 @@ const configObj: Record<string, string | number | undefined> = {
   // Project info
   VERSION: version,
   IDENTIFIER: 'HellComBot' + (isProd ? '' : 'Dev') + `/v${version}`,
+  CONTACT: '@theyodastream',
 };
 
 const config: Record<string, string> = {};
