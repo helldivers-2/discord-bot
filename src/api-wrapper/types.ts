@@ -359,6 +359,79 @@ export type PlanetStats = {
   planets_stats: PlanetStatsItem[];
 };
 
+export type ArmorItem = {
+  id: string;
+  name: string;
+  description: string;
+  type: 'Light' | 'Medium' | 'Heavy';
+  slot: 'Head' | 'Body' | 'Cloak';
+  armor_rating: number;
+  speed: number;
+  stamina_regen: number;
+  passive: {
+    name: string;
+    description: string;
+  };
+};
+
+export type WeaponItem = {
+  id: string;
+  name: string;
+  description: string;
+  type: 'Primary' | 'Secondary';
+  damage: number;
+  capacity: number;
+  recoil: number;
+  fire_rate: number;
+  fire_mode: string[];
+  traits: string[];
+};
+
+export type GrenadeItem = {
+  id: string;
+  name: string;
+  description: string;
+  damage: number;
+  penetration: number;
+  outer_radius: number;
+  fuse_time: number;
+};
+
+export type BoosterItem = {
+  id: string;
+  name: string;
+  description: string;
+};
+
+export type Items = {
+  armor: {
+    Head: ArmorItem[];
+    Body: ArmorItem[];
+    Cloak: ArmorItem[];
+  };
+  weapons: {
+    primaries: WeaponItem[];
+    secondaries: WeaponItem[];
+    grenades: GrenadeItem[];
+  };
+  boosters: BoosterItem[];
+};
+
+export type WarbondItem = {
+  name: string;
+  mix_id: string;
+  medal_cost: number;
+};
+
+export type Warbond = {
+  [key: string]: {
+    medals_to_unlock: number;
+    items: {
+      [key: string]: WarbondItem;
+    };
+  };
+};
+
 export type ApiData = {
   WarInfo: WarInfo;
   Status: Status;
@@ -373,6 +446,13 @@ export type ApiData = {
   PlanetAttacks: {source: string; target: string}[];
   Events: GlobalEvent[];
   SuperStore?: StoreRotation;
+  Items?: Items;
+  Warbonds?: {
+    helldivers_mobilize: Warbond;
+    steeled_veterans: Warbond;
+    cutting_edge: Warbond;
+    democratic_detonation: Warbond;
+  };
   Players: {
     [key in Faction]: number;
   };

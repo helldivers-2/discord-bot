@@ -27,34 +27,45 @@ const command: Command = {
     }
     const embeds: EmbedBuilder[] = [];
     for (const item of SuperStore.items) {
-      const embed = new EmbedBuilder()
-        .setTitle(
-          `${item.store_cost} ${sc_emoji} │ ${item.name} (${item.type} ${item.slot})`
-        )
-        .setDescription(item.description)
-        .addFields(
-          {
-            name: 'Armour',
-            value: `${item.armor_rating}`,
-            inline: true,
-          },
-          {
-            name: 'Speed',
-            value: `${item.speed}`,
-            inline: true,
-          },
-          {
-            name: 'Stamina Regen',
-            value: `${item.stamina_regen}`,
-            inline: true,
-          },
-          {
-            name: `Passive: ${item.passive.name}`,
-            value: item.passive.description,
-            inline: false,
-          }
+      if (item.name === 'Unmapped' || !('store_cost' in item)) {
+        embeds.push(
+          new EmbedBuilder()
+            .setTitle('Unmapped item')
+            .setDescription(
+              "This item's information is not available yet! Please try again later."
+            )
         );
-      embeds.push(embed);
+      } else {
+        embeds.push(
+          new EmbedBuilder()
+            .setTitle(
+              `${item.store_cost} ${sc_emoji} │ ${item.name} (${item.type} ${item.slot})`
+            )
+            .setDescription(item.description)
+            .addFields(
+              {
+                name: 'Armour',
+                value: `${item.armor_rating}`,
+                inline: true,
+              },
+              {
+                name: 'Speed',
+                value: `${item.speed}`,
+                inline: true,
+              },
+              {
+                name: 'Stamina Regen',
+                value: `${item.stamina_regen}`,
+                inline: true,
+              },
+              {
+                name: `Passive: ${item.passive.name}`,
+                value: item.passive.description,
+                inline: false,
+              }
+            )
+        );
+      }
     }
 
     // add a final embed for the expiration time

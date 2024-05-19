@@ -1,15 +1,20 @@
 import {
-  WarInfo,
-  Status,
-  MergedPlanetData,
-  MergedCampaignData,
-  MergedPlanetEventData,
+  AdditionalPlanetInfo,
   ApiData,
+  ArmorItem,
   Assignment,
+  BoosterItem,
+  GrenadeItem,
+  Items,
+  MergedCampaignData,
+  MergedPlanetData,
+  MergedPlanetEventData,
   NewsFeedItem,
   PlanetStats,
+  Status,
   StoreRotation,
-  AdditionalPlanetInfo,
+  WarInfo,
+  WeaponItem,
 } from './types';
 import {getFactionName, getPlanetEventType, getPlanetName} from './mapping';
 import {writeFileSync} from 'fs';
@@ -22,15 +27,15 @@ import {logger} from '../handlers';
 const CHATS_URL = 'https://api.diveharder.com/v1/all';
 const CHATS_URL_RAW = 'https://api.diveharder.com/raw/all';
 const FALLBACK_URL = 'https://api.helldivers2.dev/raw/api';
-const {IDENTIFIER} = config;
-const {CONTACT} = config;
+
+const {IDENTIFIER, CONTACT, DEALLOC_TOKEN} = config;
 
 const apiClient = axios.create({
   headers: {
     'Accept-Language': 'en-us',
     'User-Agent': IDENTIFIER,
     'X-Super-Client': IDENTIFIER,
-    'X-Super-Contact': CONTACT
+    'X-Super-Contact': CONTACT,
   },
 });
 
@@ -110,6 +115,19 @@ export async function getData() {
   let planetStats: PlanetStats;
   let newsFeed: NewsFeedItem[];
   let storeRotation: StoreRotation | undefined = undefined;
+  const gameItems: Items = {
+    armor: {
+      Body: [],
+      Cloak: [],
+      Head: [],
+    },
+    boosters: [],
+    weapons: {
+      secondaries: [],
+      grenades: [],
+      primaries: [],
+    },
+  };
   let additionalPlanetInfo: AdditionalPlanetInfo | undefined = undefined;
 
   try {
@@ -138,10 +156,54 @@ export async function getData() {
     newsFeed.sort((a, b) => b.published - a.published);
     storeRotation = chatsAPI['store_rotation'] as StoreRotation;
     additionalPlanetInfo = chatsAPI['planets'] as AdditionalPlanetInfo;
+
+    const chatsItems = chatsAPI['items'];
+    if (chatsItems['armor']) {
+      for (const [id, armor] of Object.entries(chatsItems['armor'])) {
+        const typedArmor = armor as Omit<ArmorItem, 'id'>;
+        const {slot} = typedArmor;
+        gameItems.armor[slot as 'Head' | 'Body' | 'Cloak'].push({
+          id,
+          ...typedArmor,
+        });
+      }
+    }
+    if (chatsItems['weapons']) {
+      const {primaries, secondaries, grenades} = chatsItems['weapons'];
+      for (const [id, w] of Object.entries(primaries)) {
+        const weapon = w as Omit<WeaponItem, 'id'>;
+        gameItems.weapons['primaries'].push({
+          id,
+          ...weapon,
+        });
+      }
+      for (const [id, w] of Object.entries(secondaries)) {
+        const weapon = w as Omit<WeaponItem, 'id'>;
+        gameItems.weapons['secondaries'].push({
+          id,
+          ...weapon,
+        });
+      }
+      for (const [id, grenade] of Object.entries(grenades)) {
+        gameItems.weapons['grenades'].push({
+          id,
+          ...(grenade as Omit<GrenadeItem, 'id'>),
+        });
+      }
+    }
+    if (chatsItems['boosters']) {
+      for (const [id, boosters] of Object.entries(chatsItems['boosters'])) {
+        gameItems.boosters.push({
+          id,
+          ...(boosters as Omit<BoosterItem, 'id'>),
+        });
+      }
+    }
   } else {
-    logger.error('Fallback to dealloc APIs', {type: 'API'});
-    // create a fallback API client
+    logger.error('Fallback to dealloc API', {type: 'API'});
+    // fallback to dealloc API with delay between calls to avoid rate limits (429s)
     apiClient.defaults.baseURL = FALLBACK_URL;
+    apiClient.defaults.headers['Authorization'] = `Bearer ${DEALLOC_TOKEN}`;
     const {id} = await (await apiClient.get('/WarSeason/current/WarID')).data;
     warInfo = await (await apiClient.get(`/WarSeason/${id}/WarInfo`)).data;
     status = await (await apiClient.get(`/WarSeason/${id}/Status`)).data;
@@ -248,8 +310,37 @@ export async function getData() {
   };
   if (additionalPlanetInfo) data.additionalPlanetInfo = additionalPlanetInfo;
   if (storeRotation) data.SuperStore = storeRotation;
+  if (gameItems.weapons) data.Items = gameItems; // just check one field to see if the data is there
 
   writeFileSync('data.json', JSON.stringify(data, null, 2));
+
+  // update mapped names
+  mappedNames.planets = data.Planets.map(x => x.name);
+  mappedNames.campaignPlanets = data.Campaigns.map(x => x.planetName);
+  if (data.Items) {
+    // items includes armours, weapons and boosters, so we need to map them all
+    mappedNames.armors = [
+      ...data.Items.armor.Body.map(a => `${a.name} (${a.type} ${a.slot})`),
+      ...data.Items.armor.Cloak.map(a => `${a.name} (${a.type} ${a.slot})`),
+      ...data.Items.armor.Head.map(a => `${a.name} (${a.type} ${a.slot})`),
+    ];
+    // armor may have duplicates for variants (skins?), so we need to deduplicate
+    mappedNames.armors = mappedNames.armors.filter((armor, index) => {
+      return (
+        index ===
+        mappedNames.armors.findIndex(obj => {
+          return JSON.stringify(obj) === JSON.stringify(armor);
+        })
+      );
+    });
+    mappedNames.weapons = [
+      ...data.Items.weapons.primaries.map(w => w.name),
+      ...data.Items.weapons.secondaries.map(w => w.name),
+    ];
+    mappedNames.grenades = data.Items.weapons.grenades.map(w => w.name);
+    mappedNames.boosters = data.Items.boosters.map(b => b.name);
+  }
+
   return data;
 }
 
@@ -258,10 +349,20 @@ export const mappedNames: {
   planets: string[];
   campaignPlanets: string[];
   sectors: string[];
+  // items autocomplete
+  armors: string[];
+  weapons: string[];
+  grenades: string[];
+  boosters: string[];
 } = {
   factions: [],
   planets: [],
   campaignPlanets: [],
   sectors: [],
+  armors: [],
+  weapons: [],
+  grenades: [],
+  boosters: [],
 };
+
 export const planetNames = getAllPlanets().map(p => p.name);

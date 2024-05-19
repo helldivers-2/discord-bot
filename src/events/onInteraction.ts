@@ -3,6 +3,7 @@ import {
   campaignAutoCmds,
   commandHash,
   ephemeralCmds,
+  itemAutoCmds,
   modalCmds,
   ownerCmds,
   planetAutoCmds,
@@ -46,6 +47,49 @@ const onInteraction = async (interaction: Interaction) => {
           .map(result => result.target)
           .map(choice => ({name: choice, value: choice}))
       );
+    }
+    if (itemAutoCmds.includes(interaction.commandName)) {
+      const subCmd = interaction.options.data[0].name;
+      if (subCmd === 'armor')
+        await interaction.respond(
+          search(
+            interaction.options.getFocused(),
+            mappedNames.armors,
+            searchOpts
+          )
+            .map(result => result.target)
+            .map(choice => ({name: choice, value: choice}))
+        );
+      else if (subCmd === 'weapon')
+        await interaction.respond(
+          search(
+            interaction.options.getFocused(),
+            mappedNames.weapons,
+            searchOpts
+          )
+            .map(result => result.target)
+            .map(choice => ({name: choice, value: choice}))
+        );
+      else if (subCmd === 'grenade')
+        await interaction.respond(
+          search(
+            interaction.options.getFocused(),
+            mappedNames.grenades,
+            searchOpts
+          )
+            .map(result => result.target)
+            .map(choice => ({name: choice, value: choice}))
+        );
+      else if (subCmd === 'booster')
+        await interaction.respond(
+          search(
+            interaction.options.getFocused(),
+            mappedNames.boosters,
+            searchOpts
+          )
+            .map(result => result.target)
+            .map(choice => ({name: choice, value: choice}))
+        );
     }
     // for future use
   } else if (interaction.isModalSubmit()) {

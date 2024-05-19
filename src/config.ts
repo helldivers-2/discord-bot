@@ -10,7 +10,7 @@ const configObj: Record<string, string | number | undefined> = {
 
   // Cron job intervals
   PERSISTENT_MESSAGE_INTERVAL: '*/30 * * * *', // every 30 minutes
-  API_UPDATE_INTERVAL: '*/20 * * * * *', // every 20 seconds
+  API_UPDATE_INTERVAL: '*/30 * * * * *', // every 20 seconds
   STATUS_UPDATE_INTERVAL: '*/3 * * * * *', // every 3 seconds
   DB_DATA_INTERVAL: '0 * * * *', // every 1 hour
   COMPARE_INTERVAL: '*/20 * * * * *', // every 20 seconds
@@ -33,6 +33,9 @@ const configObj: Record<string, string | number | undefined> = {
   TOP_GG_LINK: 'https://top.gg/bot/1213944670288347176',
   GITHUB_LINK: 'https://github.com/helldivers-2/discord-bot',
   HD_COMPANION_LINK: 'https://helldiverscompanion.com/',
+
+  // API config
+  DEALLOC_TOKEN: process.env.DEALLOC_TOKEN,
 
   // Project info
   VERSION: version,

@@ -10,6 +10,7 @@ import discord from './discord';
 import dispatches from './dispatches';
 import events from './events';
 import history from './history';
+import items from './items';
 import map from './map';
 import steam from './steam';
 import planet from './planet';
@@ -27,6 +28,7 @@ const commandList: Command[] = [
   discord,
   dispatches,
   history,
+  items,
   map,
   // steam,
   // wiki,
@@ -60,6 +62,7 @@ const presenceCmds = Object.keys(commandHash)
 // commands to offer planet autocomplete suggestions for
 const planetAutoCmds = ['planet', 'map'];
 const campaignAutoCmds = ['campaign'];
+const itemAutoCmds = ['items'];
 
 // commands to not defer/suggestion etc. instead provide a modal for further input
 const modalCmds: string[] = [];
@@ -87,5 +90,6 @@ export {
   ephemeralCmds,
   planetAutoCmds,
   campaignAutoCmds,
+  itemAutoCmds,
   wikiCmd,
 };
