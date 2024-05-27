@@ -16,15 +16,7 @@ const SUBSCRIBE_FOOTER = config.SUBSCRIBE_FOOTER;
 const DISCORD_INVITE = config.DISCORD_INVITE;
 const HD_COMPANION_LINK = config.HD_COMPANION_LINK;
 
-let isUpdateInProgress = false;
-
 export async function updateMessages() {
-  if (isUpdateInProgress) {
-    logger.info('Update already in progress, skipping', {type: 'update'});
-    return;
-  }
-  isUpdateInProgress = true;
-
   const start = Date.now();
   const warStatusEmbeds = await warStatusPersistentMessage();
   let {description} = warStatusEmbeds[warStatusEmbeds.length - 1].data;
@@ -89,7 +81,6 @@ export async function updateMessages() {
 
   // eslint-disable-next-line node/no-unsupported-features/es-builtins
   await Promise.allSettled(updatePromises);
-  isUpdateInProgress = false;
 
   const taken = `${(Date.now() - start).toLocaleString()}ms`;
   logger.info(
