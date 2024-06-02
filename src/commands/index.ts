@@ -6,34 +6,36 @@ import {
 } from 'discord.js';
 import {Command} from '../interfaces';
 import campaign from './campaign';
-import discord from './discord';
 import dispatches from './dispatches';
 import events from './events';
 import history from './history';
 import items from './items';
+import links from './links';
 import map from './map';
-import steam from './steam';
 import planet from './planet';
 import subscribe from './subscribe';
 import summary from './summary';
 import superstore from './superstore';
-import wiki from './wiki';
+import updates from './updates';
+import warbond from './warbond';
+// import wiki from './wiki';
 import {Category, WikiData} from '../handlers';
 
 const commandList: Command[] = [
-  planet,
-  events,
   campaign,
-  subscribe,
-  discord,
+  links,
   dispatches,
+  events,
   history,
   items,
   map,
-  // steam,
-  // wiki,
-  superstore,
+  planet,
+  subscribe,
   summary,
+  superstore,
+  updates,
+  warbond,
+  // wiki,
 ];
 const notEphemeral: string[] = [];
 const ephemeralCmds = commandList

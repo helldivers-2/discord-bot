@@ -15,6 +15,7 @@ type NewAnnouncementChannel = typeof schema.announcementChannels.$inferInsert;
 type NewPersistentMessage = typeof schema.persistentMessages.$inferInsert;
 type ApiData = typeof schema.apiData.$inferInsert;
 type PrevData = typeof schema.prevData.$inferInsert;
+type HelldiversDiscordAnn = typeof schema.helldiversDiscordAnns.$inferInsert;
 
 export const newAnnouncementChannel = async (data: NewAnnouncementChannel) => {
   return db.insert(announcementChannels).values(data);
@@ -30,6 +31,16 @@ export const newApiData = async (data: ApiData) => {
 
 export const newPrevData = async (data: PrevData) => {
   return db.insert(schema.prevData).values(data);
+};
+
+export const upsertHD2DiscordAnn = async (data: HelldiversDiscordAnn) => {
+  return db
+    .insert(schema.helldiversDiscordAnns)
+    .values(data)
+    .onConflictDoUpdate({
+      target: schema.helldiversDiscordAnns.messageId,
+      set: {content: data.content},
+    });
 };
 
 export {eq} from 'drizzle-orm';

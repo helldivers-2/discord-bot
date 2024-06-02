@@ -1,9 +1,4 @@
-import {
-  Faction,
-  StrippedApiData,
-  WarDifferences,
-  data,
-} from '../../api-wrapper';
+import {StrippedApiData, WarDifferences, data} from '../../api-wrapper';
 import {isProd} from '../../config';
 import {announcementChannels, db, eq, newPrevData, prevData} from '../../db';
 import {logger} from '../logging';
@@ -55,6 +50,9 @@ export async function compareData(): Promise<WarDifferences | void> {
     Events: data.Events,
     SuperStore: data.SuperStore,
     Players: data.Players,
+    UnmappedPersonalOrders: data.UnmappedPersonalOrders,
+    HelldiversDiscordAnnouncements: data.HelldiversDiscordAnnouncements,
+    SteamPosts: data.SteamPosts,
     UTCOffset: data.UTCOffset,
   };
   writeFileSync('strippedData.json', JSON.stringify(newData, null, 2));
@@ -211,17 +209,17 @@ export async function compareData(): Promise<WarDifferences | void> {
     }
   }
   // compare old and new player counts
-  for (const f in newData.Players) {
-    const faction = f as Faction;
-    if (Object.prototype.hasOwnProperty.call(newData.Players, faction)) {
-      const oldCount = oldData.Players[faction];
-      const newCount = newData.Players[faction];
-      if (oldCount !== newCount) {
-        differences.Players[faction] = newCount - oldCount;
-        // TODO: do this separately? way too spammy to check every 10s
-      }
-    }
-  }
+  // for (const f in newData.Players) {
+  //   const faction = f as Faction;
+  //   if (Object.prototype.hasOwnProperty.call(newData.Players, faction)) {
+  //     const oldCount = oldData.Players[faction];
+  //     const newCount = newData.Players[faction];
+  //     if (oldCount !== newCount) {
+  //       differences.Players[faction] = newCount - oldCount;
+  //       // TODO: do this separately? way too spammy to check every 10s
+  //     }
+  //   }
+  // }
   writeFileSync('differences.json', JSON.stringify(differences, null, 2));
   return differences;
 }

@@ -1,10 +1,8 @@
 {
-  "id": "831b9ba4-a6aa-47b7-b480-739e31abf130",
-  "prevId": "54752ae7-26c6-4f6c-98f7-c66ec6f498bb",
-  "version": "5",
-  "dialect": "pg",
+  "version": "6",
+  "dialect": "postgresql",
   "tables": {
-    "announcement_channels": {
+    "public.announcement_channels": {
       "name": "announcement_channels",
       "schema": "",
       "columns": {
@@ -51,7 +49,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "api_data": {
+    "public.api_data": {
       "name": "api_data",
       "schema": "",
       "columns": {
@@ -86,7 +84,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "persistent_messages": {
+    "public.persistent_messages": {
       "name": "persistent_messages",
       "schema": "",
       "columns": {
@@ -146,7 +144,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "prev_data": {
+    "public.prev_data": {
       "name": "prev_data",
       "schema": "",
       "columns": {
@@ -183,18 +181,21 @@
     }
   },
   "enums": {
-    "user_perms": {
+    "public.user_perms": {
       "name": "user_perms",
-      "values": {
-        "admin": "admin",
-        "officer": "officer"
-      }
+      "schema": "public",
+      "values": [
+        "admin",
+        "officer"
+      ]
     }
   },
   "schemas": {},
   "_meta": {
-    "columns": {},
     "schemas": {},
-    "tables": {}
-  }
+    "tables": {},
+    "columns": {}
+  },
+  "id": "831b9ba4-a6aa-47b7-b480-739e31abf130",
+  "prevId": "54752ae7-26c6-4f6c-98f7-c66ec6f498bb"
 }

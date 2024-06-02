@@ -1,83 +1,43 @@
 import {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
   ColorResolvable,
   CommandInteraction,
   EmbedBuilder,
-  ModalSubmitInteraction,
-  NewsChannel,
-  PublicThreadChannel,
-  TextChannel,
 } from 'discord.js';
 import {config, helldiversConfig} from '../config';
-import {client, formatPlayers, planetBiomeTransform} from '.';
+import {client, emojis, formatPlayers, planetBiomeTransform} from '.';
 import {
+  ApiData,
   Assignment,
-  Faction,
-  MappedTask,
-  MergedCampaignData,
-  MergedPlanetEventData,
   data,
+  Faction,
   getAllCampaigns,
   getAllPlayers,
   getCampaignByPlanetName,
-  getCurrencyName,
   getFactionName,
   getLatestAssignment,
-  getPlanetName,
   getPlanetByName,
+  getPlanetName,
+  MappedTask,
   MergedPlanetData,
+  MergedPlanetEventData,
+  Warbond,
 } from '../api-wrapper';
 import {FACTION_COLOUR} from '../commands/_components';
 import {apiData, db} from '../db';
 import {asc, gt} from 'drizzle-orm';
 
-const {SUBSCRIBE_FOOTER, FOOTER_MESSAGE, EMBED_COLOUR} = config;
+const {
+  SUBSCRIBE_FOOTER,
+  FOOTER_MESSAGE,
+  EMBED_COLOUR,
+  DISCORD_INVITE,
+  HD_COMPANION_LINK,
+  KOFI_LINK,
+} = config;
 const {factionSprites, altSprites} = helldiversConfig;
-
-export function commandErrorEmbed(
-  interaction: CommandInteraction | ModalSubmitInteraction
-) {
-  return {
-    embeds: [
-      new EmbedBuilder()
-        .setAuthor({
-          name: client.user?.tag || '',
-          iconURL: client.user?.avatarURL() || undefined,
-        })
-        .setTitle('Something Went Wrong )=')
-        .setDescription(
-          `There was an issue trying to execute \`/${
-            interaction.isCommand()
-              ? interaction.commandName
-              : interaction.customId
-          }\`! ` +
-            'The issue has been logged and will be looked into. Feel free to try again shortly. ' +
-            'If the problem persists, please let Major know'
-        )
-        .setFooter({text: FOOTER_MESSAGE})
-        .setColor(EMBED_COLOUR as ColorResolvable)
-        .setTimestamp(),
-    ],
-  };
-}
-
-export function missingChannelPerms(interaction: CommandInteraction) {
-  return {
-    embeds: [
-      new EmbedBuilder()
-        .setAuthor({
-          name: interaction.user.tag,
-          iconURL: interaction.user.avatarURL() || undefined,
-        })
-        .setTitle('Permission Denied')
-        .setDescription(
-          'This command creates a public, persistent message. To avoid inconviencing other users, it requires moderator permissions. '
-        )
-        .setFooter({text: FOOTER_MESSAGE})
-        .setColor(EMBED_COLOUR as ColorResolvable)
-        .setTimestamp(),
-    ],
-  };
-}
 
 export function ownerCommandEmbed(interaction: CommandInteraction) {
   return {
@@ -96,66 +56,6 @@ export function ownerCommandEmbed(interaction: CommandInteraction) {
   };
 }
 
-export function adminCommandEmbed(interaction: CommandInteraction) {
-  return {
-    embeds: [
-      new EmbedBuilder()
-        .setAuthor({
-          name: interaction.user.tag,
-          iconURL: interaction.user.avatarURL() || undefined,
-        })
-        .setTitle('Permission Denied')
-        .setDescription('This command is only available to Admins!')
-        .setFooter({text: FOOTER_MESSAGE})
-        .setColor(EMBED_COLOUR as ColorResolvable)
-        .setTimestamp(),
-    ],
-  };
-}
-
-export function subscribeEmbed(
-  type: string,
-  channel: NewsChannel | TextChannel | PublicThreadChannel
-): EmbedBuilder[] {
-  const embeds = [];
-  const embed = new EmbedBuilder()
-    // .setAuthor({
-    //   name: 'Super Earth Command Dispatch',
-    // })
-    // .setThumbnail(
-    //   factionSprites['Humans']
-    // )
-    // .setColor(FACTION_COLOUR.Humans)
-    .setTitle('Success!')
-    .setDescription(
-      `<#${channel.id}> has been subscribed to receive updates for **${type}** events.`
-    )
-    .setFooter({text: FOOTER_MESSAGE})
-    .setColor(EMBED_COLOUR as ColorResolvable)
-    .setTimestamp();
-  embeds.push(embed);
-  return embeds;
-}
-
-export function subscribeNotifEmbed(type: string): EmbedBuilder[] {
-  const embeds = [];
-  const embed = new EmbedBuilder()
-    .setAuthor({
-      name: 'Super Earth Command Dispatch',
-    })
-    .setThumbnail(factionSprites['Humans'])
-    .setColor(FACTION_COLOUR.Humans)
-    .setTitle('Subscription Approved!')
-    .setDescription(
-      `This channel has been subscribed to receive updates for **${type}** events.`
-    )
-    .setFooter({text: SUBSCRIBE_FOOTER})
-    .setColor(EMBED_COLOUR as ColorResolvable)
-    .setTimestamp();
-  embeds.push(embed);
-  return embeds;
-}
-
 const taskTypeMappings = {
   3: 'Eradicate',
   11: 'Liberation',
@@ -163,6 +63,7 @@ const taskTypeMappings = {
   13: 'Control',
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const valueTypeMappings = {
   1: 'race',
   3: 'goal',
@@ -172,22 +73,13 @@ const valueTypeMappings = {
 
 export function majorOrderEmbed(assignment: Assignment) {
   const {expiresIn, progress, setting} = assignment;
-  const {
-    type: settingsType,
-    overrideTitle,
-    overrideBrief,
-    taskDescription,
-    tasks,
-    reward,
-  } = setting;
+  const {overrideTitle, overrideBrief, taskDescription, tasks, reward} =
+    setting;
   const {type, amount} = reward;
 
   const expiresInUtcS = Math.floor((Date.now() + expiresIn * 1000) / 1000);
   const expiresInDays = Math.floor(expiresIn / 86400);
   const expiresInHours = Math.floor((expiresIn % 86400) / 3600);
-
-  // 0 means incomplete, 1 means complete
-  const completed = progress.filter(value => value === 1).length;
 
   const campaigns = getAllCampaigns();
 
@@ -247,7 +139,7 @@ export function majorOrderEmbed(assignment: Assignment) {
   }
 
   for (const task of mappedTasks) {
-    const {type, name, race, goal, progress, liberate, planetIndex} = task;
+    const {type, name, race, goal, progress, planetIndex} = task;
     const percent = ((progress / goal) * 100).toFixed(2);
     if (type === 3) {
       embedFields.push({
@@ -279,7 +171,7 @@ export function majorOrderEmbed(assignment: Assignment) {
     }
   }
 
-  const embed = new EmbedBuilder()
+  return new EmbedBuilder()
     .setThumbnail(factionSprites['Humans'])
     .setColor(FACTION_COLOUR.Humans)
     .setAuthor({
@@ -290,8 +182,6 @@ export function majorOrderEmbed(assignment: Assignment) {
     .setDescription(embedDescription)
     .setFields(embedFields)
     .setFooter({text: SUBSCRIBE_FOOTER});
-
-  return embed;
 }
 
 export async function warStatusEmbeds() {
@@ -310,7 +200,6 @@ export async function warStatusEmbeds() {
     emoji => emoji.name === 'helldiver_icon_s092'
   );
 
-  // todo: get API data from 2~ hours ago (or closer), and calculate the lossPercPerHour
   const timeCheck = 3 * 60 * 60 * 1000; // 6 hours in milliseconds
   const timestamp = new Date(Date.now() - timeCheck);
   // fetch the first API data entry that is older than 6 hours
@@ -407,7 +296,18 @@ export async function warStatusEmbeds() {
         )
         .setThumbnail(factionSprites['Humans'])
     );
-
+  embeds.push(
+    new EmbedBuilder()
+      .setDescription(
+        `For more detailed information about the war, visit the [Helldivers Companion website](${HD_COMPANION_LINK})!` +
+          '\n' +
+          `For support, suggestions, or to report bugs pertaining to the bot, join the [HellCom Support Discord](${DISCORD_INVITE})!` +
+          '\n' +
+          `If HellCom has proved useful and you would like to support its development, you can donate via [Ko-fi](${KOFI_LINK})!`
+      )
+      .setFooter({text: FOOTER_MESSAGE})
+      .setTimestamp()
+  );
   return embeds;
 }
 
@@ -420,8 +320,8 @@ export async function planetEmbeds(planet_name?: string) {
   for (const planet of planets) {
     const {
       name: planetName,
-      index,
-      sector,
+      // index,
+      // sector,
       sectorName,
       biome,
       environmentals,
@@ -431,7 +331,7 @@ export async function planetEmbeds(planet_name?: string) {
     embeds.push(embed);
 
     let title = `${planetName}`;
-    let description = ``;
+    let description = '';
     if (sectorName) title += ` (${sectorName} Sector)`;
     if (biome) {
       description = biome.description;
@@ -442,13 +342,13 @@ export async function planetEmbeds(planet_name?: string) {
       );
     }
     for (const e of environmentals ?? []) {
-      description += `\n\n` + `**${e.name}**` + `\n` + e.description;
+      description += '\n\n' + `**${e.name}**` + '\n' + e.description;
     }
     if (description) embed.setDescription(description);
 
     let display: Record<string, string | number> = {};
     if (campaign) {
-      const {planetName, campaignType, planetData, planetEvent} = campaign;
+      const {campaignType, planetData, planetEvent} = campaign;
       title += `: ${campaignType.toUpperCase()}`;
       if (campaignType === 'Liberation') {
         const {
@@ -548,4 +448,96 @@ function drawLoadingBarPerc(percentage: number, barLength: number) {
   const progressBar = '[`' + '█'.repeat(progress) + ' '.repeat(empty) + '`]';
 
   return `${progressBar} ${percentage.toFixed(2)}%`;
+}
+interface WarbondPageEmbedParams {
+  interaction: string;
+  warbond: string;
+  warbondPage: string;
+  action: string;
+}
+export function warbondPageResponse({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interaction,
+  warbond,
+  warbondPage,
+  action,
+}: WarbondPageEmbedParams): {
+  embeds: EmbedBuilder[];
+  components?: ActionRowBuilder<ButtonBuilder>[];
+} {
+  // `warbond_${warbond}_${warbondPage}_back`
+  if (action === 'back') warbondPage = (parseInt(warbondPage) - 1).toString();
+  else if (action === 'next')
+    warbondPage = (parseInt(warbondPage) + 1).toString();
+  // if it's not back/next, do nothing to the page num
+
+  if (!data.Warbonds) {
+    return {
+      embeds: [
+        new EmbedBuilder()
+          .setTitle('Warbonds Data Unavailable')
+          .setDescription('Try again later.'),
+      ],
+    };
+  }
+
+  const warbondData: Warbond =
+    data.Warbonds[warbond as keyof ApiData['Warbonds']];
+  const warbondPageData = warbondData[warbondPage];
+  const hasBack = (Number(warbondPage) - 1).toString() in warbondData;
+  const hasNext = (Number(warbondPage) + 1).toString() in warbondData;
+  const warbondName = (warbond as string)
+    .replace('_', ' ')
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+  const totalPages = Object.keys(warbondData).length;
+  const embed = new EmbedBuilder()
+    .setTitle(`${warbondName} - Page ${warbondPage} / ${totalPages}`)
+    .setFooter({text: FOOTER_MESSAGE});
+
+  for (const [id, item] of Object.entries(warbondPageData.items)) {
+    const {name, medal_cost, description, type} = item;
+
+    let itemDesc = '';
+    const boosterItem = data.Items?.boosters.find(i => i.name === name);
+    const errorItem = 'error' in item;
+    if ('armor_rating' in item) itemDesc += `\`${type} Armor\``;
+    else if ('fire_rate' in item)
+      itemDesc += type ? `\`${type} Primary\`` : '`Secondary Weapon`';
+    else if ('outer_radius' in item) itemDesc += '`Grenade Item`';
+    else if (boosterItem) {
+      itemDesc += '`Booster Item`';
+      itemDesc += `\n*${boosterItem.description}*`;
+    } else if (name && name.includes('Super Credits')) itemDesc += '\u200b';
+    else itemDesc += '`Vanity Item`';
+    if (description) itemDesc += `\n*${description}*`;
+
+    embed.addFields({
+      name: errorItem
+        ? '<ITEM_ERROR>'
+        : `${medal_cost} ${emojis.medals} | ${name}`,
+      value: errorItem ? `ID: \`${id}\`` : itemDesc,
+      inline: true,
+    });
+  }
+
+  const backButton = new ButtonBuilder()
+    .setCustomId(`warbond-${warbond}-${warbondPage}-back`)
+    .setLabel('Previous Page')
+    .setStyle(ButtonStyle.Success)
+    .setDisabled(!hasBack);
+  const nextButton = new ButtonBuilder()
+    .setCustomId(`warbond-${warbond}-${warbondPage}-next`)
+    .setLabel('Next Page')
+    .setStyle(ButtonStyle.Success)
+    .setDisabled(!hasNext);
+  const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
+    backButton,
+    nextButton
+  );
+  return {
+    embeds: [embed],
+    components: [row],
+  };
 }

@@ -70,7 +70,7 @@ export async function newCampaignUpdate(
       .setFooter({text: SUBSCRIBE_FOOTER}),
   ];
   // send new updates to subscribed channels
-  const promises: Promise<any>[] = [];
+  const promises: Promise<never>[] = [];
   for (const channel of channels) {
     // TODO: fix issue where bot can see channel exists (is in the server), but cannot send messages. discord err 50001 Missing Access
     try {
@@ -152,7 +152,7 @@ export async function wonPlanetUpdate(
       .setFooter({text: SUBSCRIBE_FOOTER}),
   ];
   // send new updates to subscribed channels
-  const promises: Promise<any>[] = [];
+  const promises: Promise<never>[] = [];
   for (const channel of channels) {
     try {
       const message = await channel.send({embeds});
@@ -234,7 +234,7 @@ export async function lostPlanetUpdate(
       .setFooter({text: SUBSCRIBE_FOOTER}),
   ];
   // send new updates to subscribed channels
-  const promises: Promise<any>[] = [];
+  const promises: Promise<never>[] = [];
   for (const channel of channels) {
     try {
       const message = await channel.send({embeds});
@@ -302,7 +302,7 @@ export async function lostDefenceUpdate(
       .setFooter({text: SUBSCRIBE_FOOTER}),
   ];
   // send new updates to subscribed channels
-  const promises: Promise<any>[] = [];
+  const promises: Promise<never>[] = [];
   for (const channel of channels) {
     try {
       const message = await channel.send({embeds});
@@ -366,8 +366,6 @@ export async function newEventUpdate(event: GlobalEvent, channelIds: string[]) {
   await Promise.all(promises);
   return;
 }
-// TODO: use new endpoint to get this
-// export async function newMajorOrderUpdater(order: ??, channels: (TextChannel | PublicThreadChannel)[]) {}
 export async function newMajorOrderUpdate(
   assignment: Assignment,
   channelIds: string[]
@@ -377,7 +375,7 @@ export async function newMajorOrderUpdate(
   const embeds = [majorOrderEmbed(assignment)];
 
   // send new updates to subscribed channels
-  const promises: Promise<any>[] = [];
+  const promises: Promise<never>[] = [];
   for (const channel of channels) {
     try {
       const message = await channel.send({embeds});

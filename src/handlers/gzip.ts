@@ -13,7 +13,7 @@ export async function compressFile(inputFile: string, outputFile: string) {
   await gzip(source, createGzip(), destination);
 }
 
-export async function writeGzipJson(outputFile: string, jsonData: any) {
+export async function writeGzipJson(outputFile: string, jsonData: never) {
   const jsonString = JSON.stringify(jsonData);
   // eslint-disable-next-line node/no-unsupported-features/node-builtins
   const source = Readable.from(jsonString, {encoding: 'utf8'});

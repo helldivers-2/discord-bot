@@ -7,6 +7,11 @@ const configObj: Record<string, string | number | undefined> = {
   // Bot config
   BOT_TOKEN: process.env.BOT_TOKEN,
   BOT_OWNER: process.env.BOT_OWNER || '319226464786710539',
+  // Support bot config
+  SUPPORT_BOT_TOKEN: process.env.SUPPORT_BOT_TOKEN,
+  CM_DISPATCHES_CHANNEL: '1224418805552255077',
+  HD2_ANNOUNCEMENTS_CHANNEL: '1243296806498992228',
+  AHG_ANNOUNCEMENTS_CHANNEL: '1243296967656996975',
 
   // Cron job intervals
   PERSISTENT_MESSAGE_INTERVAL: '*/30 * * * *', // every 30 minutes

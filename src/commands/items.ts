@@ -1,8 +1,4 @@
-import {
-  CommandInteraction,
-  EmbedBuilder,
-  SlashCommandBuilder,
-} from 'discord.js';
+import {EmbedBuilder, SlashCommandBuilder} from 'discord.js';
 import {Command} from '../interfaces';
 import {FOOTER_MESSAGE} from './_components';
 import {
@@ -12,7 +8,7 @@ import {
   GrenadeItem,
   WeaponItem,
 } from '../api-wrapper';
-import {logger} from '../handlers';
+import {supportDiscordRow} from '../handlers';
 
 const command: Command = {
   data: new SlashCommandBuilder()
@@ -115,17 +111,30 @@ const command: Command = {
 
     if (!foundItems) {
       await interaction.editReply({
-        content: `Item not found: ${item}`,
+        embeds: [
+          new EmbedBuilder()
+            .setTitle('Item Not Found')
+            .setDescription(
+              `The item you searched for ("${item}") could not be found. Please verify your spelling and try again.` +
+                '\n\nIf there is a missing item, please report it in the Discord below.'
+            )
+            .setFooter({
+              text: FOOTER_MESSAGE,
+            }),
+        ],
+        components: [supportDiscordRow],
       });
       return;
     }
-
-    const embeds = foundItems.map(foundItem => {
+    const embeds: EmbedBuilder[] = [];
+    for (const foundItem of foundItems) {
       const embed = new EmbedBuilder()
         .setTitle(foundItem.name)
-        .setDescription(foundItem.description);
+        .setDescription(foundItem.description)
+        .setFooter({
+          text: FOOTER_MESSAGE,
+        });
       if ('armor_rating' in foundItem) {
-        // override title for armour
         embed.setTitle(
           `${foundItem.name} (${foundItem.type} ${foundItem.slot})`
         );
@@ -208,8 +217,12 @@ const command: Command = {
           }
         );
       }
-      return embed;
-    });
+
+      // Skip displaying items that are identical
+      if (!embeds.find(e => e.data.title === embed.data.title))
+        embeds.push(embed);
+    }
+
     await interaction.editReply({
       embeds: embeds,
     });

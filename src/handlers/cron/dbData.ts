@@ -39,7 +39,10 @@ export async function dbData() {
     PlanetAttacks: data.PlanetAttacks,
     Events: data.Events,
     SuperStore: data.SuperStore,
+    UnmappedPersonalOrders: data.UnmappedPersonalOrders,
     Players: data.Players,
+    HelldiversDiscordAnnouncements: data.HelldiversDiscordAnnouncements,
+    SteamPosts: data.SteamPosts,
     UTCOffset: data.UTCOffset,
   };
 

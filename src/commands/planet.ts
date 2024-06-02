@@ -1,20 +1,11 @@
 import {
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle,
   CommandInteraction,
   EmbedBuilder,
   SlashCommandBuilder,
 } from 'discord.js';
-import {
-  getPlanetByName,
-  getAllCampaigns,
-  data,
-  MergedPlanetEventData,
-} from '../api-wrapper';
+import {getPlanetByName} from '../api-wrapper';
 import {Command} from '../interfaces';
-import {FACTION_COLOUR, FOOTER_MESSAGE} from './_components';
-import {planetEmbeds, planetNameTransform, warStatusEmbeds} from '../handlers';
+import {planetEmbeds} from '../handlers';
 
 const command: Command = {
   data: new SlashCommandBuilder()

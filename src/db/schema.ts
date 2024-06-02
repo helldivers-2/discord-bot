@@ -47,3 +47,14 @@ export const prevData = pgTable('prev_data', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('created_at').notNull(),
 });
+
+export const helldiversDiscordAnns = pgTable('arrowhead_discord_anns', {
+  messageId: varchar('message_id').primaryKey(),
+  channelId: varchar('channel_id').notNull(),
+  channelName: varchar('channel_name').notNull(), // can also be used as a type
+  content: varchar('content').notNull(),
+  attachmentUrls: json('attachment_urls').$type<string[]>(),
+  timestamp: timestamp('timestamp').notNull(),
+  editedTimestamp: timestamp('edited_timestamp'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});

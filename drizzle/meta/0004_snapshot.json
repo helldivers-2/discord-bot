@@ -1,10 +1,8 @@
 {
-  "id": "2329915e-8c3c-4665-84f5-29533a5a5d2b",
-  "prevId": "186cdb9d-92a1-43cd-80e3-298f8590c594",
-  "version": "5",
-  "dialect": "pg",
+  "version": "6",
+  "dialect": "postgresql",
   "tables": {
-    "announcement_channels": {
+    "public.announcement_channels": {
       "name": "announcement_channels",
       "schema": "",
       "columns": {
@@ -51,7 +49,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "persistent_messages": {
+    "public.persistent_messages": {
       "name": "persistent_messages",
       "schema": "",
       "columns": {
@@ -113,18 +111,21 @@
     }
   },
   "enums": {
-    "user_perms": {
+    "public.user_perms": {
       "name": "user_perms",
-      "values": {
-        "admin": "admin",
-        "officer": "officer"
-      }
+      "schema": "public",
+      "values": [
+        "admin",
+        "officer"
+      ]
     }
   },
   "schemas": {},
   "_meta": {
-    "columns": {},
     "schemas": {},
-    "tables": {}
-  }
+    "tables": {},
+    "columns": {}
+  },
+  "id": "2329915e-8c3c-4665-84f5-29533a5a5d2b",
+  "prevId": "186cdb9d-92a1-43cd-80e3-298f8590c594"
 }

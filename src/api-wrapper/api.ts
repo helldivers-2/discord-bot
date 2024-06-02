@@ -13,8 +13,12 @@ import {
   PlanetStats,
   Status,
   StoreRotation,
+  UnmappedPersonalOrder,
+  HelldiversDiscordAnnouncement,
   WarInfo,
   WeaponItem,
+  SteamPost,
+  SteamPostAPI,
 } from './types';
 import {getFactionName, getPlanetEventType, getPlanetName} from './mapping';
 import {writeFileSync} from 'fs';
@@ -22,13 +26,20 @@ import {getAllPlanets} from './planets';
 import axios from 'axios';
 import {config} from '../config';
 import {logger} from '../handlers';
+import {db} from '../db';
+import dayjs from 'dayjs';
 
 // const API_URL = 'https://api.live.prod.thehelldiversgame.com/api';
 const CHATS_URL = 'https://api.diveharder.com/v1/all';
 const CHATS_URL_RAW = 'https://api.diveharder.com/raw/all';
 const FALLBACK_URL = 'https://api.helldivers2.dev/raw/api';
 
-const {IDENTIFIER, CONTACT, DEALLOC_TOKEN} = config;
+const IDENTIFIER = config.IDENTIFIER;
+const CONTACT = config.CONTACT;
+const DEALLOC_TOKEN = config.DEALLOC_TOKEN;
+const CM_DISPATCHES_CHANNEL = config.CM_DISPATCHES_CHANNEL;
+const HD2_ANNOUNCEMENTS_CHANNEL = config.HD2_ANNOUNCEMENTS_CHANNEL;
+const AHG_ANNOUNCEMENTS_CHANNEL = config.AHG_ANNOUNCEMENTS_CHANNEL;
 
 const apiClient = axios.create({
   headers: {
@@ -103,6 +114,8 @@ export let data: ApiData = {
     },
     planets_stats: [],
   },
+  HelldiversDiscordAnnouncements: [],
+  SteamPosts: [],
 };
 
 export async function getData() {
@@ -115,6 +128,9 @@ export async function getData() {
   let planetStats: PlanetStats;
   let newsFeed: NewsFeedItem[];
   let storeRotation: StoreRotation | undefined = undefined;
+  let warbonds: ApiData['Warbonds'] | undefined = undefined;
+  let steamPosts: SteamPost[] = [];
+
   const gameItems: Items = {
     armor: {
       Body: [],
@@ -129,6 +145,7 @@ export async function getData() {
     },
   };
   let additionalPlanetInfo: AdditionalPlanetInfo | undefined = undefined;
+  let unmappedPersonalOrders: UnmappedPersonalOrder[] = [];
 
   try {
     // Unofficial: api wrapper for the authed chats endpoint
@@ -156,6 +173,14 @@ export async function getData() {
     newsFeed.sort((a, b) => b.published - a.published);
     storeRotation = chatsAPI['store_rotation'] as StoreRotation;
     additionalPlanetInfo = chatsAPI['planets'] as AdditionalPlanetInfo;
+    unmappedPersonalOrders = chatsAPI[
+      'personal_order'
+    ] as UnmappedPersonalOrder[];
+    warbonds = chatsAPI['warbonds'] as ApiData['Warbonds'];
+    steamPosts = chatsAPI['updates'].map((p: SteamPostAPI) => ({
+      ...p,
+      date: dayjs(p.date).toDate(),
+    }));
 
     const chatsItems = chatsAPI['items'];
     if (chatsItems['armor']) {
@@ -219,6 +244,25 @@ export async function getData() {
     }))) as NewsFeedItem[];
     newsFeed.sort((a, b) => b.published - a.published);
   }
+
+  // Fetch Discord announcements from the DB
+  const discAnnouncements = await db.query.helldiversDiscordAnns.findMany();
+  const hd2DiscAnnouncements: HelldiversDiscordAnnouncement[] =
+    discAnnouncements.map(d => {
+      let annType: HelldiversDiscordAnnouncement['type'];
+      if (d.channelId === CM_DISPATCHES_CHANNEL) annType = 'CM';
+      else if (d.channelId === HD2_ANNOUNCEMENTS_CHANNEL) annType = 'HD2';
+      else if (d.channelId === AHG_ANNOUNCEMENTS_CHANNEL) annType = 'AHG';
+      else annType = 'UNKNOWN';
+
+      return {
+        type: annType,
+        content: d.content,
+        attachmentUrls: d.attachmentUrls ?? undefined,
+        editedTimestamp: d.editedTimestamp ?? undefined,
+        timestamp: d.timestamp,
+      };
+    });
 
   const planets: MergedPlanetData[] = [];
   const players = {
@@ -307,12 +351,17 @@ export async function getData() {
     Players: players,
     // this is the starting point in unix for whatever time thing they use
     UTCOffset: Math.floor(status.timeUtc - status.time * 1000), // use this value to add to the time to get the UTC time in seconds
+    HelldiversDiscordAnnouncements: hd2DiscAnnouncements,
+    SteamPosts: steamPosts,
   };
   if (additionalPlanetInfo) data.additionalPlanetInfo = additionalPlanetInfo;
   if (storeRotation) data.SuperStore = storeRotation;
+  if (unmappedPersonalOrders)
+    data.UnmappedPersonalOrders = unmappedPersonalOrders;
+  if (warbonds) data.Warbonds = warbonds;
   if (gameItems.weapons) data.Items = gameItems; // just check one field to see if the data is there
 
-  writeFileSync('data.json', JSON.stringify(data, null, 2));
+  writeFileSync('data.json', JSON.stringify(data));
 
   // update mapped names
   mappedNames.planets = data.Planets.map(x => x.name);

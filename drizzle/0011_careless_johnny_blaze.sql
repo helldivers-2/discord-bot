@@ -1,0 +1,1 @@
+ALTER TABLE "arrowhead_discord_anns" ADD COLUMN "attachment_urls" json;

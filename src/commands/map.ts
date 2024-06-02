@@ -7,8 +7,8 @@ import {
 import {Command} from '../interfaces';
 import {FOOTER_MESSAGE} from './_components';
 import {data} from '../api-wrapper';
-import {createCanvas, loadImage} from 'canvas';
-import {create2kCanvas, FONT} from '../handlers';
+import {createCanvas} from 'canvas';
+import {generateGalacticMap} from '../handlers';
 
 const command: Command = {
   data: new SlashCommandBuilder()
@@ -33,6 +33,10 @@ const command: Command = {
     ),
   run: async interaction => {
     const subcommand = interaction.options.data[0].name;
+    // temp embed to show while we're loading the server info
+    await interaction.editReply({
+      embeds: [new EmbedBuilder().setTitle('Generating galactic map...')],
+    });
 
     await subcmds[subcommand](interaction);
   },
@@ -45,81 +49,7 @@ const subcmds: {[key: string]: (job: CommandInteraction) => Promise<void>} = {
 };
 
 async function galaxy(interaction: CommandInteraction) {
-  const planets = data.Planets;
-
-  const canvas = create2kCanvas();
-  const context = canvas.getContext('2d');
-
-  // Start a new path for filling in only circle background
-  context.beginPath();
-  // Draw a circle in the middle of the canvas
-  context.arc(
-    canvas.width / 2,
-    canvas.height / 2,
-    Math.min(canvas.width, canvas.height) / 2,
-    0,
-    2 * Math.PI
-  );
-  context.clip(); // Clip rendering to the current circle path
-  context.fillStyle = 'black';
-  context.fillRect(0, 0, canvas.width, canvas.height);
-
-  // Load the sectormap image
-  const image = await loadImage('./images/hd2_sectormap_2k.png');
-
-  context.globalAlpha = 0.21; // make the sectormap 50% transparent
-
-  // Draw the image onto the canvas
-  context.drawImage(image, 0, 0, canvas.width, canvas.height);
-
-  context.globalAlpha = 1.0;
-
-  // Find the minimum and maximum x and y values
-  const minX = Math.min(...planets.map(planet => planet.position.x));
-  const maxX = Math.max(...planets.map(planet => planet.position.x));
-  const minY = Math.min(...planets.map(planet => planet.position.y));
-  const maxY = Math.max(...planets.map(planet => planet.position.y));
-
-  // Calculate the scale factors
-  const padding = 50; // Padding in pixels
-  const scaleX = (canvas.width - 2 * padding) / (maxX - minX);
-  const scaleY = (canvas.height - 2 * padding) / (maxY - minY);
-
-  // Draw a point for each planet at its x, y coordinates
-  for (const planet of planets) {
-    context.globalAlpha = 1;
-    // Translate and scale the coordinates
-    const x = padding + (planet.position.x - minX) * scaleX;
-    // const y = canvas.height - padding - (planet.position.y - minY) * scaleY; // Invert the y-coordinate
-    const y = canvas.height - (padding + (planet.position.y - minY) * scaleY);
-
-    // Set the fill style for the points
-    const colour =
-      planet.owner === 'Humans'
-        ? '#46BDF0'
-        : planet.owner === 'Terminids'
-        ? '#FEB801'
-        : '#FE6D6A';
-    context.fillStyle = colour;
-    context.fillRect(x, y - 8, 8, 8);
-
-    // Set the fill style for the text
-    context.fillStyle = 'white';
-    context.font = `25px ${FONT}`;
-
-    // Calculate the width of the text
-    const textWidth = context.measureText(planet.name).width;
-
-    // don't render the text if the planet is controlled by us and has no campaign
-    const campaign = data.Campaigns.find(c => c.planetIndex === planet.index);
-    if (planet.owner === 'Humans' && !campaign) continue;
-
-    // Draw the planet name next to the point
-    // If the planet is too close to the right edge, draw the text to the left of the point
-    if (x + textWidth + 10 > canvas.width)
-      context.fillText(planet.name, x - textWidth - 10, y + 3);
-    else context.fillText(planet.name, x + 10, y + 3);
-  }
+  const {canvas} = await generateGalacticMap();
 
   // Convert the canvas to an image buffer
   const buffer = canvas.toBuffer('image/png');
@@ -143,97 +73,8 @@ async function planet(interaction: CommandInteraction) {
 
   const planets = data.Planets;
 
-  const canvas = create2kCanvas();
-  const context = canvas.getContext('2d');
-  // Start a new path for filling in only circle background
-  context.beginPath();
-  // Draw a circle in the middle of the canvas
-  context.arc(
-    canvas.width / 2,
-    canvas.height / 2,
-    Math.min(canvas.width, canvas.height) / 2,
-    0,
-    2 * Math.PI
-  );
-  context.clip(); // Clip rendering to the current circle path
-  context.fillStyle = 'black';
-  context.fillRect(0, 0, canvas.width, canvas.height);
-
-  // Load the sectormap image
-  const image = await loadImage('./images/hd2_sectormap_2k.png');
-
-  context.globalAlpha = 0.21; // make the sectormap 50% transparent
-
-  // Draw the image onto the canvas
-  context.drawImage(image, 0, 0, canvas.width, canvas.height);
-
-  context.globalAlpha = 1.0;
-
-  // Find the minimum and maximum x and y values
-  const minX = Math.min(...planets.map(planet => planet.position.x));
-  const maxX = Math.max(...planets.map(planet => planet.position.x));
-  const minY = Math.min(...planets.map(planet => planet.position.y));
-  const maxY = Math.max(...planets.map(planet => planet.position.y));
-
-  // Calculate the scale factors
-  const padding = 50; // Padding in pixels
-  const scaleX = (canvas.width - 2 * padding) / (maxX - minX);
-  const scaleY = (canvas.height - 2 * padding) / (maxY - minY);
-
-  // Draw a point for each planet at its x, y coordinates
-  for (const planet of planets) {
-    context.globalAlpha = 1;
-    // Translate and scale the coordinates
-    const x = padding + (planet.position.x - minX) * scaleX;
-    // const y = canvas.height - padding - (planet.position.y - minY) * scaleY; // Invert the y-coordinate
-    const y = canvas.height - (padding + (planet.position.y - minY) * scaleY);
-
-    // Set the fill style for the points
-    const colour =
-      planet.owner === 'Humans'
-        ? '#46BDF0'
-        : planet.owner === 'Terminids'
-        ? '#FEB801'
-        : '#FE6D6A';
-    context.fillStyle = colour;
-    context.fillRect(x, y - 8, 8, 8);
-
-    // Set the fill style for the text
-    context.fillStyle = 'white';
-
-    // Calculate the width of the text
-    const textWidth = context.measureText(planet.name).width;
-
-    if (planet.owner === 'Humans') context.globalAlpha = 0.5;
-
-    const campaign = data.Campaigns.find(c => c.planetIndex === planet.index);
-    let planetText: string = planet.name;
-    if (campaign) {
-      context.font = `18px ${FONT}`;
-
-      planetText += '\n';
-      planetText += `Helldivers: ${campaign.planetData.players.toLocaleString()} (${
-        campaign.planetData.playerPerc
-      }%)`;
-      planetText += '\n';
-      planetText +=
-        campaign.campaignType === 'Liberation'
-          ? `Liberation: ${campaign.planetData.liberation.toFixed(2)}%`
-          : `Defence: ${campaign.planetEvent?.defence.toFixed(2)}%`;
-    } else if (planet.name === userQuery) {
-      context.font = `18px ${FONT}`;
-      context.globalAlpha = 1;
-    } else {
-      context.font = `15px ${FONT}`;
-      context.globalAlpha = 0.5;
-    }
-
-    // Draw the planet name next to the point
-    // If the planet is too close to the right edge, draw the text to the left of the point
-    if (x + textWidth + 10 > canvas.width)
-      context.fillText(planetText, x - textWidth - 10, y + 3);
-    else context.fillText(planetText, x + 10, y + 3);
-  }
+  const {canvas, padding, minX, minY, scaleX, scaleY} =
+    await generateGalacticMap();
 
   // Define the crop size
   const cropSize = 800;

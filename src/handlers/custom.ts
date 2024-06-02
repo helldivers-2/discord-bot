@@ -15,6 +15,7 @@ const biomeMap: Record<string, string> = {
   Crimsonmoor: 'Crimson',
   Toxic: 'Acidic',
   Desolate: 'Inferno',
+  Tundra: 'Taiga',
 };
 export function planetBiomeTransform(biome: string) {
   return (biomeMap[biome] || biome).toLowerCase();

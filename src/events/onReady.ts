@@ -1,7 +1,7 @@
 import {ActivityType, Client, REST, Routes} from 'discord.js';
 import {schedule} from 'node-cron';
-import {commandHash, commandList, presenceCmds, wikiCmd} from '../commands';
-import {config} from '../config';
+import {commandHash, commandList, presenceCmds} from '../commands';
+import {config, isProd} from '../config';
 import {getData, mappedNames} from '../api-wrapper';
 import {compareData, dbData, logger, updateMessages} from '../handlers';
 
@@ -136,8 +136,8 @@ const onReady = async (client: Client) => {
     }
   });
 
-  // update messages on startup
-  // updateMessages();
+  // update messages on startup only in a dev environment
+  if (!isProd) await updateMessages();
 };
 
 export {onReady};

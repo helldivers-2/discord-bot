@@ -335,6 +335,29 @@ export type WarOverview = {
   Events: GlobalEvent[];
 };
 
+export type UnmappedPersonalOrder = {
+  id32: number;
+  progress: number[];
+  expiresIn: number;
+  setting: {
+    type: number;
+    overrideTitle: string;
+    overrideBrief: string;
+    taskDescription: string;
+    tasks: {
+      type: number;
+      values: number[];
+      valueTypes: number[];
+    }[];
+    reward: {
+      type: number;
+      id32: number;
+      amount: number;
+    };
+    flags: number;
+  };
+};
+
 export type PlanetStatsItem = {
   planetIndex: number;
   planetName: string;
@@ -421,7 +444,17 @@ export type WarbondItem = {
   name: string;
   mix_id: string;
   medal_cost: number;
-};
+} & Partial<GrenadeItem> &
+  Partial<ArmorItem> &
+  Partial<WeaponItem> &
+  Partial<BoosterItem>;
+
+export type WarbondNames =
+  | 'helldivers_mobilize'
+  | 'steeled_veterans'
+  | 'cutting_edge'
+  | 'democratic_detonation'
+  | 'polar_patriots';
 
 export type Warbond = {
   [key: string]: {
@@ -430,6 +463,28 @@ export type Warbond = {
       [key: string]: WarbondItem;
     };
   };
+};
+
+export type HelldiversDiscordAnnouncement = {
+  type: 'CM' | 'HD2' | 'AHG' | 'UNKNOWN';
+  content: string;
+  attachmentUrls?: string[];
+  timestamp: Date;
+  editedTimestamp?: Date;
+};
+
+export type SteamPostAPI = {
+  title: string;
+  url: string;
+  date: string;
+  contents: string;
+};
+
+export type SteamPost = {
+  title: string;
+  url: string;
+  contents: string;
+  date: Date;
 };
 
 export type ApiData = {
@@ -447,15 +502,19 @@ export type ApiData = {
   Events: GlobalEvent[];
   SuperStore?: StoreRotation;
   Items?: Items;
+  UnmappedPersonalOrders?: UnmappedPersonalOrder[];
   Warbonds?: {
     helldivers_mobilize: Warbond;
     steeled_veterans: Warbond;
     cutting_edge: Warbond;
     democratic_detonation: Warbond;
+    polar_patriots: Warbond;
   };
   Players: {
     [key in Faction]: number;
   };
+  HelldiversDiscordAnnouncements: HelldiversDiscordAnnouncement[];
+  SteamPosts: SteamPost[];
   UTCOffset: number;
 };
 
@@ -471,9 +530,12 @@ export type StrippedApiData = {
   PlanetAttacks: {source: string; target: string}[];
   Events: GlobalEvent[];
   SuperStore?: StoreRotation;
+  UnmappedPersonalOrders?: UnmappedPersonalOrder[];
   Players: {
     [key in Faction]: number;
   };
+  HelldiversDiscordAnnouncements: HelldiversDiscordAnnouncement[];
+  SteamPosts: SteamPost[];
   UTCOffset: number;
 };
 

@@ -102,9 +102,9 @@ const command: Command = {
         await pageSelect.update({
           embeds: [
             new EmbedBuilder()
-              .setTitle(`Page Not Found!`)
+              .setTitle('Page Not Found!')
               .setDescription(
-                `The selected page was not found!` +
+                'The selected page was not found!' +
                   '\n\n' +
                   `${pageSelect.customId}`
               ),
@@ -138,7 +138,7 @@ const command: Command = {
         await interaction.editReply({
           embeds: [
             new EmbedBuilder()
-              .setTitle(`No response received!`)
+              .setTitle('No response received!')
               .setFooter({text: FOOTER_MESSAGE})
               .setTimestamp(),
           ],

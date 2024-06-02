@@ -71,6 +71,20 @@
       "when": 1711311580430,
       "tag": "0009_wonderful_stingray",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "6",
+      "when": 1716500746289,
+      "tag": "0010_dark_nova",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "6",
+      "when": 1716506814501,
+      "tag": "0011_careless_johnny_blaze",
+      "breakpoints": true
     }
   ]
 }

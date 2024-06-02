@@ -1,5 +1,6 @@
 export * from './cron';
 export * from './discord';
+export * from './embeds';
 export * from './auth';
 export * from './canvas';
 export * from './client';

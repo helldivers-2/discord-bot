@@ -10,10 +10,13 @@ COPY ./fonts ./fonts
 COPY ./images ./images
 COPY ./wiki ./wiki
 # Build the project, then re-install only runtime dependencies
-RUN npm run build \ 
+RUN npm run build \
     && npm ci --omit=dev
 # - - - FRESH BUILD STAGE - - -
 FROM node:20-alpine as deploy
+ENV NEW_RELIC_NO_CONFIG_FILE=true
+ENV NEW_RELIC_DISTRIBUTED_TRACING_ENABLED=true
+ENV NEW_RELIC_LOG=stdout
 ## These are runtime dependencies required by node-canvas
 RUN apk add --no-cache cairo pango libjpeg-turbo
 WORKDIR /home/node/app
@@ -24,8 +27,11 @@ COPY --chown=node:node package*.json *.config.js ./
 COPY --chown=node:node --from=build /app/fonts ./fonts
 COPY --chown=node:node --from=build /app/images ./images
 COPY --chown=node:node --from=build /app/wiki ./wiki
+
+RUN npm install -g pm2
+
 # Set 'node' as owner of this directory (permits creating files eg. logs)
 RUN chown -h node:node .
 USER node
 # Start the application
-CMD ["node", "build/src/index.js"]
+CMD ["pm2-runtime", "ecosystem.config.js"]
