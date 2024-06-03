@@ -124,7 +124,7 @@ export async function getData() {
   let warInfo: WarInfo;
   let status: Status;
   let UTCOffset: number;
-  let assignment: Assignment[];
+  let assignment: Assignment[] = [];
   let planetStats: PlanetStats;
   let newsFeed: NewsFeedItem[];
   let storeRotation: StoreRotation | undefined = undefined;
@@ -162,7 +162,8 @@ export async function getData() {
     status = chatsAPI['status'] as Status;
     status.timeUtc = Date.now();
     UTCOffset = Math.floor(status.timeUtc - status.time * 1000); // use this value to add to the time to get the UTC time in seconds
-    assignment = chatsAPI['major_order'] as Assignment[];
+    if ('major_order' in chatsAPI)
+      assignment = chatsAPI['major_order'] as Assignment[];
     planetStats = chatsAPI['planet_stats'] as PlanetStats;
     newsFeed = chatsAPI['news_feed'].map(
       (item: Omit<NewsFeedItem, 'publishedUtc'>) => ({
