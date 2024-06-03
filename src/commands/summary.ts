@@ -1,16 +1,6 @@
-import {
-  ActionRowBuilder,
-  ButtonBuilder,
-  EmbedBuilder,
-  SlashCommandBuilder,
-} from 'discord.js';
+import {SlashCommandBuilder} from 'discord.js';
 import {Command} from '../interfaces';
-import {
-  hdCompanionButton,
-  supportDiscordButton,
-  supportRow,
-  warStatusEmbeds,
-} from '../handlers';
+import {summaryRow, warStatusEmbeds} from '../handlers';
 
 const command: Command = {
   data: new SlashCommandBuilder()
@@ -21,13 +11,7 @@ const command: Command = {
 
     await interaction.editReply({
       embeds: embeds,
-      components: [
-        new ActionRowBuilder<ButtonBuilder>().addComponents([
-          supportDiscordButton,
-          hdCompanionButton,
-        ]),
-        supportRow,
-      ],
+      components: [summaryRow],
     });
   },
 };
