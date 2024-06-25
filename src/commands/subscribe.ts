@@ -5,7 +5,8 @@ import {subscribeEmbed} from '../handlers';
 const command: Command = {
   data: new SlashCommandBuilder()
     .setName('subscribe')
-    .setDescription("Manage this server's notifications."),
+    .setDescription("Manage this server's notifications.")
+    .setDefaultMemberPermissions(8),
   run: async interaction => {
     const {embeds, components} = await subscribeEmbed(interaction);
 
