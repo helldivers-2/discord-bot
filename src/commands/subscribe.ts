@@ -6,7 +6,7 @@ const command: Command = {
   data: new SlashCommandBuilder()
     .setName('subscribe')
     .setDescription("Manage this server's notifications.")
-    .setDefaultMemberPermissions(8),
+    .setDefaultMemberPermissions(32),
   run: async interaction => {
     const {embeds, components} = await subscribeEmbed(interaction);
 
