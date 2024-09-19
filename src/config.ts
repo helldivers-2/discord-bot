@@ -14,11 +14,11 @@ const configObj: Record<string, string | number | undefined> = {
   AHG_ANNOUNCEMENTS_CHANNEL: '1243296967656996975',
 
   // Cron job intervals
-  PERSISTENT_MESSAGE_INTERVAL: '*/30 * * * *', // every 30 minutes
-  API_UPDATE_INTERVAL: '*/30 * * * * *', // every 20 seconds
-  STATUS_UPDATE_INTERVAL: '*/3 * * * * *', // every 3 seconds
-  DB_DATA_INTERVAL: '0 * * * *', // every 1 hour
-  COMPARE_INTERVAL: '*/20 * * * * *', // every 20 seconds
+  PERSISTENT_MESSAGE_INTERVAL: '*/30 * * * *', // every 30 minutes (discord API limits -- somewhat intensive)
+  API_UPDATE_INTERVAL: '*/30 * * * * *', // every 30 seconds (fly egress -- not intensive)
+  STATUS_UPDATE_INTERVAL: '*/3 * * * * *', // update discord status every 3 seconds (discord egress -- not intensive)
+  DB_DATA_INTERVAL: '0 * * * *', // store new API data every 1 hour (supabase egress -- somewhat intensive)
+  COMPARE_INTERVAL: '*/15 * * * *', // compare full API data every 15 minutes (supabase egress -- very intensive)
 
   // Database config
   DATABASE_URL: process.env.DATABASE_URL,

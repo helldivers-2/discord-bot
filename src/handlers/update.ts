@@ -42,9 +42,9 @@ export async function updateMessages() {
           type: 'update',
           ...err,
         });
-        db.delete(persistentMessages)
-          .where(eq(persistentMessages.messageId, message.messageId))
-          .catch();
+        // db.delete(persistentMessages)
+        //   .where(eq(persistentMessages.messageId, message.messageId))
+        //   .catch();
         return null;
       });
   });
