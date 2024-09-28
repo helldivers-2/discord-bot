@@ -118,7 +118,7 @@ const messageCreate = async (msg: Message) => {
   // Using upsert for simplicity as it alr exists, but this is always an insert
   await upsertHD2DiscordAnn({
     messageId: msg.id,
-    channelName: channel.name,
+    channelName: channel.name ?? 'Unknown',
     channelId: channel.id,
     timestamp: new Date(msg.createdTimestamp),
     editedTimestamp: msg.editedTimestamp
@@ -167,7 +167,7 @@ const messageUpdate = async (
   // Update the message in the database if the content has changed
   await upsertHD2DiscordAnn({
     messageId: newMsg.id,
-    channelName: channel.name,
+    channelName: channel.name ?? 'Unknown',
     channelId: channel.id,
     timestamp: new Date(newMsg.createdTimestamp),
     editedTimestamp: newMsg.editedTimestamp
@@ -181,9 +181,10 @@ const messageUpdate = async (
     type: 'support-message',
     messageId: oldMsg.id,
     channel: channel.name,
-    guild: channel.guild.name,
+    // guild: channel.guild?.name ?? 'Unknown',
+    guild: guild.name,
     channelId: channel.id,
-    guildId: channel.guildId,
+    guildId: guild.id,
   });
 };
 
