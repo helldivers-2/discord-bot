@@ -8,7 +8,9 @@ const {DATABASE_URL} = config;
 
 // https://orm.drizzle.team/kit-docs/quick#quick-start
 // https://orm.drizzle.team/docs/get-started-postgresql#postgresjs
-const queryClient = postgres(DATABASE_URL, {ssl: 'require'});
+const queryClient = postgres(DATABASE_URL, {
+  ssl: 'require',
+});
 export const db = drizzle(queryClient, {schema});
 
 type NewAnnouncementChannel = typeof schema.announcementChannels.$inferInsert;

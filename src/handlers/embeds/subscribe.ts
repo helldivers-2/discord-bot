@@ -81,6 +81,10 @@ export async function subscribeEmbed(
     new ButtonBuilder()
       .setCustomId('subscribe-updates')
       .setLabel('War Updates')
+      .setStyle(ButtonStyle.Success),
+    new ButtonBuilder()
+      .setCustomId('subscribe-highlights')
+      .setLabel('War Highlights')
       .setStyle(ButtonStyle.Success)
   );
 
@@ -220,6 +224,23 @@ export function subUpdatesNotifEmbed() {
       'This channel has been subscribed to galactic war updates.' +
         '\n\n' +
         'HellCom will send subsequent messages informing Helldivers of war updates as they happen. These war updates include campaign victories and losses, new campaigns, in-game events such as additional stratagems, major orders, and more!' +
+        '\n\n' +
+        'Godspeed, fellow soldiers.'
+    )
+    .setFooter({text: SUBSCRIBE_FOOTER})
+    .setTimestamp();
+  return {embeds: [embed]};
+}
+
+export function subHighlightsNotifEmbed() {
+  const embed = new EmbedBuilder()
+    .setThumbnail(factionSprites['Humans'])
+    .setColor(FACTION_COLOUR.Humans)
+    .setTitle('War Highlights Enabled!')
+    .setDescription(
+      'This channel has been subscribed to galactic war highlights.' +
+        '\n\n' +
+        'HellCom will send subsequent messages informing Helldivers of war highlights as they happen. These war highlights are primarily major orders and other important information!' +
         '\n\n' +
         'Godspeed, fellow soldiers.'
     )

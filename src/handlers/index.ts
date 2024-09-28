@@ -10,5 +10,6 @@ export * from './embed';
 export * from './graphs';
 export * from './gzip';
 export * from './logging';
+export * from './redis';
 export * from './update';
 export * from './wiki';

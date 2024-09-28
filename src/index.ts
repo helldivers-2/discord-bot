@@ -1,10 +1,12 @@
 import {config} from './config';
-import {onInteraction, onReady} from './events';
+import {onInteraction, onReady, shutdown, startup} from './events';
 import {client, logger} from './handlers';
 
 const {BOT_TOKEN} = config;
 
 async function main() {
+  process.on('SIGINT', async () => await shutdown());
+
   client.on('ready', async () => await onReady(client));
 
   // log server join
@@ -34,6 +36,7 @@ async function main() {
     async interaction => await onInteraction(interaction)
   );
 
+  await startup();
   await client.login(BOT_TOKEN);
 }
 

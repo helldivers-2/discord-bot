@@ -16,6 +16,7 @@ import {
 import {EMBED_COLOUR, FOOTER_MESSAGE} from '../../commands/_components';
 import {
   client,
+  subHighlightsNotifEmbed,
   subNotifRemoveSuccessEmbed,
   subscribeFailureEmbed,
   subStatusAddSuccessEmbed,
@@ -43,6 +44,8 @@ const subscriptions: {
   status_remove: statusRemove,
   updates_add: updatesAdd,
   updates_remove: updatesRemove,
+  highlights_add: highlightsAdd,
+  highlights_remove: highlightsRemove,
 };
 
 async function statusAdd(interaction: ChannelSelectMenuInteraction) {
@@ -76,7 +79,7 @@ async function statusAdd(interaction: ChannelSelectMenuInteraction) {
           .setTitle('Channel Already Subscribed')
           .setDescription(
             'This selected channel is already subscribed to war status updates! ' +
-              'To prevent spam, only one subscription per type per channel is allowed. ' +
+              'To prevent spam, only one subscription (excluding status) per channel is allowed. ' +
               'Feel free to enable this subscription in other channels, or to enable another subscription in this channel!' +
               '\n\nIf you would like to remove the subscription, use the `/subscribe` command again, and select the "**Remove**" option.'
           )
@@ -217,7 +220,7 @@ async function updatesAdd(interaction: ChannelSelectMenuInteraction) {
   const existing = await db.query.announcementChannels.findMany({
     where: and(
       eq(announcementChannels.guildId, interaction.guildId ?? ''),
-      eq(announcementChannels.type, 'war_announcements'),
+      // eq(announcementChannels.type, 'war_announcements'),
       eq(persistentMessages.production, isProd)
     ),
   });
@@ -227,8 +230,8 @@ async function updatesAdd(interaction: ChannelSelectMenuInteraction) {
         new EmbedBuilder()
           .setTitle('Channel Already Subscribed')
           .setDescription(
-            'This selected channel is already subscribed to war updates updates! ' +
-              'To prevent spam, only one subscription per type per channel is allowed. ' +
+            'The selected channel already has an active subscription! ' +
+              'To prevent spam, only one subscription (excluding status) per channel is allowed. ' +
               'Feel free to enable this subscription in other channels, or to enable another subscription in this channel!' +
               '\n\nIf you would like to remove the subscription, use the `/subscribe` command again, and select the "**Remove**" option.'
           )
@@ -285,6 +288,108 @@ async function updatesRemove(interaction: ChannelSelectMenuInteraction) {
     const row = new ActionRowBuilder<ChannelSelectMenuBuilder>().addComponents(
       new ChannelSelectMenuBuilder()
         .setCustomId('subscribe-updates_remove')
+        .addChannelTypes(
+          ChannelType.GuildText,
+          ChannelType.PublicThread,
+          ChannelType.GuildAnnouncement,
+          ChannelType.AnnouncementThread
+        )
+    );
+    await interaction.editReply({embeds: [embed], components: [row]});
+    return;
+  }
+
+  await db.delete(announcementChannels).where(queryOpts.where);
+  await interaction.editReply(subNotifRemoveSuccessEmbed(channel));
+  return;
+}
+
+async function highlightsAdd(interaction: ChannelSelectMenuInteraction) {
+  const channel = await client.channels.fetch(interaction.values[0]);
+  if (
+    !channel ||
+    !(
+      channel.type === ChannelType.GuildText ||
+      channel.type === ChannelType.PublicThread ||
+      channel.type === ChannelType.GuildAnnouncement ||
+      channel.type === ChannelType.AnnouncementThread
+    )
+  ) {
+    // TODO: add error handling
+    return;
+  }
+
+  const existing = await db.query.announcementChannels.findMany({
+    where: and(
+      eq(announcementChannels.guildId, interaction.guildId ?? ''),
+      // eq(announcementChannels.type, 'war_highlights'),
+      eq(persistentMessages.production, isProd)
+    ),
+  });
+  if (existing.map(m => m.channelId).includes(channel.id)) {
+    await interaction.editReply({
+      embeds: [
+        new EmbedBuilder()
+          .setTitle('Channel Already Subscribed')
+          .setDescription(
+            'The selected channel already has an active subscription! ' +
+              'To prevent spam, only one subscription (excluding status) per channel is allowed. ' +
+              'Feel free to enable this subscription in other channels, or to enable another subscription in this channel!' +
+              '\n\nIf you would like to remove the subscription, use the `/subscribe` command again, and select the "**Remove**" option.'
+          )
+          .setFooter({text: FOOTER_MESSAGE})
+          .setColor(EMBED_COLOUR)
+          .setTimestamp(),
+      ],
+      components: [],
+    });
+
+    return;
+  }
+
+  try {
+    const message = await channel.send(subHighlightsNotifEmbed());
+
+    // if edit succeeds, then create db entry to update the message in future
+    await newAnnouncementChannel({
+      channelId: channel.id,
+      type: 'war_highlights',
+      userId: interaction.user.id,
+      guildId: interaction.guild?.id || '',
+      production: isProd,
+    });
+
+    await interaction.editReply(subUpdatesAddSuccessEmbed(message));
+  } catch (err) {
+    // Discord API rejects the request if bot doesn't have perms for the channel
+    await interaction.editReply(
+      subscribeFailureEmbed('highlights', interaction, err as DiscordAPIError)
+    );
+  }
+  return;
+}
+
+async function highlightsRemove(interaction: ChannelSelectMenuInteraction) {
+  const queryOpts = {
+    where: and(
+      eq(announcementChannels.guildId, interaction.guildId || ''),
+      eq(announcementChannels.type, 'war_highlights'),
+      eq(announcementChannels.channelId, interaction.values[0]),
+      eq(announcementChannels.production, isProd)
+    ),
+  };
+  const channel = await db.query.announcementChannels.findFirst(queryOpts);
+  if (!channel) {
+    const embed = new EmbedBuilder()
+      .setTitle('No Subscription Found!')
+      .setDescription(
+        `<#${interaction.values[0]}> is not subscribed to war update announcements. If this was a mistake you may select another channel below.`
+      )
+      .setFooter({text: FOOTER_MESSAGE})
+      .setTimestamp();
+    const row = new ActionRowBuilder<ChannelSelectMenuBuilder>().addComponents(
+      new ChannelSelectMenuBuilder()
+        .setCustomId('subscribe-highlights_remove')
         .addChannelTypes(
           ChannelType.GuildText,
           ChannelType.PublicThread,

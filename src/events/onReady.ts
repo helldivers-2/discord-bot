@@ -28,37 +28,36 @@ const onReady = async (client: Client) => {
     }
   );
 
-  // two non-constant value for timing functions
-  let start = Date.now();
-  let time = '';
-
   // register commands as global discord slash commands
   const commandData = commandList.map(command => command.data.toJSON());
-
-  await rest.put(Routes.applicationCommands(clientId), {
-    body: commandData,
-  });
   logger.info(`Commands loaded: ${Object.keys(commandHash).join(', ')}`, {
     type: 'startup',
   });
 
-  time = `${Date.now() - start}ms`;
-  logger.info(`Loaded ${commandData.length} commands in ${time}`, {
-    type: 'startup',
-  });
+  const commandStart = Date.now();
+  rest
+    .put(Routes.applicationCommands(clientId), {
+      body: commandData,
+    })
+    .then(() => {
+      const time = `${Date.now() - commandStart}ms`;
+      logger.info(`Loaded ${commandData.length} commands in ${time}`, {
+        type: 'startup',
+      });
+    });
 
-  start = Date.now();
-  // get api data on startup
-  await getData().then(data => {
-    mappedNames.planets = data.Planets.map(x => x.name);
-    mappedNames.campaignPlanets = data.Campaigns.map(x => x.planetName);
-  });
-
-  // retrieve encounters and load them as autocomplete suggestions
-  time = `${Date.now() - start}ms`;
-  logger.info(`Loaded ${mappedNames.planets.length} planets in ${time}`, {
-    type: 'startup',
-  });
+  // start = Date.now();
+  // // get api data on startup
+  // await getData().then(data => {
+  //   mappedNames.planets = data.Planets.map(x => x.name);
+  //   mappedNames.campaignPlanets = data.Campaigns.map(x => x.planetName);
+  // });
+  //
+  // // retrieve encounters and load them as autocomplete suggestions
+  // time = `${Date.now() - start}ms`;
+  // logger.info(`Loaded ${mappedNames.planets.length} planets in ${time}`, {
+  //   type: 'startup',
+  // });
 
   // load wiki pages
   // const wiki = loadWikiFiles('./wiki');

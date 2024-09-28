@@ -17,7 +17,7 @@ import subscribe from './subscribe';
 import summary from './summary';
 import superstore from './superstore';
 import updates from './updates';
-import warbond from './warbond';
+// import warbond from './warbond';
 // import wiki from './wiki';
 import {Category, WikiData} from '../handlers';
 
@@ -34,7 +34,7 @@ const commandList: Command[] = [
   summary,
   superstore,
   updates,
-  warbond,
+  // warbond,
   // wiki,
 ];
 const notEphemeral: string[] = [];

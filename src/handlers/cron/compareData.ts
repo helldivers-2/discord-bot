@@ -12,6 +12,7 @@ import {
   newNewsUpdate,
   wonPlanetUpdate,
 } from '.';
+import {redis} from '../redis';
 
 export async function compareData(): Promise<WarDifferences | void> {
   const newData: StrippedApiData = {
@@ -55,8 +56,9 @@ export async function compareData(): Promise<WarDifferences | void> {
     SteamPosts: data.SteamPosts,
     UTCOffset: data.UTCOffset,
   };
-  writeFileSync('strippedData.json', JSON.stringify(newData, null, 2));
+  writeFileSync('strippedData.json', JSON.stringify(newData));
 
+  // const oldRedisData = redis.
   const oldDbData = await db.query.prevData.findFirst({
     where: eq(prevData.warId, newData.WarInfo.warId),
   });
@@ -113,11 +115,18 @@ export async function compareData(): Promise<WarDifferences | void> {
       eq(announcementChannels.type, 'war_announcements')
     ),
   });
+  const warHighlightsChannels = await db.query.announcementChannels.findMany({
+    where: and(
+      eq(announcementChannels.production, isProd),
+      eq(announcementChannels.type, 'war_highlights')
+    ),
+  });
   const channelIds = warAnnChannels.map(c => c.channelId);
+  const highlightsChannelIds = warHighlightsChannels.map(c => c.channelId);
 
   // compare old api snapshot to the new one, check for changes
   // eg. new campaign, planet owner change, new event, new major order etc.
-  // TODO: compare major order
+
   // check the list of old campaigns to see if it doesn't exist in the new data
   // if not, then we either lost or won a planet
   for (const oldCampaign of oldData.Campaigns) {
@@ -200,12 +209,14 @@ export async function compareData(): Promise<WarDifferences | void> {
     }
   }
   // compare old and new events
+  // events are major information such as major orders
   for (const event of newData.Events) {
     const oldEvent = oldData.Events.find(e => e.eventId === event.eventId);
     if (!oldEvent) {
       differences.NewEvents.push(event);
       logger.info(`New event: ${event.title}`, {type: 'info'});
       newEventUpdate(event, channelIds);
+      newEventUpdate(event, highlightsChannelIds);
     }
   }
   // compare old and new player counts

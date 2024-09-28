@@ -22,6 +22,7 @@ const configObj: Record<string, string | number | undefined> = {
 
   // Database config
   DATABASE_URL: process.env.DATABASE_URL,
+  // REDIS_URL: process.env.REDIS_URL,
 
   // Bot Commands
   EMBED_COLOUR: process.env.EMBED_COLOUR || 'DarkPurple',
