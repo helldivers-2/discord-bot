@@ -1,0 +1,26 @@
+{
+    "page": "tr-117_alpha_commander",
+    "title": "TR-117 Alpha",
+    "description": "",
+    "content": "",
+    "fields": [
+        {
+            "name": "Armour Type", "value": "Medium Armour"
+        },
+        {
+            "name": "Med-Kit", "value": "Increases initial inventory and holding capacity of stims by +2.\nIncreases stim effect duration by 2.0s."
+        },
+        {
+            "name": "Armour Rating", "value": "100"
+        },
+        {
+            "name": "Speed", "value": "500"
+        },
+        {
+            "name": "Stamina Regen", "value": "100"
+        }
+    ],
+    "emoji": "",
+    "thumbnail": "",
+    "image": ""
+}

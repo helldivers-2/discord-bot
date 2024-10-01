@@ -1,0 +1,32 @@
+{
+    "page": "cm-21_trench_paramedic",
+    "title": "CM-21 Trench Paramedic",
+    "description": "",
+    "content": "",
+    "fields": [
+        {
+            "name": "Armour Type", "value": "Light Armour"
+        },
+        {
+            "name": "Med-Kit", "value": "Increases initial inventory and holding capacity of stims by +2.\nIncreases stim effect duration by 2.0s."
+        },
+        {
+            "name": "Armour Rating", "value": "69"
+        },
+        {
+            "name": "Speed", "value": "531"
+        },
+        {
+            "name": "Stamina Regen", "value": "116"
+        },
+        {
+            "name": "Superstore Price (Body Armour)", "value": "250"
+        },
+        {
+            "name": "Superstore Price (Helmet)", "value": "125"
+        }
+    ],
+    "emoji": "",
+    "thumbnail": "",
+    "image": ""
+}

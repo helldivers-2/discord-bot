@@ -1,0 +1,32 @@
+{
+    "page": "fs-34_exterminator",
+    "title": "FS-34 Exterminator",
+    "description": "",
+    "content": "",
+    "fields": [
+        {
+            "name": "Armour Type", "value": "Medium Armour"
+        },
+        {
+            "name": "Fortified", "value": "Further reduced recoil when crouching or prone by 30%.\nProvides 50% resistance to explosives."
+        },
+        {
+            "name": "Armour Rating", "value": "100"
+        },
+        {
+            "name": "Speed", "value": "500"
+        },
+        {
+            "name": "Stamina Regen", "value": "100"
+        },
+        {
+            "name": "Superstore Price (Body Armour)", "value": "400 Super Credits"
+        },
+        {
+            "name": "Superstore Price (Helmet)", "value": "200 Super Credits"
+        }
+    ],
+    "emoji": "",
+    "thumbnail": "",
+    "image": ""
+}

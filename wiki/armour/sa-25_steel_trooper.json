@@ -1,0 +1,32 @@
+{
+    "page": "sa-25_steel_trooper",
+    "title": "SA-25 Steel Trooper",
+    "description": "",
+    "content": "",
+    "fields": [
+        {
+            "name": "Armour Type", "value": "Medium Armour"
+        },
+        {
+            "name": "Servo-Assisted", "value": "Increases throwing range by 30%.\nProvides +50% limb health."
+        },
+        {
+            "name": "Armour Rating", "value": "100"
+        },
+        {
+            "name": "Speed", "value": "500"
+        },
+        {
+            "name": "Stamina Regen", "value": "100"
+        },
+        {
+            "name": "Steeled Veterans Warbond Price (Body Armour)", "value": "18 Medals"
+        },
+        {
+            "name": "Steeled Veterans Warbond Price (Helmet)", "value": "12 Medals"
+        }
+    ],
+    "emoji": "",
+    "thumbnail": "",
+    "image": ""
+}

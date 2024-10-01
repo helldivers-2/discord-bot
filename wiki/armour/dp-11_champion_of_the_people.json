@@ -1,0 +1,32 @@
+{
+    "page": "dp-11_champion_of_the_people",
+    "title": "DP-11 Champion of the People",
+    "description": "",
+    "content": "",
+    "fields": [
+        {
+            "name": "Armour Type", "value": "Medium Armour"
+        },
+        {
+            "name": "Democracy Protects", "value": "50% chance to not die when taking lethal damage.\nPrevents all damage from bleeding if chest hemorrhages."
+        },
+        {
+            "name": "Armour Rating", "value": "100"
+        },
+        {
+            "name": "Speed", "value": "500"
+        },
+        {
+            "name": "Stamina Regen", "value": "100"
+        },
+        {
+            "name": "Mobalize Warbond Price (Body Armour)", "value": "100 Medals"
+        },
+        {
+            "name": "Mobalize Warbond Price (Helmet)", "value": "75 Medals"
+        }
+    ],
+    "emoji": "",
+    "thumbnail": "",
+    "image": ""
+}

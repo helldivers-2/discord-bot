@@ -1,0 +1,32 @@
+{
+    "page": "sc-30_trailblazer_scout",
+    "title": "SC-30 Trailblazer Scout",
+    "description": "",
+    "content": "",
+    "fields": [
+        {
+            "name": "Armour Type", "value": "Light Armour"
+        },
+        {
+            "name": "Scout", "value": "Markers placed on the map will generate radar scans every 2.0s.\nReduces range at which enemies can detect the wearer by 30%."
+        },
+        {
+            "name": "Armour Rating", "value": "56"
+        },
+        {
+            "name": "Speed", "value": "544"
+        },
+        {
+            "name": "Stamina Regen", "value": "122"
+        },
+        {
+            "name": "Mobalize Warbond Price (Body Armour)", "value": "50 Medals"
+        },
+        {
+            "name": "Mobalize Warbond Price (Helmet)", "value": "35 Medals"
+        }
+    ],
+    "emoji": "",
+    "thumbnail": "",
+    "image": ""
+}

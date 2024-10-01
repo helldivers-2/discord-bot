@@ -1,0 +1,32 @@
+{
+    "page": "ex-00_protype_x",
+    "title": "EX-00 Protype X",
+    "description": "",
+    "content": "",
+    "fields": [
+        {
+            "name": "Armour Type", "value": "Light Armour"
+        },
+        {
+            "name": "Electrical Conduit", "value": "Provides 95% resistance to arc damage."
+        },
+        {
+            "name": "Armour Rating", "value": "50"
+        },
+        {
+            "name": "Speed", "value": "550"
+        },
+        {
+            "name": "Stamina Regen", "value": "125"
+        },
+        {
+            "name": "Cutting Edge Warbond Price (Body Armour)", "value": "64 Medals"
+        },
+        {
+            "name": "Cutting Edge Warbond Price (Helmet)", "value": "48 Medals"
+        }
+    ],
+    "emoji": "",
+    "thumbnail": "",
+    "image": ""
+}

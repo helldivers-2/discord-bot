@@ -1,0 +1,32 @@
+{
+    "page": "sc-34_infiltrator",
+    "title": "SC-34 Infiltrator",
+    "description": "",
+    "content": "",
+    "fields": [
+        {
+            "name": "Armour Type", "value": "Light Armour"
+        },
+        {
+            "name": "Scout", "value": "Markers placed on the map will generate radar scans every 2.0s.\nReduces range at which enemies can detect the wearer by 30%."
+        },
+        {
+            "name": "Armour Rating", "value": "75"
+        },
+        {
+            "name": "Speed", "value": "525"
+        },
+        {
+            "name": "Stamina Regen", "value": "113"
+        },
+        {
+            "name": "Mobalize Warbond Price (Body Armour)", "value": "3 Medals"
+        },
+        {
+            "name": "Mobalize Warbond Price (Helmet)", "value": "2 Medals"
+        }
+    ],
+    "emoji": "",
+    "thumbnail": "",
+    "image": ""
+}
