@@ -427,7 +427,7 @@ async function highlightsRemove(interaction: ButtonInteraction) {
 
   const row = new ActionRowBuilder<ChannelSelectMenuBuilder>().addComponents(
     new ChannelSelectMenuBuilder()
-      .setCustomId('subscribe-updates_remove')
+      .setCustomId('subscribe-highlights_remove')
       .addChannelTypes(
         ChannelType.GuildText,
         ChannelType.PublicThread,
