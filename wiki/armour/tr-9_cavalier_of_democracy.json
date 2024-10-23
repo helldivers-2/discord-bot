@@ -1,0 +1,32 @@
+{
+    "page": "tr-9_cavalier_of_democracy",
+    "title": "TR-9 Cavalier of Democracy",
+    "description": "",
+    "content": "",
+    "fields": [
+        {
+            "name": "Armour Type", "value": "Medium Armour"
+        },
+        {
+            "name": "Democracy Protects", "value": "50% chance to not die when taking lethal damage.\nPrevents all damage from bleeding if chest hemorrhages."
+        },
+        {
+            "name": "Armour Rating", "value": "100"
+        },
+        {
+            "name": "Speed", "value": "500"
+        },
+        {
+            "name": "Stamina Regen", "value": "100"
+        },
+        {
+            "name": "Super Citizen (Body Armour)", "value": "Pre-Order Bonus"
+        },
+        {
+            "name": "Super Citizen (Helmet)", "value": "Pre-Order Bonus"
+        }
+    ],
+    "emoji": "",
+    "thumbnail": "",
+    "image": ""
+}

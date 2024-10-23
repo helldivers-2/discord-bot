@@ -1,0 +1,32 @@
+{
+    "page": "fs-38_eradicator",
+    "title": "FS-38 Eradicator",
+    "description": "",
+    "content": "",
+    "fields": [
+        {
+            "name": "Armour Type", "value": "Light Armour"
+        },
+        {
+            "name": "Fortified", "value": "Further reduced recoil when crouching or prone by 30%.\nProvides 50% resistance to explosives."
+        },
+        {
+            "name": "Armour Rating", "value": "56"
+        },
+        {
+            "name": "Speed", "value": "544"
+        },
+        {
+            "name": "Stamina Regen", "value": "122"
+        },
+        {
+            "name": "Superstore Price (Body Armour)", "value": "250 Super Credits"
+        },
+        {
+            "name": "Superstore Price (Helmet)", "value": "125 Super Credits"
+        }
+    ],
+    "emoji": "",
+    "thumbnail": "",
+    "image": ""
+}

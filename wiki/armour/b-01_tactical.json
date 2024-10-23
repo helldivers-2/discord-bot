@@ -1,0 +1,26 @@
+{
+    "page": "b-01_tactical",
+    "title": "B-01 Tactical",
+    "description": "",
+    "content": "",
+    "fields": [ 
+      {
+        "name": "Armour Type", "value": "Medium Armour"
+      },
+      {
+        "name": "Extra Padding", "value": "With this, your armour will be buffed and you'll receive a higher armour rating."
+      },
+      {
+        "name": "Armour Rating", "value": "100"
+      },
+      {
+        "name": "Speed", "value": "500"
+      },
+      {
+        "name": "Stamina Regen", "value": "100"
+      }
+    ],
+    "emoji": "",
+    "thumbnail": "",
+    "image": ""
+  }
