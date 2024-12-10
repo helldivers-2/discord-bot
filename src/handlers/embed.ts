@@ -335,11 +335,12 @@ export async function planetEmbeds(planet_name?: string) {
     if (sectorName) title += ` (${sectorName} Sector)`;
     if (biome) {
       description = biome.description;
-      embed.setImage(
-        `https://helldiverscompanion.com/biomes/${planetBiomeTransform(
-          biome.name
-        )}.webp`
-      );
+      // TODO: correct links and re-enable
+      // embed.setImage(
+      //   `https://helldiverscompanion.com/biomes/${planetBiomeTransform(
+      //     biome.name
+      //   )}.webp`
+      // );
     }
     for (const e of environmentals ?? []) {
       description += '\n\n' + `**${e.name}**` + '\n' + e.description;
@@ -417,12 +418,10 @@ export async function planetEmbeds(planet_name?: string) {
       const successRate = (missionsWon / (missionsWon + missionsLost)) * 100;
       const failRate = (missionsLost / (missionsWon + missionsLost)) * 100;
 
-      display[
-        'Missions Won'
-      ] = `${missionsWon.toLocaleString()} (${successRate.toFixed(2)}%)`;
-      display[
-        'Missions Lost'
-      ] = `${missionsLost.toLocaleString()} (${failRate.toFixed(2)}%)`;
+      display['Missions Won'] =
+        `${missionsWon.toLocaleString()} (${successRate.toFixed(2)}%)`;
+      display['Missions Lost'] =
+        `${missionsLost.toLocaleString()} (${failRate.toFixed(2)}%)`;
       display['Mission Time'] = `${(missionTime / 3600).toFixed(2)} hours`;
       display['Helldivers Killed'] = deaths.toLocaleString();
       if (bugKills) display['Bug Kills'] = bugKills.toLocaleString();
