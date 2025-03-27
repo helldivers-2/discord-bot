@@ -32,7 +32,7 @@ const commandList: Command[] = [
   planet,
   subscribe,
   summary,
-  superstore,
+  // superstore,
   updates,
   // warbond,
   // wiki,

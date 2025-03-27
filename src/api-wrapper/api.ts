@@ -378,7 +378,7 @@ export async function getData() {
   if (warbonds) data.Warbonds = warbonds;
   if (gameItems.weapons) data.Items = gameItems; // just check one field to see if the data is there
 
-  writeFileSync('data.json', JSON.stringify(data));
+  writeFileSync('data.json', JSON.stringify(data, null, 2));
 
   // update mapped names
   mappedNames.planets = data.Planets.map(x => x.name);

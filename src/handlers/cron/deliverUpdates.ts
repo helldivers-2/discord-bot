@@ -449,7 +449,7 @@ export async function newNewsUpdate(news: NewsFeedItem, channelIds: string[]) {
         .setTimestamp()
     );
   // otherwise, no title, just description
-  else
+  else if (news.message.length > 0)
     embeds.push(
       new EmbedBuilder()
         .setAuthor({
