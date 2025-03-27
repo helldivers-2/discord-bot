@@ -1,0 +1,32 @@
+{
+    "page": "cm-17_butcher",
+    "title": "CM-17 Butcher",
+    "description": "",
+    "content": "",
+    "fields": [
+        {
+            "name": "Armour Type", "value": ""
+        },
+        {
+            "name": "", "value": ""
+        },
+        {
+            "name": "Armour Rating", "value": ""
+        },
+        {
+            "name": "Speed", "value": ""
+        },
+        {
+            "name": "Stamina Regen", "value": ""
+        },
+        {
+            "name": " (Body Armour)", "value": ""
+        },
+        {
+            "name": " (Helmet)", "value": ""
+        }
+    ],
+    "emoji": "",
+    "thumbnail": "",
+    "image": ""
+}

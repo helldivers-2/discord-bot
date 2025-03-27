@@ -1,0 +1,32 @@
+{
+    "page": "ex-16_prototype_16",
+    "title": "EX-16 Protype 16",
+    "description": "",
+    "content": "",
+    "fields": [
+        {
+            "name": "Armour Type", "value": "Medium Armour"
+        },
+        {
+            "name": "Electrical Conduit", "value": "Provides 95% resistance to arc damage."
+        },
+        {
+            "name": "Armour Rating", "value": "100"
+        },
+        {
+            "name": "Speed", "value": "500"
+        },
+        {
+            "name": "Stamina Regen", "value": "100"
+        },
+        {
+            "name": "Cutting Edge Warbond Price (Body Armour)", "value": "45 Medals"
+        },
+        {
+            "name": "Cutting Edge Warbond Price (Helmet)", "value": "35 Medals"
+        }
+    ],
+    "emoji": "",
+    "thumbnail": "",
+    "image": ""
+}

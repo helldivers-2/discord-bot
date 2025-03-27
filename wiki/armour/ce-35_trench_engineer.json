@@ -1,0 +1,32 @@
+{
+    "page": "ce-35_trench_engineer",
+    "title": "CE-35 Trench Engineer",
+    "description": "",
+    "content": "",
+    "fields": [
+        {
+            "name": "Armour Type", "value": "Medium Armour"
+        },
+        {
+            "name": "Engineering Kit", "value": "Recoil is reduced by 30% when prone or crouching.\nInventory and capacity of grenades is increased by +2."
+        },
+        {
+            "name": "Armour Rating", "value": "100"
+        },
+        {
+            "name": "Speed", "value": "500"
+        },
+        {
+            "name": "Stamina Regen", "value": "100"
+        },
+        {
+            "name": "Mobalize Warbond Price (Body Armour)", "value": "10 Medals"
+        },
+        {
+            "name": "Mobalize Warbond Price (Helmet)", "value": "7 Medals"
+        }
+    ],
+    "emoji": "",
+    "thumbnail": "",
+    "image": ""
+}

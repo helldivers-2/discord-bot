@@ -1,0 +1,32 @@
+{
+    "page": "b-27_fortified_commando",
+    "title": "B-27 Fortified Commando",
+    "description": "",
+    "content": "",
+    "fields": [
+        {
+            "name": "Armour Type", "value": "Heavy Armour"
+        },
+        {
+            "name": "Extra Padding", "value": "With this, your armor will be buffed and you'll receive a higher armor rating."
+        },
+        {
+            "name": "Armour Rating", "value": "144"
+        },
+        {
+            "name": "Speed", "value": "456"
+        },
+        {
+            "name": "Stamina Regen", "value": "56"
+        },
+        {
+            "name": "Superstore Price (Body Armour)", "value": "400 Super Credits"
+        },
+        {
+            "name": "Superstore Price (Helmet)", "value": "200 Super Credits"
+        }
+    ],
+    "emoji": "",
+    "thumbnail": "",
+    "image": ""
+}

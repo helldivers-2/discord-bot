@@ -1,0 +1,32 @@
+{
+    "page": "dp-40_hero_of_the_federation",
+    "title": "DP-40 Hero of the Federation",
+    "description": "",
+    "content": "",
+    "fields": [
+        {
+            "name": "Armour Type", "value": "Medium Armour"
+        },
+        {
+            "name": "Democracy Protects", "value": "50% chance to not die when taking lethal damage.\nPrevents all damage from bleeding if chest hemorrhages."
+        },
+        {
+            "name": "Armor Rating", "value": "100"
+        },
+        {
+            "name": "Speed", "value": "500"
+        },
+        {
+            "name": "Stamina Regen", "value": "100"
+        },
+        {
+            "name": "Mobalize Warbond Price (Body Armor)", "value": "25 Medals"
+        },
+        {
+            "name": "Mobalize Warbond Price (Helmet)", "value": "20 Medals"
+        }
+    ],
+    "emoji": "",
+    "thumbnail": "",
+    "image": ""
+}

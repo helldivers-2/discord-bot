@@ -1,0 +1,32 @@
+{
+    "page": "sc-37_legionnaire",
+    "title": "SC-37 Legionnaire",
+    "description": "",
+    "content": "",
+    "fields": [
+        {
+            "name": "Armour Type", "value": "Light Armour"
+        },
+        {
+            "name": "Servo-Assisted", "value": "Throwing range is increased by 30% and provides limb health for +50%."
+        },
+        {
+            "name": "Armour Rating", "value": "56"
+        },
+        {
+            "name": "Speed", "value": "544"
+        },
+        {
+            "name": "Stamina Regen", "value": "122"
+        },
+        {
+            "name": "Superstore Price (Body Armour)", "value": "150 Super Credits"
+        },
+        {
+            "name": "Superstore Price (Helmet)", "value": "75 Super Credits"
+        }
+    ],
+    "emoji": "",
+    "thumbnail": "",
+    "image": ""
+}

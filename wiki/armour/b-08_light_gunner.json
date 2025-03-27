@@ -1,0 +1,32 @@
+{
+    "page": "b-08_light_gunner",
+    "title": "B-08 Light Gunner",
+    "description": "",
+    "content": "",
+    "fields": [
+        {
+            "name": "Armour Type", "value": "Light Armour"
+        },
+        {
+            "name": "Extra Padding", "value": "With this, your armour will be buffed and you'll receive a higher armour rating."
+        },
+        {
+            "name": "Armour Rating", "value": "57"
+        },
+        {
+            "name": "Speed", "value": "543"
+        },
+        {
+            "name": "Stamina Regen", "value": "121"
+        },
+        {
+            "name": "Superstore Price (Body Armour)", "value": "150 Super Credits"
+        },
+        {
+            "name": "Superstore Price (Helmet)", "value": "75 Super Credits"
+        }
+    ],
+    "emoji": "",
+    "thumbnail": "",
+    "image": ""
+}
