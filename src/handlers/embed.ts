@@ -17,7 +17,9 @@ import {
   getAllPlayers,
   getCampaignByPlanetName,
   getFactionName,
+  getItemName,
   getLatestAssignment,
+  getPlanetByIndex,
   getPlanetByName,
   getPlanetName,
   MappedTask,
@@ -193,7 +195,15 @@ export async function warStatusEmbeds() {
     Terminids: [],
     Automaton: [],
     Humans: [],
+    Illuminate: [],
     Total: [],
+  };
+  const statusShortened: Record<Faction, string> = {
+    Terminids: '',
+    Automaton: '',
+    Humans: '',
+    Illuminate: '',
+    Total: '',
   };
 
   const diverEmoji = client.emojis.cache.find(
@@ -246,23 +256,48 @@ export async function warStatusEmbeds() {
     if (campaignType === 'Liberation') {
       const {owner, liberation} = planetData;
       const progressBar = drawLoadingBarPerc(liberation, 30);
-      status[owner as Faction].push({
-        name: title,
-        value: `${progressBar}` + averageChangeStr,
-      });
+      if (liberation > 5)
+        status[owner as Faction].push({
+          name: title,
+          value: `${progressBar}` + averageChangeStr,
+        });
+      else
+        statusShortened[owner as Faction] +=
+          `\`${campaignType}\` ${planetName}: ${liberation}%\n`;
     } else if (campaignType === 'Defend') {
       const {defence, race, expireTime} = planetEvent as MergedPlanetEventData;
       const expiresInS = expireTime - data.Status.time;
       const expireTimeUtc = Math.floor(Date.now() + expiresInS * 1000);
       const expiresInUtcS = Math.floor(expireTimeUtc / 1000);
       const progressBar = drawLoadingBarPerc(defence, 30);
-      status[race as Faction].push({
-        name: title,
-        value:
-          `${progressBar}` +
-          averageChangeStr +
-          `\n**Defence Ends**: <t:${expiresInUtcS}:R>`,
-      });
+      if (defence > 5)
+        status[race as Faction].push({
+          name: title,
+          value:
+            `${progressBar}` +
+            averageChangeStr +
+            `\n**Defence Ends**: <t:${expiresInUtcS}:R>`,
+        });
+      else
+        statusShortened[race as Faction] +=
+          `\`${campaignType}\` ${planetName}: ${defence}%\n`;
+    } else if (campaignType === 'Invasion') {
+      const {defence, race, expireTime} = planetEvent as MergedPlanetEventData;
+      const expiresInS = expireTime - data.Status.time;
+      const expireTimeUtc = Math.floor(Date.now() + expiresInS * 1000);
+      const expiresInUtcS = Math.floor(expireTimeUtc / 1000);
+      const progressBar = drawLoadingBarPerc(defence, 30);
+      if (defence > 5)
+        status[race as Faction].push({
+          name: title,
+          value:
+            `${progressBar}` +
+            averageChangeStr +
+            `\n**Defence Ends**: <t:${expiresInUtcS}:R>`,
+        });
+      else
+        statusShortened[race as Faction] +=
+          `\`${campaignType}\` ${planetName}: ${defence}%\n`;
     }
   }
   const automatonEmbed = new EmbedBuilder()
@@ -272,7 +307,10 @@ export async function warStatusEmbeds() {
     .setDescription(
       `**${players.Automaton.toLocaleString()}** Helldivers are braving the automaton trenches!`
     )
-    .addFields(status['Automaton']);
+    .addFields([
+      ...status['Automaton'],
+      {name: 'Low-Progress Campaigns', value: statusShortened['Automaton']},
+    ]);
 
   const terminidEmbed = new EmbedBuilder()
     .setThumbnail(factionSprites['Terminids'])
@@ -281,9 +319,26 @@ export async function warStatusEmbeds() {
     .setDescription(
       `**${players.Terminids.toLocaleString()}** Helldivers are deployed to manage the terminid swarms!`
     )
-    .addFields(status['Terminids']);
+    .addFields([
+      ...status['Terminids'],
+      {name: 'Low-Progress Campaigns', value: statusShortened['Terminids']},
+    ]);
 
-  const embeds = [automatonEmbed, terminidEmbed];
+  const illuminateEmbed = new EmbedBuilder()
+    .setThumbnail(factionSprites['Illuminate'])
+    .setColor(FACTION_COLOUR.Illuminate)
+    .setTitle('Illuminate')
+    .setDescription(
+      `**${players.Illuminate.toLocaleString()}** Helldivers are deployed to quell the illuminate invasions!`
+    )
+    .addFields([
+      ...status['Illuminate'],
+      {name: 'Low-Progress Campaigns', value: statusShortened['Illuminate']},
+    ]);
+
+  const embeds = [automatonEmbed, terminidEmbed, illuminateEmbed];
+  const dssEmbed = await democracySpaceStationEmbed();
+  if (dssEmbed) embeds.push(dssEmbed);
 
   if (majorOrder) embeds.push(majorOrderEmbed(majorOrder));
   else
@@ -309,6 +364,93 @@ export async function warStatusEmbeds() {
       .setTimestamp()
   );
   return embeds;
+}
+
+const dssActionStatus: Record<number, string> = {
+  1: 'IN PROGRESS ❓',
+  2: 'ACTIVE :bangbang:',
+  3: 'COOLDOWN ❌',
+};
+
+export async function democracySpaceStationEmbed(): Promise<EmbedBuilder | void> {
+  const {RawDSS: dssData, UTCOffset} = data;
+  if (!dssData) return;
+  const {planetIndex, currentElectionEndWarTime, flags, tacticalActions} =
+    dssData;
+  const planet = getPlanetByIndex(planetIndex);
+
+  const embed = new EmbedBuilder();
+
+  if (planet)
+    embed.setTitle(`Democracy Space Station (orbiting ${planet.name})`);
+  else embed.setTitle('Democracy Space Station');
+
+  const dssMovesInS = Math.floor(
+    Math.floor(
+      Date.now() + (currentElectionEndWarTime - data.Status.time) * 1000
+    ) / 1000
+  );
+  embed.setDescription(`DSS moves in <t:${dssMovesInS}:R>`);
+
+  for (const action of tacticalActions) {
+    const {
+      name,
+      description,
+      strategicDescription,
+      status,
+      statusExpireAtWarTimeSeconds,
+      cost,
+    } = action;
+
+    let displayName = '';
+    switch (name) {
+      case 'EAGLE STORM':
+        displayName = `<:eagle_airstrike:1220789240049434734> ${name} - ${dssActionStatus[status]}`;
+        break;
+      case 'ORBITAL BLOCKADE':
+        displayName = `<:supply_pack:1220789644455579658> ${name} - ${dssActionStatus[status]}`;
+        break;
+      case 'HEAVY ORDNANCE DISTRIBUTION':
+        displayName = `<:orbital_380mm_he_barrage:1220789627841937419> ${name} - ${dssActionStatus[status]}`;
+        break;
+      default:
+        displayName = `${name} (${dssActionStatus[status]})`;
+        break;
+    }
+    let desc = '';
+    if (status === 1 || status === 2)
+      desc =
+        strategicDescription.replace(/\<i\=\d\>/g, '').replace(/<\/i>/g, '') +
+        '\n';
+    const expiresInS = statusExpireAtWarTimeSeconds - data.Status.time;
+    const expireTimeUtc = Math.floor(Date.now() + expiresInS * 1000);
+    const expiresInUtcS = Math.floor(expireTimeUtc / 1000);
+
+    switch (status) {
+      case 1:
+        for (const c of cost) {
+          const item = getItemName(c.itemMixId);
+          const progress = ((c.currentValue / c.targetValue) * 100).toFixed(2);
+          const contribPeriodInHours = c.maxDonationPeriodSeconds / 60 / 60;
+          desc += `\n*${item}*: ${c.currentValue} / ${c.targetValue} (${progress}%)`;
+          desc += `\n*Contribution Allowance*: ${c.maxDonationAmount} per ${contribPeriodInHours}H`;
+        }
+        desc += `\n*Contribution Period Ends*: <t:${expiresInUtcS}:f> (<t:${expiresInUtcS}:R>)`;
+        break;
+      case 2:
+        desc += `\n*Active Until*: <t:${expiresInUtcS}:f>`;
+        break;
+      case 3:
+        desc += `\n*Cooldown Expires*: <t:${expiresInUtcS}:f> (<t:${expiresInUtcS}:R>)`;
+        break;
+    }
+    embed.addFields({
+      name: displayName,
+      value: desc,
+    });
+  }
+
+  return embed;
 }
 
 export async function planetEmbeds(planet_name?: string) {
@@ -448,12 +590,14 @@ function drawLoadingBarPerc(percentage: number, barLength: number) {
 
   return `${progressBar} ${percentage.toFixed(2)}%`;
 }
+
 interface WarbondPageEmbedParams {
   interaction: string;
   warbond: string;
   warbondPage: string;
   action: string;
 }
+
 export function warbondPageResponse({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interaction,

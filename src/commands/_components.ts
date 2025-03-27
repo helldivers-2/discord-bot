@@ -9,4 +9,5 @@ export const FACTION_COLOUR: {
   Humans: 'Aqua',
   Terminids: 'Orange',
   Automaton: 'Red',
+  Illuminate: 'DarkPurple',
 };

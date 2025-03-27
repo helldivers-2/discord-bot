@@ -38,6 +38,7 @@ export async function dbData() {
     ActivePlanets: data.ActivePlanets,
     PlanetAttacks: data.PlanetAttacks,
     Events: data.Events,
+    RawDSS: data.RawDSS,
     SuperStore: data.SuperStore,
     UnmappedPersonalOrders: data.UnmappedPersonalOrders,
     Players: data.Players,

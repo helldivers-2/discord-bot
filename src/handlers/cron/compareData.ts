@@ -106,6 +106,7 @@ export async function compareData(): Promise<WarDifferences | void> {
       Total: 0,
       Automaton: 0,
       Terminids: 0,
+      Illuminate: 0,
     },
   };
 

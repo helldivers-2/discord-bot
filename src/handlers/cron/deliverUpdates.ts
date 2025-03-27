@@ -27,7 +27,18 @@ export async function newCampaignUpdate(
   const channels = await validateChannelArr(channelIds);
 
   const {planetName, campaignType} = campaign;
-  const typeDisplay = campaignType === 'Liberation' ? 'Liberate' : 'Defend';
+  const typeDisplay =
+    campaignType === 'Liberation'
+      ? 'Liberate'
+      : campaignType === 'Invasion'
+        ? 'Repel'
+        : 'Defend';
+  const verb =
+    campaignType === 'Liberation'
+      ? 'liberation'
+      : campaignType === 'Invasion'
+        ? 'protective'
+        : 'defensive';
   const race =
     campaignType === 'Liberation'
       ? campaign.planetData.owner
@@ -38,7 +49,7 @@ export async function newCampaignUpdate(
   )}.png`;
   let description =
     `A new campaign has started on **${planetName}**! ` +
-    `Helldivers are requested to assist in ${campaignType.toLowerCase()} efforts against the ${displayRace}!`;
+    `Helldivers are requested to assist in ${verb} efforts against the ${displayRace}!`;
   if (campaignType === 'Defend' && campaign.planetEvent) {
     const {expireTime} = campaign.planetEvent;
     const expiresInS = expireTime - data.Status.time;
@@ -46,6 +57,13 @@ export async function newCampaignUpdate(
     const expiresInUtcS = Math.floor(expireTimeUtc / 1000);
 
     description += `\n\n**Defence Ends**: <t:${expiresInUtcS}:R>`;
+  } else if (campaignType === 'Invasion' && campaign.planetEvent) {
+    const {expireTime} = campaign.planetEvent;
+    const expiresInS = expireTime - data.Status.time;
+    const expireTimeUtc = Math.floor(Date.now() + expiresInS * 1000);
+    const expiresInUtcS = Math.floor(expireTimeUtc / 1000);
+
+    description += `\n\n**Invasion Ends**: <t:${expiresInUtcS}:R>`;
   }
   const embeds = [
     new EmbedBuilder()
@@ -105,7 +123,12 @@ export async function wonPlanetUpdate(
   const planetThumbnailUrl = `https://helldiverscompanionimagescdn.b-cdn.net/planet-images/${planetNameTransform(
     planetName
   )}.png`;
-  const verb = campaignType === 'Liberation' ? 'liberated' : 'defended';
+  const verb =
+    campaignType === 'Liberation'
+      ? 'liberated'
+      : campaignType === 'Invasion'
+        ? 'protected'
+        : 'defended';
   const race =
     campaignType === 'Liberation'
       ? campaign.planetData.owner
@@ -130,23 +153,23 @@ export async function wonPlanetUpdate(
         `Helldivers have successfully ${verb} **${planetName}** from the ${displayRace}! Super Earth thanks you for your service.` +
           `\n\nRemaining **${players.toLocaleString()}** troops are to direct their efforts elsewhere.`
       )
-      .addFields(
-        {
-          name: '[SUGGESTION]',
-          value: nextPlanetName,
-          inline: true,
-        },
-        {
-          name: 'Helldiver Forces',
-          value: nextPlanetPlayers.toLocaleString(),
-          inline: true,
-        },
-        {
-          name: 'Faction',
-          value: nextPlanetRaceDisplay,
-          inline: true,
-        }
-      )
+      // .addFields(
+      //   {
+      //     name: '[SUGGESTION]',
+      //     value: nextPlanetName,
+      //     inline: true,
+      //   },
+      //   {
+      //     name: 'Helldiver Forces',
+      //     value: nextPlanetPlayers.toLocaleString(),
+      //     inline: true,
+      //   },
+      //   {
+      //     name: 'Faction',
+      //     value: nextPlanetRaceDisplay,
+      //     inline: true,
+      //   }
+      // )
       .setImage(planetThumbnailUrl)
       .setColor(FACTION_COLOUR['Humans'])
       .setFooter({text: SUBSCRIBE_FOOTER}),

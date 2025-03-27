@@ -67,6 +67,8 @@ const helldiversConfig = {
       'https://helldiverscompanionimagescdn.b-cdn.net/icons/factions/Humans.png',
     Terminids:
       'https://helldiverscompanionimagescdn.b-cdn.net/icons/factions/Terminids.png',
+    Illuminate:
+      'https://helldiverscompanionimagescdn.b-cdn.net/icons/factions/Illuminate.png',
     Total:
       'https://helldiverscompanionimagescdn.b-cdn.net/icons/factions/Humans.png',
   },

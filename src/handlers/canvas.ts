@@ -18,6 +18,7 @@ const colours: Record<Faction, string[]> = {
   Humans: ['#1d8dc1', '#2f34f9'],
   Terminids: ['#fe8001', '#FEB801'],
   Automaton: ['#ca1212', '#fb4a47'],
+  Illuminate: ['#8A1EFF', '#B856E2'],
   Total: ['#FFFFFF', '#6bf046'],
 };
 

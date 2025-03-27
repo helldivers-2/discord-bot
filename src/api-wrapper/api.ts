@@ -19,6 +19,7 @@ import {
   WeaponItem,
   SteamPost,
   SteamPostAPI,
+  RawDSSData,
 } from './types';
 import {getFactionName, getPlanetEventType, getPlanetName} from './mapping';
 import {writeFileSync} from 'fs';
@@ -26,12 +27,13 @@ import {getAllPlanets} from './planets';
 import axios from 'axios';
 import {config} from '../config';
 import {logger} from '../handlers';
-import {db} from '../db';
+import {apiData, db} from '../db';
 import dayjs from 'dayjs';
 
 // const API_URL = 'https://api.live.prod.thehelldiversgame.com/api';
 const CHATS_URL = 'https://api.diveharder.com/v1/all';
 const CHATS_URL_RAW = 'https://api.diveharder.com/raw/all';
+const CHATS_URL_RAW_DSS = 'https://api.diveharder.com/raw/dss';
 const FALLBACK_URL = 'https://api.helldivers2.dev/raw/api';
 
 const IDENTIFIER = config.IDENTIFIER;
@@ -91,6 +93,7 @@ export let data: ApiData = {
     Total: 0,
     Automaton: 0,
     Terminids: 0,
+    Illuminate: 0,
   },
   UTCOffset: 0,
   Assignment: [],
@@ -120,6 +123,7 @@ export let data: ApiData = {
 
 export async function getData() {
   let chatsAPI;
+  let rawDSS;
 
   let warInfo: WarInfo;
   let status: Status;
@@ -152,6 +156,16 @@ export async function getData() {
     chatsAPI = await (await apiClient.get(CHATS_URL)).data;
   } catch (err) {
     logger.error('Failed to fetch chats data.', {
+      type: 'API',
+      ...(err as Error),
+    });
+  }
+
+  try {
+    // fetch DSS raw data
+    rawDSS = await (await apiClient.get(CHATS_URL_RAW_DSS)).data[0];
+  } catch (err) {
+    logger.error('Failed to fetch DSS data.', {
       type: 'API',
       ...(err as Error),
     });
@@ -270,6 +284,7 @@ export async function getData() {
     Automaton: 0,
     Humans: 0,
     Terminids: 0,
+    Illuminate: 0,
     Total: status.planetStatus.reduce((acc, p) => acc + p.players, 0),
   };
   // ACTIVE MISSIONS ARE IN status/campaigns
@@ -349,6 +364,7 @@ export async function getData() {
     })),
     Events: status.globalEvents,
     // SuperStore: storeRotation,
+    RawDSS: rawDSS,
     Players: players,
     // this is the starting point in unix for whatever time thing they use
     UTCOffset: Math.floor(status.timeUtc - status.time * 1000), // use this value to add to the time to get the UTC time in seconds

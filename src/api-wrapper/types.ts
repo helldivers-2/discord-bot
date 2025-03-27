@@ -4,9 +4,14 @@ export type Position = {
 };
 
 export type Currency = 'Medals';
-export type Faction = 'Humans' | 'Total' | 'Automaton' | 'Terminids';
+export type Faction =
+  | 'Humans'
+  | 'Total'
+  | 'Automaton'
+  | 'Terminids'
+  | 'Illuminate';
 export type PlanetEventType = 'Defend';
-export type CampaignType = 'Defend' | 'Liberation';
+export type CampaignType = 'Defend' | 'Liberation' | 'Invasion';
 
 export type PlanetBiome = {
   name: string;
@@ -156,6 +161,8 @@ export type MergedPlanetEventData = {
   expireTime: number;
   campaignId: number;
   jointOperationIds: number[];
+  potentialBuildUp?: number;
+  globalResourceId?: number;
 };
 
 export type MergedCampaignData = {
@@ -500,6 +507,7 @@ export type ApiData = {
   ActivePlanets: MergedPlanetData[];
   PlanetAttacks: {source: string; target: string}[];
   Events: GlobalEvent[];
+  RawDSS?: RawDSSData;
   SuperStore?: StoreRotation;
   Items?: Items;
   UnmappedPersonalOrders?: UnmappedPersonalOrder[];
@@ -529,6 +537,7 @@ export type StrippedApiData = {
   ActivePlanets: MergedPlanetData[];
   PlanetAttacks: {source: string; target: string}[];
   Events: GlobalEvent[];
+  RawDSS?: RawDSSData;
   SuperStore?: StoreRotation;
   UnmappedPersonalOrders?: UnmappedPersonalOrder[];
   Players: {
@@ -537,6 +546,35 @@ export type StrippedApiData = {
   HelldiversDiscordAnnouncements: HelldiversDiscordAnnouncement[];
   SteamPosts: SteamPost[];
   UTCOffset: number;
+};
+
+export type RawDSSData = {
+  id32: number;
+  planetIndex: number;
+  lastElectrionId: string;
+  currentElectionId: string;
+  currentElectionEndWarTime: number;
+  flags: number;
+  tacticalActions: {
+    id32: number;
+    mediaId32: number;
+    name: string;
+    description: string;
+    strategicDescription: string;
+    status: number;
+    statusExpireAtWarTimeSeconds: number;
+    cost: {
+      id: string;
+      itemMixId: number;
+      targetValue: number;
+      currentValue: number;
+      deltaPerSecond: number;
+      maxDonationAmount: number;
+      maxDonationPeriodSeconds: number;
+    }[];
+    effectIds: number[];
+    activeEffectIds: number[];
+  }[];
 };
 
 export type WarDifferences = {
