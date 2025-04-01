@@ -215,9 +215,13 @@ export async function compareData(): Promise<WarDifferences | void> {
     const oldEvent = oldData.Events.find(e => e.eventId === event.eventId);
     if (!oldEvent) {
       differences.NewEvents.push(event);
-      logger.info(`New event: ${event.title}`, {type: 'info'});
-      newEventUpdate(event, channelIds);
-      newEventUpdate(event, highlightsChannelIds);
+      logger.info(`New event: ${event.title} (${event.eventId})`, {
+        type: 'info',
+      });
+      if (event.title || event.message) {
+        newEventUpdate(event, channelIds);
+        newEventUpdate(event, highlightsChannelIds);
+      }
     }
   }
   // compare old and new player counts
