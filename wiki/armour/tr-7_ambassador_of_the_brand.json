@@ -1,0 +1,32 @@
+{
+    "page": "tr-7_ambassador_of_the_brand",
+    "title": "TR-7 Ambassador of the Brand",
+    "description": "",
+    "content": "",
+    "fields": [
+        {
+            "name": "Armour Type", "value": ""
+        },
+        {
+            "name": "", "value": ""
+        },
+        {
+            "name": "Armour Rating", "value": ""
+        },
+        {
+            "name": "Speed", "value": ""
+        },
+        {
+            "name": "Stamina Regen", "value": ""
+        },
+        {
+            "name": " (Body Armour)", "value": ""
+        },
+        {
+            "name": " (Helmet)", "value": ""
+        }
+    ],
+    "emoji": "",
+    "thumbnail": "",
+    "image": ""
+}

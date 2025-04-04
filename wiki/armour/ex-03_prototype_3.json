@@ -1,0 +1,32 @@
+{
+    "page": "ex-03_prototype_3",
+    "title": "EX-03 Protype 3",
+    "description": "",
+    "content": "",
+    "fields": [
+        {
+            "name": "Armour Type", "value": "Medium Armour"
+        },
+        {
+            "name": "Electrical Conduit", "value": "Provides 95% resistance to arc damage."
+        },
+        {
+            "name": "Armour Rating", "value": "100"
+        },
+        {
+            "name": "Speed", "value": "500"
+        },
+        {
+            "name": "Stamina Regen", "value": "100"
+        },
+        {
+            "name": "Cutting Edge Warbond Price (Body Armour)", "value": "18 Medals"
+        },
+        {
+            "name": "Cutting Edge Warbond Price (Helmet)", "value": "12 Medals"
+        }
+    ],
+    "emoji": "",
+    "thumbnail": "",
+    "image": ""
+}

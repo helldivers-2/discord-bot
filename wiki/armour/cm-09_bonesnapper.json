@@ -1,0 +1,32 @@
+{
+    "page": "cm-09_bonesnapper",
+    "title": "CM-09 Bonesnapper",
+    "description": "",
+    "content": "",
+    "fields": [
+        {
+            "name": "Armour Type", "value": "Medium Armour"
+        },
+        {
+            "name": "Med-Kit", "value": "Increases initial inventory and holding capacity of stims by +2.\nIncreases stim effect duration by 2.0s."
+        },
+        {
+            "name": "Armour Rating", "value": "100"
+        },
+        {
+            "name": "Speed", "value": "500"
+        },
+        {
+            "name": "Stamina Regen", "value": "100"
+        },
+        {
+            "name": "Mobalize Warbond Price (Body Armour)", "value": "15 Medals"
+        },
+        {
+            "name": "Mobalize Warbond Price (Helmet)", "value": "12 Medals"
+        }
+    ],
+    "emoji": "",
+    "thumbnail": "",
+    "image": ""
+}

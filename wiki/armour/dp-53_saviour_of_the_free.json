@@ -1,0 +1,32 @@
+{
+    "page": "dp-53_saviour_of_the_free",
+    "title": "DP-53 Saviour of the Free",
+    "description": "",
+    "content": "",
+    "fields": [
+        {
+            "name": "Armour Type", "value": "Medium Armour"
+        },
+        {
+            "name": "Democracy Protects", "value": "50% to not die when taking lethal damage.\nPrevents all damage from bleeding if chest hemorrhages."
+        },
+        {
+            "name": "Armor Rating", "value": "100"
+        },
+        {
+            "name": "Speed", "value": "500"
+        },
+        {
+            "name": "Stamina Regen", "value": "100"
+        },
+        {
+            "name": "Super Citizen Price (Body Armor)", "value": "Pre-order bonus"
+        },
+        {
+            "name": "Super Citizen Price (Helmet)", "value": "Pre-order bonus"
+        }
+    ],
+    "emoji": "",
+    "thumbnail": "",
+    "image": ""
+}

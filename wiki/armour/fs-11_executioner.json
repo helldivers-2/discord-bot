@@ -1,0 +1,32 @@
+{
+    "page": "fs-11_executioner",
+    "title": "FS-11 Executioner",
+    "description": "",
+    "content": "",
+    "fields": [
+        {
+            "name": "Armour Type", "value": "Heavy Armour"
+        },
+        {
+            "name": "Fortified", "value": "Further reduces recoil when crouching or prone by 30%.\nProvides 50% resistance to explosive damage."
+        },
+        {
+            "name": "Armour Rating", "value": "144"
+        },
+        {
+            "name": "Speed", "value": "456"
+        },
+        {
+            "name": "Stamina Regen", "value": "56"
+        },
+        {
+            "name": "Superstore Price (Body Armour)", "value": "150 Super Credits"
+        },
+        {
+            "name": "Superstore Price (Helmet)", "value": "75 Super Credits"
+        }
+    ],
+    "emoji": "",
+    "thumbnail": "",
+    "image": ""
+}

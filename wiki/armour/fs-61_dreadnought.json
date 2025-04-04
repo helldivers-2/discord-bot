@@ -1,0 +1,32 @@
+{
+    "page": "fs-61_dreadnought",
+    "title": "FS-61 Dreadnought",
+    "description": "",
+    "content": "",
+    "fields": [
+        {
+            "name": "Armour Type", "value": "Heavy Armour"
+        },
+        {
+            "name": "Servo-Assisted", "value": "Increases throwing range by 30%.\nProvides +50% limb health."
+        },
+        {
+            "name": "Armour Rating", "value": "144"
+        },
+        {
+            "name": "Speed", "value": "456"
+        },
+        {
+            "name": "Stamina Regen", "value": "56"
+        },
+        {
+            "name": "Superstore Price (Body Armour)", "value": "250 Super Credits"
+        },
+        {
+            "name": "Superstore Price (Helmet)", "value": "125 Super Credits"
+        }
+    ],
+    "emoji": "",
+    "thumbnail": "",
+    "image": ""
+}
