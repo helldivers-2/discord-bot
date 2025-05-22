@@ -255,7 +255,9 @@ export async function warStatusEmbeds() {
 
     if (campaignType === 'Liberation') {
       const {owner, liberation} = planetData;
-      const progressBar = drawLoadingBarPerc(liberation, 30);
+      // TODO: temp fix, need to add illuminate support
+      const progressBar =
+        liberation > 0 ? drawLoadingBarPerc(liberation, 30) : '';
       if (liberation > 5)
         status[owner as Faction].push({
           name: title,
@@ -374,7 +376,8 @@ const dssActionStatus: Record<number, string> = {
 
 export async function democracySpaceStationEmbed(): Promise<EmbedBuilder | void> {
   const {RawDSS: dssData, UTCOffset} = data;
-  if (!dssData) return;
+  // TODO: temp fix, need to add illuminate support
+  if (!dssData || !dssData.tacticalActions) return;
   const {planetIndex, currentElectionEndWarTime, flags, tacticalActions} =
     dssData;
   const planet = getPlanetByIndex(planetIndex);

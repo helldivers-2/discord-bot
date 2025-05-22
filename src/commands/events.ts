@@ -57,10 +57,10 @@ async function all(interaction: CommandInteraction) {
     let message = event.message;
     message = message.replace(/\<i\=\d\>/g, '*').replace(/<\/i>/g, '*');
     const embed = new EmbedBuilder()
-      .setTitle(title)
       .setThumbnail(factionSprites['Humans'])
       .setTimestamp();
 
+    if (title) embed.setTitle(title);
     if (message) embed.setDescription(message);
     embeds.push(embed);
   }

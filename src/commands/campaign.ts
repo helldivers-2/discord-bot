@@ -52,9 +52,17 @@ const subcmds: {[key: string]: (job: CommandInteraction) => Promise<void>} = {
 async function list(interaction: CommandInteraction) {
   const embeds: EmbedBuilder[] = await planetEmbeds();
   if (embeds.length > 10) {
+    // send in batches of 10
     await interaction.editReply({embeds: embeds.slice(0, 10)});
-    await interaction.followUp({embeds: embeds.slice(10), ephemeral: true});
-  } else await interaction.editReply({embeds: embeds});
+    for (let i = 10; i < embeds.length; i += 10) {
+      await interaction.followUp({
+        embeds: embeds.slice(i, i + 10),
+        ephemeral: true,
+      });
+    }
+  } else {
+    await interaction.editReply({embeds: embeds});
+  }
 }
 
 async function info(interaction: CommandInteraction) {
