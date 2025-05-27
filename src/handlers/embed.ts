@@ -77,7 +77,6 @@ export function majorOrderEmbed(assignment: Assignment) {
   const {expiresIn, progress, setting} = assignment;
   const {overrideTitle, overrideBrief, taskDescription, tasks, reward} =
     setting;
-  const {type, amount} = reward;
 
   const expiresInUtcS = Math.floor((Date.now() + expiresIn * 1000) / 1000);
   const expiresInDays = Math.floor(expiresIn / 86400);
@@ -104,13 +103,16 @@ export function majorOrderEmbed(assignment: Assignment) {
     }
   );
   // TODO: task progress here
-  embedFields.push({
-    name: 'Reward',
-    value:
-      `${amount}x ` +
-      (type === 1 ? '<:warbond_medal:1231439956640010261>' : type.toString()),
-    inline: true,
-  });
+  if (reward)
+    embedFields.push({
+      name: 'Reward',
+      value:
+        `${reward.amount}x ` +
+        (reward.type === 1
+          ? '<:warbond_medal:1231439956640010261>'
+          : reward.type.toString()),
+      inline: true,
+    });
 
   const mappedTasks: MappedTask[] = [];
   for (const [taskIndex, task] of tasks.entries()) {
