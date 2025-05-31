@@ -1,0 +1,32 @@
+{
+    "page": "tr-62_knight",
+    "title": "TR-62 Knight",
+    "description": "",
+    "content": "",
+    "fields": [
+        {
+            "name": "Armour Type", "value": "Heavy Armour"
+        },
+        {
+            "name": "Servo-Assisted", "value": "Increases throwing range by 30%.\nProvides +50% limb health."
+        },
+        {
+            "name": "Armour Rating", "value": "144"
+        },
+        {
+            "name": "Speed", "value": "456"
+        },
+        {
+            "name": "Stamina Regen", "value": "56"
+        },
+        {
+            "name": "Super Citizen (Body Armour)", "value": "Pre-Order Bonus"
+        },
+        {
+            "name": "Super Citizen (Helmet)", "value": "Pre-Order Bonus"
+        }
+    ],
+    "emoji": "",
+    "thumbnail": "",
+    "image": ""
+}

@@ -1,0 +1,32 @@
+{
+    "page": "b-24_enforcer",
+    "title": "B-24 Enforcer",
+    "description": "",
+    "content": "",
+    "fields": [
+        {
+            "name": "Armour Type", "value": "Medium Armour"
+        },
+        {
+            "name": "Fortified", "value": "Recoil is reduced by 30% more when crouching or prone. Also provides resistance to explosive damage by 50%."
+        },
+        {
+            "name": "Armour Rating", "value": "125"
+        },
+        {
+            "name": "Speed", "value": "475"
+        },
+        {
+            "name": "Stamina Regen", "value": "75"
+        },
+        {
+            "name": "Superstore Price (Body Armour)", "value": "150 Super Credits"
+        },
+        {
+            "name": "Superstore Price (Helmet)", "value": "75 Super Credits"
+        }
+    ],
+    "emoji": "",
+    "thumbnail": "",
+    "image": ""
+}

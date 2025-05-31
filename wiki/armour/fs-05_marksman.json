@@ -1,0 +1,32 @@
+{
+    "page": "fs-05_marksman",
+    "title": "FS-05 Marksman",
+    "description": "",
+    "content": "",
+    "fields": [
+        {
+            "name": "Armour Type", "value": "Heavy Armour"
+        },
+        {
+            "name": "Fortified", "value": "Further reduced recoil when crouching or prone by 30%.\nProvides 50% resistance to explosives."
+        },
+        {
+            "name": "Armour Rating", "value": "144"
+        },
+        {
+            "name": "Speed", "value": "456"
+        },
+        {
+            "name": "Stamina Regen", "value": "56"
+        },
+        {
+            "name": "Mobalize Warbond Price (Body Armour)", "value": "6 Medals"
+        },
+        {
+            "name": "Mobalize Warbond Price (Helmet)", "value": "5 Medals"
+        }
+    ],
+    "emoji": "",
+    "thumbnail": "",
+    "image": ""
+}

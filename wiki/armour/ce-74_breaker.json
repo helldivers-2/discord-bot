@@ -1,0 +1,32 @@
+{
+    "page": "ce-74_breaker",
+    "title": "CE-74 Breaker",
+    "description": "",
+    "content": "",
+    "fields": [
+        {
+            "name": "Armour Type", "value": "Light Armour"
+        },
+        {
+            "name": "Engineering Kit", "value": "Recoil is reduced by 30% when prone or crouching.\nInventory and capacity of grenades is increased by +2."
+        },
+        {
+            "name": "Armour Rating", "value": "56"
+        },
+        {
+            "name": "Speed", "value": "544"
+        },
+        {
+            "name": "Stamina Regen", "value": "122"
+        },
+        {
+            "name": "Superstore Price (Body Armour)", "value": "250 Super Credits"
+        },
+        {
+            "name": "Superstore Price (Helmet)", "value": "125 Super Credits"
+        } 
+   ],
+    "emoji": "",
+    "thumbnail": "",
+    "image": ""
+}

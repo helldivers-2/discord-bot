@@ -1,0 +1,32 @@
+{
+    "page": "sa-04_combat_technician",
+    "title": "SA-04 Combat Technician",
+    "description": "",
+    "content": "",
+    "fields": [
+        {
+            "name": "Armour Type", "value": "Medium Armour"
+        },
+        {
+            "name": "Scout", "value": "Markers placed on the map will generate radar scans every 2.0s.\nReduces range at which enemies can detect the wearer by 30%."
+        },
+        {
+            "name": "Armour Rating", "value": "100"
+        },
+        {
+            "name": "Speed", "value": "500"
+        },
+        {
+            "name": "Stamina Regen", "value": "100"
+        },
+        {
+            "name": "Mobalize Warbond Price (Body Armour)", "value": "60 Medals"
+        },
+        {
+            "name": "Mobalize Warbond Price (Helmet)", "value": "40 Medals"
+        }
+    ],
+    "emoji": "",
+    "thumbnail": "",
+    "image": ""
+}
