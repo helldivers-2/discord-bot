@@ -2,8 +2,29 @@
   "page": "eagle_110mm_rocket_pods",
   "title": "Eagle 110mm Rocket Pods",
   "description": "",
-  "content": "",
-  "fields": [],
+  "content": "The Eagle 110mm Rocket Pods stratagem sends out 3 sets of 4 rockets into the largest target near the beacon. This highly damaging stratagem is able to deal with larger, armored targets with ease, either stripping their armor so they can be readily dispatched by normal weapons fire, or outright killing them. Due to the travel speed of the missiles, fast moving targets such as Chargers may not always be hit by the rockets.",
+  "fields": [
+    {
+      "name": "Uses",
+      "value": "2",
+      "inline": true
+    },
+    {
+      "name": "Cooldown",
+      "value": "15 seconds",
+      "inline": true
+    },
+    {
+      "name": "Traits",
+      "value": "- Eagle\n- Explosive",
+      "inline": true
+    },
+    {
+      "name": "Rearm Time",
+      "value": "N/A",
+      "inline": true
+    }
+  ],
   "emoji": "<eagle_110mm_rocket_pods:1220789237675331644>",
   "thumbnail": "https://xywpvislkizlfztycqhf.supabase.co/storage/v1/object/public/hellcom/stratagems/eagle_110mm_rocket_pods.png",
   "image": ""
