@@ -1,0 +1,24 @@
+name: Feature Request
+description: Request a new feature or enhancement
+title: "[Feat]: "
+labels: ["feature"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this feature request!
+  - type: textarea
+    id: feature-request
+    attributes:
+      label: New Feature Idea?
+      description: How would you like it to behavior? What problem does it solve?
+      placeholder: I'd like to see a new feature that does X, Y, and Z.
+    validations:
+      required: true
+  - type: checkboxes
+    attributes:
+      label: Unique Feature
+      description: I've checked the documentation and issues list
+      options:
+        - label: A feature for this does not already exist.
+          required: true
