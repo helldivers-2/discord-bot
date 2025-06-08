@@ -35,7 +35,7 @@ const command: Command = {
       .splice(0, limit)
       .sort((a, b) => a.publishedUtc - b.publishedUtc)) {
       const {message} = dispatch;
-      const timestamp = `\n**Recieved**: <t:${Math.floor(
+      const timestamp = `\n**Received**: <t:${Math.floor(
         dispatch.publishedUtc / 1000
       )}:f>`;
       if (message && message.includes('\n')) {
