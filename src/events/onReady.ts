@@ -17,7 +17,7 @@ const VERSION = config.VERSION;
 const onReady = async (client: Client) => {
   if (!client.user) throw Error('Client not initialised');
   const clientId = client.user.id;
-  const serverCount = (await client.guilds.fetch()).size;
+  const serverCount = client.guilds.cache.size;
 
   const rest = new REST().setToken(BOT_TOKEN);
 
